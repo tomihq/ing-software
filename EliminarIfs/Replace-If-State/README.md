@@ -3,6 +3,9 @@ Hay tres versiones:
 1. La primera es la que hice inicialmente solo con State pero que rompe encapsulamiento, poco declarativa, bastante rígida e instancia en cualquier lado el estado del Automobile.
 2. La segunda utiliza State, ya no rompe encapsulamiento pero sigue estando el problema de que se pueden crear instancias desde cualquier lugar *(lo cual no es responsabilidad ni de cerca del vehiculo armarla bien)*, ahora de PowerOff y PowerOn pensados para ser vehículos genéricos.
 3. La segunda utiliza State, y además Factory Method para realizar instancias de Power en un único lugar. Esto nso permite poder saber que si hay un problema con la creación de instancias está ahí. La seguridad que le da el FactoryMethod es que: si en algún momento necesitaras que tanto VehiclePowerOn/VehiclePowerOff requieran más parámetros, se rompería apropósito a menos que extiendas el factory method para aceptarlos. Esto te da la seguridad que solo créas instancias de esa familia en un único lugar. 
+Además, ahora, tanto VehiclePowerOn/VehiclePowerOff son "hijas" de VehiclePowerStatus donde esta ultima tiene un colaborador interno vehicleToPower pues está siendo nombrada en el contexto con el rol que le cumple ahí.
+Notar también que, como VehiclePowerOn/VehicePowerOff aceptan accelerate pues responden al estado del vehículo, VehiclePowerStatus delega la responsabilidad a estos, pues, VehiclePowerStatus no representa ningun estado lo cual no tiene sentido que haga algo al acelerar.
+Tambien, ahora el vehiculo podría tener "varios estados" lo cual *state* es muy ambiguo. Ahora se lleva "powerStatus". 
 
 La solución de los docentes tiene la pinta de la segunda (más reutilizable) aunque podría parecer un poco "flashera".
 

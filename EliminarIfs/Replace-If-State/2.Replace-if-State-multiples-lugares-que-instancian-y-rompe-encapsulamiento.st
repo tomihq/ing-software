@@ -1,0 +1,44 @@
+!classDefinition: #Automobile2 category: '2.Replace-if-State-multiples-lugares-que-instancian-y-rompe-encapsulamiento'!
+Object subclass: #Automobile2
+	instanceVariableNames: 'state speed'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: '2.Replace-if-State-multiples-lugares-que-instancian-y-rompe-encapsulamiento'!
+
+!Automobile2 methodsFor: 'initialization' stamp: 'tomihq 9/23/2025 01:35:16'!
+initialize
+	state := VehicleOff new.
+	speed := 0 * kilometer / hour! !
+
+
+!Automobile2 methodsFor: 'move' stamp: 'tomihq 9/23/2025 01:36:03'!
+accelerate
+	state accelerate: speed.! !
+
+!Automobile2 methodsFor: 'move' stamp: 'tomihq 9/23/2025 01:35:36'!
+turnOn
+	state := VehicleOn new.! !
+
+
+!classDefinition: #VehicleOff category: '2.Replace-if-State-multiples-lugares-que-instancian-y-rompe-encapsulamiento'!
+Object subclass: #VehicleOff
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: '2.Replace-if-State-multiples-lugares-que-instancian-y-rompe-encapsulamiento'!
+
+!VehicleOff methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 01:35:47'!
+accelerate: aSpeed
+	^ self error: 'Can not accelerate when turned off'.! !
+
+
+!classDefinition: #VehicleOn category: '2.Replace-if-State-multiples-lugares-que-instancian-y-rompe-encapsulamiento'!
+Object subclass: #VehicleOn
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: '2.Replace-if-State-multiples-lugares-que-instancian-y-rompe-encapsulamiento'!
+
+!VehicleOn methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 01:35:55'!
+accelerate: aSpeed
+	^ aSpeed + (10 * kilometer / hour)! !
