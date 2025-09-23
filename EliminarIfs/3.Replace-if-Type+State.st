@@ -114,6 +114,10 @@ acceleratePoweredOn
 	speed := speed + (10 * kilometer / hour).
 	altitude := altitude + (5 * meter).! !
 
+!Helicopter methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 12:44:39'!
+initialize
+	altitude := 0.! !
+
 
 !classDefinition: #Motorcycle category: #'3.Replace-if-Type+State'!
 Vehicle subclass: #Motorcycle
