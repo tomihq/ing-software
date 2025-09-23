@@ -14,9 +14,9 @@ automobile := Automobile initialize: #ElectricEngine.
 accelerate
 	speed := speed + (engine contributionToSpeed: speed).! !
 
-!Automobile1 methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 01:27:47'!
-initialize: aEngine
-	engine := aEngine.
+!Automobile1 methodsFor: 'as yet unclassified' stamp: 'tomihq 9/22/2025 14:13:46'!
+initialize: aEngineType
+	engineType := aEngineType.
 	speed := 0 * kilometer / hour.! !
 
 
