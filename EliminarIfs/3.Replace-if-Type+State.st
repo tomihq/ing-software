@@ -9,9 +9,10 @@ Object subclass: #PowerStatus
 accelerate
 	^self subclassResponsibility.! !
 
-!PowerStatus methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 12:27:05'!
+!PowerStatus methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 13:03:03'!
 initializePowerStatusOf: aVehicle
-	vehicleToPower := aVehicle.! !
+	vehicleToPower := aVehicle.
+	^self.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -19,9 +20,9 @@ initializePowerStatusOf: aVehicle
 PowerStatus class
 	instanceVariableNames: ''!
 
-!PowerStatus class methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 12:26:42'!
+!PowerStatus class methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 13:02:45'!
 on: aVehicle
-	^(self new) initializePowerStatusOf: aVehicle! !
+	^self new initializePowerStatusOf: aVehicle! !
 
 
 !classDefinition: #PowerOff category: #'3.Replace-if-Type+State'!
@@ -55,14 +56,14 @@ Object subclass: #Vehicle
 	poolDictionaries: ''
 	category: '3.Replace-if-Type+State'!
 
-!Vehicle methodsFor: 'initialization' stamp: 'tomihq 9/23/2025 12:37:19'!
+!Vehicle methodsFor: 'initialization' stamp: 'tomihq 9/23/2025 12:52:13'!
 initialize
 	self turnOff.
 	speed := 0 * kilometer / hour.
-	! !
+	^self.! !
 
 
-!Vehicle methodsFor: 'move' stamp: 'tomihq 9/23/2025 12:39:49'!
+!Vehicle methodsFor: 'move' stamp: 'tomihq 9/23/2025 13:01:05'!
 accelerate
 	^powerStatus accelerate.! !
 
@@ -114,8 +115,10 @@ acceleratePoweredOn
 	speed := speed + (10 * kilometer / hour).
 	altitude := altitude + (5 * meter).! !
 
-!Helicopter methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 12:44:39'!
+
+!Helicopter methodsFor: 'nil' stamp: 'tomihq 9/23/2025 13:04:44'!
 initialize
+	super initialize.
 	altitude := 0.! !
 
 
