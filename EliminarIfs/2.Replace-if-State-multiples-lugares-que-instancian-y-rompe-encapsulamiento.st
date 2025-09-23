@@ -7,7 +7,7 @@ Object subclass: #Automobile2
 
 !Automobile2 methodsFor: 'initialization' stamp: 'tomihq 9/23/2025 01:35:16'!
 initialize
-	state := VehicleOff new.
+	state := AutomobileOff new.
 	speed := 0 * kilometer / hour! !
 
 
@@ -17,28 +17,28 @@ accelerate
 
 !Automobile2 methodsFor: 'move' stamp: 'tomihq 9/23/2025 01:35:36'!
 turnOn
-	state := VehicleOn new.! !
+	state := AutomobileOn new.! !
 
 
-!classDefinition: #VehicleOff category: #'2.Replace-if-State'!
-Object subclass: #VehicleOff
+!classDefinition: #AutomobileOff category: #'2.Replace-if-State'!
+Object subclass: #AutomobileOff
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: '2.Replace-if-State'!
 
-!VehicleOff methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 01:35:47'!
+!AutomobileOff methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 01:35:47'!
 accelerate: aSpeed
 	^ self error: 'Can not accelerate when turned off'.! !
 
 
-!classDefinition: #VehicleOn category: #'2.Replace-if-State'!
-Object subclass: #VehicleOn
+!classDefinition: #AutomobileOn category: #'2.Replace-if-State'!
+Object subclass: #AutomobileOn
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: '2.Replace-if-State'!
 
-!VehicleOn methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 01:35:55'!
+!AutomobileOn methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 01:35:55'!
 accelerate: aSpeed
 	^ aSpeed + (10 * kilometer / hour)! !
