@@ -21,3 +21,8 @@ La segunda versión, soluciona algunos problemas pero sigue teniendo otro *(no u
 Los estados siguen estando, pero ahora, puede ser cualquier vehículo *(al acelerar, el state correspondiente, llama al método del vehículo correspondiente. El estado, en este caso, no tiene la menor idea de qué es el efecto que sucede en el vehículo al ser acelerado.*). Además, se abstrajo la idea y ahora es VehiclePowerOn/VehiclePowerOff en vez de AutomobileOn y AutomobileOff.
 Ya no hablamos de un "automobil" sino que puede acelerar cualquier vehículo.
 El problema que persiste es que estamos configurando e instanciando VehiclePowerOff y VehiclePowerOn en cualquier lugar.
+
+## Ejecución
+Para probarlo, abrir un workspace y jugar con los métodos.
+Recordar que los initialize de instancia se ejecutan una vez utilizado "new" junto a la clase a instanciar.
+
