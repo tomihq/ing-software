@@ -1,19 +1,20 @@
-!classDefinition: #Automobile category: '2.Replace-if-State-Factory'!
+!classDefinition: #Automobile category: #'2.Replace-if-State-Factory'!
 Object subclass: #Automobile
 	instanceVariableNames: 'powerStatus speed'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: '2.Replace-if-State-Factory'!
 
-!Automobile methodsFor: 'initialization' stamp: 'tomihq 9/23/2025 02:59:44'!
+!Automobile methodsFor: 'initialization' stamp: 'tomihq 9/23/2025 12:11:14'!
 initialize
 	self turnOff.
-	speed := 0 * kilometer / hour.! !
+	speed := 0 * kilometer / hour.
+	^self.! !
 
 
-!Automobile methodsFor: 'move' stamp: 'tomihq 9/23/2025 02:15:07'!
+!Automobile methodsFor: 'move' stamp: 'tomihq 9/23/2025 12:14:54'!
 accelerate
-	state accelerate.! !
+	powerStatus accelerate.! !
 
 !Automobile methodsFor: 'move' stamp: 'tomihq 9/23/2025 03:00:14'!
 turnOff
@@ -28,12 +29,12 @@ turnOn
 accelerateWhenPoweredOff
 	^ self error: 'no se puede acelerar si esta apagado'.! !
 
-!Automobile methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 02:57:48'!
+!Automobile methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 12:18:47'!
 accelerateWhenPoweredOn
-	speed := speed + (10 * kilometer / hour)! !
+	speed := speed + (10 * kilometer / hour).! !
 
 
-!classDefinition: #VehiclePowerStatus category: '2.Replace-if-State-Factory'!
+!classDefinition: #VehiclePowerStatus category: #'2.Replace-if-State-Factory'!
 Object subclass: #VehiclePowerStatus
 	instanceVariableNames: 'vehicleToPower'
 	classVariableNames: ''
@@ -48,12 +49,18 @@ accelerate
 initializeVehiclePowerStatusOf: aVehicle
 	vehicleToPower := aVehicle.! !
 
-!VehiclePowerStatus methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 03:08:40'!
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'VehiclePowerStatus class' category: #'2.Replace-if-State-Factory'!
+VehiclePowerStatus class
+	instanceVariableNames: ''!
+
+!VehiclePowerStatus class methodsFor: 'as yet unclassified' stamp: 'tomihq 9/23/2025 12:07:21'!
 on: aVehicle
-	^(self new) initializeVehiclePowerStatusOf: aVehicle.! !
+	^self new initializeVehiclePowerStatusOf: aVehicle.! !
 
 
-!classDefinition: #VehiclePowerOff category: '2.Replace-if-State-Factory'!
+!classDefinition: #VehiclePowerOff category: #'2.Replace-if-State-Factory'!
 VehiclePowerStatus subclass: #VehiclePowerOff
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -65,7 +72,7 @@ accelerate
 	^vehicleToPower accelerateWhenPoweredOff.! !
 
 
-!classDefinition: #VehiclePowerOn category: '2.Replace-if-State-Factory'!
+!classDefinition: #VehiclePowerOn category: #'2.Replace-if-State-Factory'!
 VehiclePowerStatus subclass: #VehiclePowerOn
 	instanceVariableNames: ''
 	classVariableNames: ''
