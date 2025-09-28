@@ -22,6 +22,13 @@ Se sacó la validación del prefijo en el find pues esto se encarga de hacerlo e
 No obstante, sigue teniendo el Iterador pues era una de las limitaciones iniciales dada por los profesores. En la proxima version, sera parte del Stack.
 
 ## SentenceFinder completo (con Iterador metodos instancia)
+Esta versión comienza la refactorización del Iterador. De tal manera que se puede utilizar sus métodos una vez que se tiene la instancia. No obstante, sigue siendo un "objeto que se instancia por sí solo", lo cual no tiene sentido, porque instanciar un Iterador como queramos mandando un stack rompés el encapsulamiento. El propio Stack debería darte un iterador para él.
 
 ## SentenceFinder completo (con Iterador dentro de Stack)
+La versión final. Acá el iterador te lo proporciona el stack. 
+Notar que el stack no tiene un colaborador interno "iterador" porque no es necesario. Si estuviese, estarías "admitiendo" un solo posible iterador lo cual esto no tendría ningún tipo de sentido. 
+¿Por qué no?
+1. Si una persona te pide más de un iterador en diferentes partes del código estarías creando un nuevo iterador y pisando el viejo.
+2. Perderías la referencia al resto de "iteradores" y quedarían in-usables en otras partes del código.
 
+Solución: no uses el iterador como un colaborador único del stack, sino que, hacer un getter que te devuelva una instancia del iterador con referencia al stack mismo. Así, podés instanciar el iterador, con permiso del stack cuando quieras.
