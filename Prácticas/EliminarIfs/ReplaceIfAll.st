@@ -1,177 +1,3 @@
-!classDefinition: #VehicleTests category: #'4.Replace-if-All'!
-TestCase subclass: #VehicleTests
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: '4.Replace-if-All'!
-
-!VehicleTests methodsFor: 'testing' stamp: 'NR 9/7/2024 18:25:03'!
-test01LandVehicleCannotAccelerateWhileTurnedOff
-
-	| landVehicle |
-	
-	landVehicle := Vehicle electricMotorcycle.
-	
-	self should: [ landVehicle accelerate ] 
-	raise: Error 
-	withExceptionDo: [ :error | error messageText = 'Can not run when turned off'.
-		self assert: (landVehicle speedAt: (0 * kilometer / hour)) ]
-	
-	
-	! !
-
-!VehicleTests methodsFor: 'testing' stamp: 'NR 9/7/2024 18:27:17'!
-test02AirVehicleCannotAccelerateWhileTurnedOff
-
-	| airVehicle |
-	
-	airVehicle := Vehicle helicopter.
-	
-	self should: [ airVehicle accelerate ] 
-	raise: Error 
-	withExceptionDo: [ :error | error messageText = 'Can not fly when turned off'.
-		self assert: (airVehicle speedAt: (0 * kilometer / hour)).
-		self assert: (airVehicle altitudeAt: (0 * meter)) ]
-	
-	
-	! !
-
-!VehicleTests methodsFor: 'testing' stamp: 'NR 9/7/2024 18:52:20'!
-test03ElectricVehicleAccelerateAsIntended
-
-	| electricVehicle |
-	
-	electricVehicle := Vehicle electricMotorcycle.
-	
-	electricVehicle turnOn.
-	self assert: (electricVehicle speedAt: 0 * kilometer / hour).
-	
-	electricVehicle accelerate.
-	self assert: (electricVehicle speedAt: 10 * kilometer / hour).
-	
-	electricVehicle accelerate.
-	self assert: (electricVehicle speedAt: 40 * kilometer / hour)
-	
-	
-	
-	
-	! !
-
-!VehicleTests methodsFor: 'testing' stamp: 'NR 9/7/2024 18:52:16'!
-test04GasolineVehicleAccelerateAsIntended
-
-	| gasolineVehicle |
-	
-	gasolineVehicle := Vehicle gasolineMotorcycle.
-	
-	gasolineVehicle turnOn.
-	self assert: (gasolineVehicle speedAt: 0 * kilometer / hour).
-	
-	gasolineVehicle accelerate.
-	self assert: (gasolineVehicle speedAt: 10 * kilometer / hour).
-	
-	gasolineVehicle accelerate.
-	self assert: (gasolineVehicle speedAt: 20 * kilometer / hour)
-	
-	
-	
-	
-	! !
-
-!VehicleTests methodsFor: 'testing' stamp: 'NR 9/7/2024 18:52:11'!
-test05JetFueledVehicleAccelerateAsIntended
-
-	| jetFueledVehicle |
-	
-	jetFueledVehicle := Vehicle helicopter.
-	
-	jetFueledVehicle turnOn.
-	self assert: (jetFueledVehicle speedAt: 0 * kilometer / hour).
-	
-	jetFueledVehicle accelerate.
-	self assert: (jetFueledVehicle speedAt: 1 * kilometer / hour).
-	
-	jetFueledVehicle accelerate.
-	self assert: (jetFueledVehicle speedAt: 5 * kilometer / hour).
-	
-	jetFueledVehicle accelerate.
-	self assert: (jetFueledVehicle speedAt: 41 * kilometer / hour)
-	
-	
-	
-	
-	! !
-
-!VehicleTests methodsFor: 'testing' stamp: 'NR 9/7/2024 18:47:14'!
-test06AirVehicleGoesUpAsItAcceleratesAsExpected
-
-	| airVehicle |
-	
-	airVehicle := Vehicle helicopter.
-	
-	airVehicle turnOn.
-	self assert: (airVehicle altitudeAt: 0 * meter).
-	
-	airVehicle accelerate.
-	self assert: (airVehicle altitudeAt: 5 * meter).
-	
-	airVehicle accelerate.
-	self assert: (airVehicle altitudeAt: 10 * meter)
-	
-	! !
-
-!VehicleTests methodsFor: 'testing' stamp: 'NR 9/7/2024 18:52:05'!
-test07SpeedLimiterForCityLimitsSpeedAt70Kmh
-
-	| cityVehicle |
-	
-	cityVehicle := Vehicle electricMotorcycle.
-	
-	cityVehicle turnOn.
-	self assert: (cityVehicle speedAt: 0 * kilometer / hour).
-	
-	20 timesRepeat: [ cityVehicle accelerate ].
-	
-	self assert: (cityVehicle speedAt: 70 * kilometer / hour)
-	
-	
-	! !
-
-!VehicleTests methodsFor: 'testing' stamp: 'NR 9/7/2024 18:53:50'!
-test08SpeedLimiterForOpenRoadLimitsSpeedAt130Kmh
-
-	| openRoadVehicle |
-	
-	openRoadVehicle := Vehicle gasolineMotorcycle.
-	
-	openRoadVehicle turnOn.
-	self assert: (openRoadVehicle speedAt: 0 * kilometer / hour).
-	
-	20 timesRepeat: [ openRoadVehicle accelerate ].
-	
-	self assert: (openRoadVehicle speedAt: 130 * kilometer / hour)
-	
-	
-	! !
-
-!VehicleTests methodsFor: 'testing' stamp: 'NR 9/7/2024 18:55:32'!
-test09SpeedLimiterForAirTrafficLimitsSpeedAt500Kmh
-
-	| vehicleInAir |
-	
-	vehicleInAir := Vehicle helicopter.
-	
-	vehicleInAir turnOn.
-	self assert: (vehicleInAir speedAt: 0 * kilometer / hour).
-	
-	20 timesRepeat: [ vehicleInAir accelerate ].
-	
-	self assert: (vehicleInAir speedAt: 500 * kilometer / hour)
-	
-	
-	! !
-
-
 !classDefinition: #Engine category: #'4.Replace-if-All'!
 Object subclass: #Engine
 	instanceVariableNames: ''
@@ -351,9 +177,9 @@ Object subclass: #SpeedLimiter
 initializeWithLimit: aLimit
 	limit := aLimit.! !
 
-!SpeedLimiter methodsFor: 'as yet unclassified' stamp: 'Tom 9/28/2025 00:38:15'!
+!SpeedLimiter methodsFor: 'as yet unclassified' stamp: 'tomihq 9/28/2025 01:16:20'!
 limit: aSpeed
-	^ aSpeed min:limit! !
+	^ aSpeed min: limit! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -387,20 +213,19 @@ Object subclass: #Vehicle
 	poolDictionaries: ''
 	category: '4.Replace-if-All'!
 
-!Vehicle methodsFor: 'initialization' stamp: 'Tom 9/28/2025 00:48:02'!
+!Vehicle methodsFor: 'initialization' stamp: 'tomihq 9/28/2025 01:30:12'!
 "inicializa todo lo que tienen en comun todos los vehiculos"
 initializeWithEngine: anEngine andSpeedLimiter: aSpeedLimiter
 	self turnOff.
-	actualSpeed := 0.
+	actualSpeed := 0 * kilometer / hour.
 	engine := anEngine.
 	speedLimiter := aSpeedLimiter.
 ! !
 
 
-!Vehicle methodsFor: 'move' stamp: 'NR 9/7/2024 18:23:27'!
-speedAt: aSpeed
-
-	^ speed = aSpeed! !
+!Vehicle methodsFor: 'move' stamp: 'tomihq 9/23/2025 13:01:05'!
+accelerate
+	^powerStatus accelerate.! !
 
 
 !Vehicle methodsFor: 'on/off' stamp: 'Tom 9/28/2025 00:15:01'!
@@ -408,10 +233,21 @@ turnOff
 	powerStatus := PowerStateOff for: self.
 	actualSpeed := 0 * kilometer / hour! !
 
-!Vehicle methodsFor: 'on/off' stamp: 'Tom 9/28/2025 00:15:06'!
+!Vehicle methodsFor: 'on/off' stamp: 'tomihq 9/28/2025 01:36:33'!
 turnOn
-	powerStatus := PowerStateOn for: self.! !
+	powerStatus := PowerStateOn for: self.
+	actualSpeed := 0 * kilometer / hour.! !
 
+
+!Vehicle methodsFor: 'error messages' stamp: 'tomihq 9/23/2025 12:28:29'!
+acceleratePoweredOn
+	^self subclassResponsibility ! !
+
+
+!Vehicle methodsFor: 'comparing' stamp: 'tomihq 9/28/2025 01:23:22'!
+speedAt: aSpeed
+
+	^ actualSpeed = aSpeed! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -432,13 +268,13 @@ Vehicle subclass: #Helicopter
 	poolDictionaries: ''
 	category: '4.Replace-if-All'!
 
-!Helicopter methodsFor: 'as yet unclassified' stamp: 'Tom 9/27/2025 23:46:20'!
+!Helicopter methodsFor: 'as yet unclassified' stamp: 'tomihq 9/28/2025 01:15:26'!
 accelerateWhenPowerOff
-	^'Can not fly when turned off'! !
+	^self error: 'Can not fly when turned off'! !
 
-!Helicopter methodsFor: 'as yet unclassified' stamp: 'Tom 9/28/2025 00:28:28'!
+!Helicopter methodsFor: 'as yet unclassified' stamp: 'tomihq 9/28/2025 01:42:52'!
 accelerateWhenPowerOn
-	actualSpeed := speedLimiter limit: self accelerationSpeed. 
+	actualSpeed := speedLimiter limit: (actualSpeed + (engine accelerationFor: actualSpeed)). 
 	altitude := altitude + (5 * meter).
 	
 	! !
@@ -447,12 +283,17 @@ accelerateWhenPowerOn
 altitude
 	^altitude.! !
 
-!Helicopter methodsFor: 'as yet unclassified' stamp: 'Tom 9/28/2025 00:19:05'!
-initializeWithType: typeToTake engineType: anEngineType andSurroundings: surroundings
-	super initializeWithType: typeToTake engineType: anEngineType andSurroundings: surroundings.
-	altitude := 0.
+!Helicopter methodsFor: 'as yet unclassified' stamp: 'tomihq 9/28/2025 01:34:50'!
+altitudeAt: anAltitude
+	^altitude = anAltitude.! !
 
+!Helicopter methodsFor: 'as yet unclassified' stamp: 'tomihq 9/28/2025 01:32:48'!
+initializeWithEngine: anEngine andSpeedLimiter: aSpeedLimiter
+	super initializeWithEngine:  anEngine andSpeedLimiter: aSpeedLimiter.
+	altitude := 0 * meter.
+	^self.
 ! !
+
 
 
 !classDefinition: #Motorcycle category: #'4.Replace-if-All'!
@@ -462,14 +303,201 @@ Vehicle subclass: #Motorcycle
 	poolDictionaries: ''
 	category: '4.Replace-if-All'!
 
-!Motorcycle methodsFor: 'as yet unclassified' stamp: 'Tom 9/27/2025 23:46:38'!
+!Motorcycle methodsFor: 'as yet unclassified' stamp: 'tomihq 9/28/2025 01:15:31'!
 accelerateWhenPowerOff
-	^'Can not run when turned off'! !
+	^self error: 'Can not run when turned off'! !
 
-!Motorcycle methodsFor: 'as yet unclassified' stamp: 'Tom 9/28/2025 00:19:52'!
+!Motorcycle methodsFor: 'as yet unclassified' stamp: 'tomihq 9/28/2025 01:43:15'!
 accelerateWhenPowerOn
-	|acceleration|
+	actualSpeed := speedLimiter limit: (actualSpeed + (engine accelerationFor: actualSpeed)). 
 
-	acceleration := engine accelerationFor: actualSpeed.
-	actualSpeed := actualSpeed + acceleration.
+	! !
+
+
+!classDefinition: #VehicleTests category: #'4.Replace-if-All'!
+TestCase subclass: #VehicleTests
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: '4.Replace-if-All'!
+
+!VehicleTests methodsFor: 'testing' stamp: 'tomihq 9/28/2025 01:19:00'!
+Helicopter
+
+	^ Helicopter withEngine: JetFueledEngine new andSpeedLimiter: SpeedLimiter forSkies! !
+
+!VehicleTests methodsFor: 'testing' stamp: 'tomihq 9/28/2025 01:11:52'!
+electricMotorcycle
+
+	^ Motorcycle withEngine: ElectricEngine new andSpeedLimiter: SpeedLimiter forCity! !
+
+!VehicleTests methodsFor: 'testing' stamp: 'tomihq 9/28/2025 01:45:30'!
+gasolineMotorcycle
+
+	^ Motorcycle withEngine: GasolineEngine new andSpeedLimiter: SpeedLimiter forOpenRoad! !
+
+!VehicleTests methodsFor: 'testing' stamp: 'tomihq 9/28/2025 01:11:52'!
+test01LandVehicleCannotAccelerateWhileTurnedOff
+
+	| landVehicle |
+	
+	landVehicle := self electricMotorcycle.
+	self should: [ landVehicle accelerate ] 
+	raise: Error 
+	withExceptionDo: [ :error | error messageText = 'Can not run when turned off'.
+		self assert: (landVehicle speedAt: (0 * kilometer / hour)) ]
+	
+	
+	! !
+
+!VehicleTests methodsFor: 'testing' stamp: 'tomihq 9/28/2025 01:33:39'!
+test02AirVehicleCannotAccelerateWhileTurnedOff
+
+	| airVehicle |
+	
+	airVehicle := self Helicopter.
+	
+	self should: [ airVehicle accelerate ] 
+	raise: Error 
+	withExceptionDo: [ :error | error messageText = 'Can not fly when turned off'.
+		self assert: (airVehicle speedAt: (0 * kilometer / hour)).
+		self assert: (airVehicle altitudeAt: (0 * meter)) ]
+	
+	
+	! !
+
+!VehicleTests methodsFor: 'testing' stamp: 'tomihq 9/28/2025 01:43:39'!
+test03ElectricVehicleAccelerateAsIntended
+
+	| electricVehicle |
+	
+	electricVehicle := self electricMotorcycle.
+	
+	electricVehicle turnOn.
+	self assert: (electricVehicle speedAt: 0 * kilometer / hour).
+
+	electricVehicle accelerate.
+	
+	self assert: (electricVehicle speedAt: 10 * kilometer / hour).
+	
+	electricVehicle accelerate.
+	self assert: (electricVehicle speedAt: 40 * kilometer / hour)
+	
+	
+	
+	
+	! !
+
+!VehicleTests methodsFor: 'testing' stamp: 'tomihq 9/28/2025 01:45:30'!
+test04GasolineVehicleAccelerateAsIntended
+
+	| gasolineVehicle |
+	
+	gasolineVehicle := self gasolineMotorcycle.
+	
+	gasolineVehicle turnOn.
+	self assert: (gasolineVehicle speedAt: 0 * kilometer / hour).
+	
+	gasolineVehicle accelerate.
+	self assert: (gasolineVehicle speedAt: 10 * kilometer / hour).
+	
+	gasolineVehicle accelerate.
+	self assert: (gasolineVehicle speedAt: 20 * kilometer / hour)
+	
+	
+	
+	
+	! !
+
+!VehicleTests methodsFor: 'testing' stamp: 'tomihq 9/28/2025 01:44:40'!
+test05JetFueledVehicleAccelerateAsIntended
+
+	| jetFueledVehicle |
+	
+	jetFueledVehicle := self Helicopter.
+	
+	jetFueledVehicle turnOn.
+	self assert: (jetFueledVehicle speedAt: 0 * kilometer / hour).
+	
+	jetFueledVehicle accelerate.
+	self assert: (jetFueledVehicle speedAt: 1 * kilometer / hour).
+	
+	jetFueledVehicle accelerate.
+	self assert: (jetFueledVehicle speedAt: 5 * kilometer / hour).
+	
+	jetFueledVehicle accelerate.
+	self assert: (jetFueledVehicle speedAt: 41 * kilometer / hour)
+	
+	
+	
+	
+	! !
+
+!VehicleTests methodsFor: 'testing' stamp: 'tomihq 9/28/2025 01:44:58'!
+test06AirVehicleGoesUpAsItAcceleratesAsExpected
+
+	| airVehicle |
+	
+	airVehicle := self Helicopter.
+	
+	airVehicle turnOn.
+	self assert: (airVehicle altitudeAt: 0 * meter).
+	
+	airVehicle accelerate.
+	self assert: (airVehicle altitudeAt: 5 * meter).
+	
+	airVehicle accelerate.
+	self assert: (airVehicle altitudeAt: 10 * meter)
+	
+	! !
+
+!VehicleTests methodsFor: 'testing' stamp: 'tomihq 9/28/2025 01:45:07'!
+test07SpeedLimiterForCityLimitsSpeedAt70Kmh
+
+	| cityVehicle |
+	
+	cityVehicle := self electricMotorcycle.
+	
+	cityVehicle turnOn.
+	self assert: (cityVehicle speedAt: 0 * kilometer / hour).
+	
+	20 timesRepeat: [ cityVehicle accelerate ].
+	
+	self assert: (cityVehicle speedAt: 70 * kilometer / hour)
+	
+	
+	! !
+
+!VehicleTests methodsFor: 'testing' stamp: 'tomihq 9/28/2025 01:45:39'!
+test08SpeedLimiterForOpenRoadLimitsSpeedAt130Kmh
+
+	| openRoadVehicle |
+	
+	openRoadVehicle := self gasolineMotorcycle .
+	
+	openRoadVehicle turnOn.
+	self assert: (openRoadVehicle speedAt: 0 * kilometer / hour).
+	
+	20 timesRepeat: [ openRoadVehicle accelerate ].
+	
+	self assert: (openRoadVehicle speedAt: 130 * kilometer / hour)
+	
+	
+	! !
+
+!VehicleTests methodsFor: 'testing' stamp: 'tomihq 9/28/2025 01:45:45'!
+test09SpeedLimiterForAirTrafficLimitsSpeedAt500Kmh
+
+	| vehicleInAir |
+	
+	vehicleInAir := self Helicopter.
+	
+	vehicleInAir turnOn.
+	self assert: (vehicleInAir speedAt: 0 * kilometer / hour).
+	
+	20 timesRepeat: [ vehicleInAir accelerate ].
+	
+	self assert: (vehicleInAir speedAt: 500 * kilometer / hour)
+	
+	
 	! !
