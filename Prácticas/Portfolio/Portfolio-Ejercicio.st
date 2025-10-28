@@ -97,6 +97,61 @@ for: aValue
 	^ self new initializeFor: aValue ! !
 
 
+!classDefinition: #Portfolio category: #'Portfolio-Ejercicio'!
+Object subclass: #Portfolio
+	instanceVariableNames: 'accounts'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/28/2025 15:13:16'!
+accountsAmount
+	^accounts size.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/28/2025 15:11:49'!
+addAccount: anAccount
+	accounts add: anAccount! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/28/2025 15:12:25'!
+balance
+	|currentBalance|
+	currentBalance := 0.
+	accounts do: [:account | currentBalance := currentBalance + account balance].
+	^currentBalance! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/28/2025 15:18:00'!
+hasRegistered: aTransaction
+	^ accounts anySatisfy: [:account | account hasRegistered: aTransaction].! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/28/2025 15:12:54'!
+initialize
+	accounts := OrderedCollection new.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/28/2025 15:13:02'!
+initializeWith: anAccount
+	super initialize.
+	accounts add: anAccount! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/28/2025 15:33:46'!
+transactions
+	|transactions|
+	transactions := OrderedCollection new.
+	accounts do: [:account | 
+		account transactions do: [:transaction | transactions add: transaction].
+	].
+	^transactions! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Portfolio class' category: #'Portfolio-Ejercicio'!
+Portfolio class
+	instanceVariableNames: ''!
+
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'tomihq 10/28/2025 15:02:00'!
+for: anAccount
+	^self new initializeWith: anAccount.! !
+
+
 !classDefinition: #ReceptiveAccount category: #'Portfolio-Ejercicio'!
 Object subclass: #ReceptiveAccount
 	instanceVariableNames: 'transactions'
@@ -136,6 +191,95 @@ balance
 !ReceptiveAccount methodsFor: 'testing' stamp: 'tomihq 10/28/2025 14:34:43'!
 hasRegistered: aTransaction
 	^transactions includes: aTransaction.! !
+
+
+!classDefinition: #PortfolioTest category: #'Portfolio-Ejercicio'!
+TestCase subclass: #PortfolioTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/28/2025 14:58:24'!
+test01PortfolioSinCuentasAsignadasTieneBalanceCero
+	|portfolio|
+	portfolio := Portfolio new.
+	self assert: 0 equals: (portfolio balance).! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/28/2025 15:04:37'!
+"solamente falla porque necesito incluir una forma de agregar una cuenta al portfolio"
+test02PortfolioConCuentaAsignadaSinTransaccionesTieneBalance0
+	|portfolio account|
+	account := ReceptiveAccount new.
+	portfolio := Portfolio for: account.
+	self assert: 0 equals: (portfolio balance).! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/28/2025 15:04:11'!
+"no me importa que transaccion es. Me obliga a cambiar el hardcodeo del balance."
+test03PortfolioConCuentaAsignadaConTransaccionesTieneBalanceDistintoDe0
+	|portfolio account|
+	account := ReceptiveAccount new.
+	Deposit register: 100 on: account.
+	portfolio := Portfolio for: account.
+	self assert: 100 equals: (portfolio balance).! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/28/2025 15:24:40'!
+"generalizo la cantidad de cuentas que puede tener un portfolio. Este claramente generaliza el 2"
+test04PortfolioTieneMasDeUnaCuentaAsignadaSinTransaccionesTieneBalance0
+	|portfolio account account2|
+	account := ReceptiveAccount new.
+	Deposit register: 100 on: account.
+	
+	portfolio := Portfolio for: account.
+	
+	account2 := ReceptiveAccount new.
+	portfolio addAccount: account2.
+	self assert: (portfolio accountsAmount) equals: 2.! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/28/2025 15:23:58'!
+"generalizo el calculo del balance para mas de una cuenta. Este claramente generaliza el 3."
+test05PortfolioConMasDeUnaCuentaAsignadaConTransaccionesTieneBalanceDistintoDe0
+	|portfolio account account2|
+	account := ReceptiveAccount new.
+	Deposit register: 100 on: account.
+	
+	portfolio := Portfolio for: account.
+	
+	account2 := ReceptiveAccount new.
+	portfolio addAccount: account2.
+	self assert: (portfolio balance > 0).! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/28/2025 15:22:36'!
+"aca la solucion es trivial. Me basta con chequear del portfolio, si alguna cuenta satisface hasRegistered"
+test06TransaccionEsDeUnaCuentaAsociadaAlPortfolio
+	|portfolio account deposit |
+	account := ReceptiveAccount new.
+	deposit := Deposit register: 100 on: account.
+	
+	portfolio := Portfolio for: account.
+	self assert: (portfolio hasRegistered: deposit) equals: true.
+! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/28/2025 15:26:43'!
+"creo que este deberia haber estado antes del balance? porque aca estoy hablando de cantidad de transacciones, que incluyen balances. Osea antes de haber hablado de balances antes, deberia haber considerado la cantidad de transacciones.
+El tema es que cuando lo hice lei esto despues daksjdaskdja, y lo tome como otra funcionalidad
+"
+test07TransaccionesPortfolioEstanVaciasSiLasCuentasNoTienenTransacciones
+	|portfolio account |
+	account := ReceptiveAccount new.
+	portfolio := Portfolio for: account.
+	
+	self assert: portfolio transactions size equals: 0.! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/28/2025 15:28:03'!
+"aca generalizo devolviendo la lista posta"
+test08TransaccionesPortfolioNoEstanVaciasSiAlgunaCuentaTieneTransacciones
+	|portfolio account deposit|
+	account := ReceptiveAccount new.
+	deposit := Deposit register: 100 on: account.
+	portfolio := Portfolio for: account.
+	
+	self assert: portfolio transactions size > 0.! !
 
 
 !classDefinition: #ReceptiveAccountTest category: #'Portfolio-Ejercicio'!
