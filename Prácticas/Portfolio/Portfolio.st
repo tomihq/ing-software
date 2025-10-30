@@ -1,9 +1,9 @@
-!classDefinition: #AccountTransaction category: #'Portfolio-Ejercicio'!
+!classDefinition: #AccountTransaction category: 'Portfolio'!
 Object subclass: #AccountTransaction
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Portfolio-Ejercicio'!
+	category: 'Portfolio'!
 
 !AccountTransaction methodsFor: 'value' stamp: 'HernanWilkinson 9/12/2011 12:25'!
 value 
@@ -12,7 +12,7 @@ value
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'AccountTransaction class' category: #'Portfolio-Ejercicio'!
+!classDefinition: 'AccountTransaction class' category: 'Portfolio'!
 AccountTransaction class
 	instanceVariableNames: ''!
 
@@ -27,12 +27,12 @@ register: aValue on: account
 	^ transaction! !
 
 
-!classDefinition: #Deposit category: #'Portfolio-Ejercicio'!
+!classDefinition: #Deposit category: 'Portfolio'!
 AccountTransaction subclass: #Deposit
 	instanceVariableNames: 'value'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Portfolio-Ejercicio'!
+	category: 'Portfolio'!
 
 !Deposit methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:45'!
 initializeFor: aValue
@@ -52,7 +52,7 @@ affectBalance: currentBalance
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'Deposit class' category: #'Portfolio-Ejercicio'!
+!classDefinition: 'Deposit class' category: 'Portfolio'!
 Deposit class
 	instanceVariableNames: ''!
 
@@ -62,12 +62,12 @@ with: aValue
 	^ self new initializeFor: aValue ! !
 
 
-!classDefinition: #Withdraw category: #'Portfolio-Ejercicio'!
+!classDefinition: #Withdraw category: 'Portfolio'!
 AccountTransaction subclass: #Withdraw
 	instanceVariableNames: 'value'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Portfolio-Ejercicio'!
+	category: 'Portfolio'!
 
 !Withdraw methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:46'!
 initializeFor: aValue
@@ -87,7 +87,7 @@ affectBalance: currentBalance
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'Withdraw class' category: #'Portfolio-Ejercicio'!
+!classDefinition: 'Withdraw class' category: 'Portfolio'!
 Withdraw class
 	instanceVariableNames: ''!
 
@@ -97,16 +97,31 @@ with: aValue
 	^ self new initializeFor: aValue ! !
 
 
-!classDefinition: #Portfolio category: #'Portfolio-Ejercicio'!
+!classDefinition: #Portfolio category: 'Portfolio'!
 Object subclass: #Portfolio
 	instanceVariableNames: 'accounts portfolios accountables'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Portfolio-Ejercicio'!
+	category: 'Portfolio'!
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:07:18'!
+"requerido por test de catedra. Responde si no tiene ninguna cuenta asignada."
+accountIsEmpty
+	^self accountsSize = 0! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 13:02:59'!
 accountsAmount
 	^(accountables select: [:accountable | accountable isKindOf: ReceptiveAccount]) size.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:06:25'!
+"requerido por test de catedra. Responde si tiene un portfolio o cuenta sin recursion"
+accountsIncludes: anAccountable
+	^accountables includes: anAccountable.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:01:52'!
+"requerido por test de catedra. Devuelve la cantidad de ReceptiveAccounts o Portfolios tiene de forma directa sin recursion"
+accountsSize
+	^accountables size.! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:51:56'!
 add: anAccountable
@@ -150,7 +165,7 @@ transactions
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'Portfolio class' category: #'Portfolio-Ejercicio'!
+!classDefinition: 'Portfolio class' category: 'Portfolio'!
 Portfolio class
 	instanceVariableNames: ''!
 
@@ -169,12 +184,12 @@ with: anAccount with: aSecondAccount
 	^portfolio! !
 
 
-!classDefinition: #ReceptiveAccount category: #'Portfolio-Ejercicio'!
+!classDefinition: #ReceptiveAccount category: 'Portfolio'!
 Object subclass: #ReceptiveAccount
 	instanceVariableNames: 'transactions'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Portfolio-Ejercicio'!
+	category: 'Portfolio'!
 
 !ReceptiveAccount methodsFor: 'initialization' stamp: 'NR 10/17/2019 15:06:56'!
 initialize
@@ -210,19 +225,20 @@ hasRegistered: aTransaction
 	^transactions includes: aTransaction.! !
 
 
-!classDefinition: #PortfolioTest category: #'Portfolio-Ejercicio'!
+!classDefinition: #PortfolioTest category: 'Portfolio'!
 TestCase subclass: #PortfolioTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Portfolio-Ejercicio'!
+	category: 'Portfolio'!
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 12:47:06'!
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 14:10:06'!
 "caso Z"
 test01PortfolioSinCuentasAsignadasTieneBalanceCero
 	|portfolio|
 	portfolio := Portfolio new.
-	self assert: 0 equals: (portfolio balance).! !
+	self assert: 0 equals: (portfolio balance).
+	self assert: portfolio accountIsEmpty ! !
 
 !PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 12:54:22'!
 "generalizo la cantidad de cuentas que puede tener un portfolio. Este claramente generaliza el O/M"
@@ -250,7 +266,7 @@ test03PortfolioConMasDeUnaCuentaAsignadaConTransaccionesTieneBalanceDistintoDe0
 	portfolio add: account2.
 	self assert: portfolio balancePositivo.! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 12:54:21'!
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 14:10:21'!
 "aca la solucion es trivial. Me basta con chequear del portfolio, si alguna cuenta satisface hasRegistered"
 test04TransaccionEsDeUnaCuentaAsociadaAlPortfolio
 	|portfolio account deposit |
@@ -258,7 +274,7 @@ test04TransaccionEsDeUnaCuentaAsociadaAlPortfolio
 	deposit := Deposit register: 100 on: account.
 	
 	portfolio := Portfolio with: account.
-	self assert: (portfolio hasRegistered: deposit) equals: true.
+	self assert: (portfolio hasRegistered: deposit).
 ! !
 
 !PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 12:54:22'!
@@ -356,13 +372,23 @@ test13PortfolioTieneBalancePositivoPorTransaccionDeUnaCuentaAsociadaAUnPortfolio
 	
 	self assert: portfolio balancePositivo.! !
 
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 14:09:01'!
+"me obliga a implementar accountsIncludes que me dice si en la lista sin recursion esta el portfolio o cuenta. Como en este momento la lista es polimórfica no me preocupa diferenciar si es portfolio o cuenta."
+test14PortfolioIncluyeHijoDirecto
+	|portfolio portfolio2 account |
+	account := ReceptiveAccount new.
+	portfolio2 := Portfolio with: account.
+	portfolio := Portfolio with: portfolio2.
+	
+	self assert: (portfolio accountsIncludes: portfolio2).! !
+
 
-!classDefinition: #ReceptiveAccountTest category: #'Portfolio-Ejercicio'!
+!classDefinition: #ReceptiveAccountTest category: 'Portfolio'!
 TestCase subclass: #ReceptiveAccountTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Portfolio-Ejercicio'!
+	category: 'Portfolio'!
 
 !ReceptiveAccountTest methodsFor: 'tests' stamp: 'NR 11/2/2020 17:13:44'!
 test01ReceptiveAccountHaveZeroAsBalanceWhenCreated 
