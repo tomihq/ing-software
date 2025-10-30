@@ -97,9 +97,29 @@ with: aValue
 	^ self new initializeFor: aValue ! !
 
 
+!classDefinition: #Accountable category: 'Portfolio'!
+Object subclass: #Accountable
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio'!
+
+!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 15:10:24'!
+balance
+	^self subclassResponsibility.! !
+
+!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 15:10:37'!
+hasRegistered
+	^self subclassResponsibility.! !
+
+!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 15:10:29'!
+transactions
+	^self subclassResponsibility.! !
+
+
 !classDefinition: #Portfolio category: 'Portfolio'!
-Object subclass: #Portfolio
-	instanceVariableNames: 'accounts portfolios accountables parent'
+Accountable subclass: #Portfolio
+	instanceVariableNames: 'accountables parent'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio'!
@@ -212,7 +232,7 @@ with: anAccount with: aSecondAccount
 
 
 !classDefinition: #ReceptiveAccount category: 'Portfolio'!
-Object subclass: #ReceptiveAccount
+Accountable subclass: #ReceptiveAccount
 	instanceVariableNames: 'transactions'
 	classVariableNames: ''
 	poolDictionaries: ''
