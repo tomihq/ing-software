@@ -99,7 +99,7 @@ with: aValue
 
 !classDefinition: #Portfolio category: 'Portfolio'!
 Object subclass: #Portfolio
-	instanceVariableNames: 'accounts portfolios accountables'
+	instanceVariableNames: 'accounts portfolios accountables parent'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio'!
@@ -108,6 +108,10 @@ Object subclass: #Portfolio
 "requerido por test de catedra. Responde si no tiene ninguna cuenta asignada."
 accountIsEmpty
 	^self accountsSize = 0! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:56:48'!
+accountables
+	^accountables.! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 13:02:59'!
 accountsAmount
@@ -123,14 +127,27 @@ accountsIncludes: anAccountable
 accountsSize
 	^accountables size.! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:23:35'!
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 15:00:19'!
 add: anAccountable
-	self assertNotAlreadyDirectChild: anAccountable."primer nivel"
-	accountables add: anAccountable! !
+	"Nivel 1"
+	(self accountsIncludes: anAccountable) ifTrue: [self error: 'Ya existe la cuenta en este Portfolio']. "primer nivel"
+	
+	"Nivel >= 2"
+	(anAccountable isKindOf: Portfolio) ifTrue: [
+        | stack current |
+        stack := OrderedCollection with: anAccountable. 
+        [ stack isEmpty ] whileFalse: [
+            current := stack removeFirst.
+            current accountables do: [ :child | "claramente rompo encapsulamiento, esto deberia encargarse el objeto propio"
+                (accountables includes: child)
+                    ifTrue: [ self error: 'Nodo duplicado en algún nivel del árbol' ].
+                (child isKindOf: Portfolio) ifTrue: [ stack add: child ]
+            ].
+        ].
+    ].
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:25:05'!
-assertNotAlreadyDirectChild: anAccountable
-	^ (self accountsIncludes: anAccountable) ifTrue: [self error: 'Ya existe la cuenta en este Portfolio']! !
+	accountables add: anAccountable.
+	(anAccountable isKindOf: Portfolio) ifTrue: [ anAccountable parent: self ]. "portfolios hijos pueden tener padres."! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:52:22'!
 balance
@@ -147,14 +164,19 @@ balancePositivo
 hasRegistered: aTransaction
 	^ accountables anySatisfy: [:account | account hasRegistered: aTransaction].! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:59:42'!
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:58:14'!
 initialize
-	accountables := OrderedCollection new.! !
+	accountables := OrderedCollection new.
+	parent := nil. "Object Nil Pattern?"! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:56:11'!
 initializeWithAccountables: aListOfAccountables
 	super initialize.
 	accountables := aListOfAccountables.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:41:48'!
+parent: aParent
+	parent := aParent! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 13:03:20'!
 portfoliosAmount
@@ -390,12 +412,25 @@ test14PortfolioIncluyeHijoDirecto
 	
 	self assert: (portfolio accountsIncludes: portfolio2).! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 14:30:01'!
-test15DebeFallarSiSeQuiereAgregarMismaCuentaAlMismoPortfolio
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 14:33:11'!
+test15FallaSiAgregaCuentaQueYaEsHijoDirectoDePortfolio
 	|account portfolio|
 	account := ReceptiveAccount new.
 	portfolio := Portfolio with: account.
 	self should: [portfolio add: account] raise: Error withExceptionDo: [:anError |
+			self assert: (portfolio accountsSize = 1)
+	].
+	
+	! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 14:50:40'!
+"acá falla inicialmente porque el portfolio2 lo agrega de una porque no hay chequeo recursivo de si la cuenta ya la tiene el padre."
+test16FallaSiAgregaPortfolioQueContieneCuentaQueYaEsHijaDirectaDePortfolio
+	|account portfolio portfolio2|
+	account := ReceptiveAccount new.
+	portfolio := Portfolio with: account.
+	portfolio2 := Portfolio with: account.
+	self should: [portfolio add: portfolio2] raise: Error withExceptionDo: [:anError |
 			self assert: (portfolio accountsSize = 1)
 	].
 	
