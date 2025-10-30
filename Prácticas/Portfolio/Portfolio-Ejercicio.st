@@ -116,12 +116,17 @@ addAccount: anAccount
 addPortfolio: aPortfolio
 	portfolios add: aPortfolio! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/28/2025 15:12:25'!
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:45:52'!
 balance
 	|currentBalance|
 	currentBalance := 0.
 	accounts do: [:account | currentBalance := currentBalance + account balance].
+	portfolios do: [:portfolio | currentBalance := currentBalance + portfolio balance].
 	^currentBalance! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:44:56'!
+balancePositivo
+	^self balance > 0! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:30:27'!
 hasRegistered: aTransaction
@@ -218,14 +223,15 @@ TestCase subclass: #PortfolioTest
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/28/2025 14:58:24'!
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 12:47:06'!
+"caso Z"
 test01PortfolioSinCuentasAsignadasTieneBalanceCero
 	|portfolio|
 	portfolio := Portfolio new.
 	self assert: 0 equals: (portfolio balance).! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 12:10:21'!
-"generalizo la cantidad de cuentas que puede tener un portfolio. Este claramente generaliza el 2"
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 12:47:20'!
+"generalizo la cantidad de cuentas que puede tener un portfolio. Este claramente generaliza el O/M"
 test02PortfolioTieneMasDeUnaCuentaAsignadaSinTransaccionesTieneBalance0
 	|portfolio account account2|
 	account := ReceptiveAccount new.
@@ -237,8 +243,8 @@ test02PortfolioTieneMasDeUnaCuentaAsignadaSinTransaccionesTieneBalance0
 	portfolio addAccount: account2.
 	self assert: (portfolio accountsAmount) equals: 2.! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 12:10:21'!
-"generalizo el calculo del balance para mas de una cuenta. Este claramente generaliza el 3."
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 12:47:28'!
+"generalizo el calculo del balance para mas de una cuenta. Este claramente generaliza el O/M"
 test03PortfolioConMasDeUnaCuentaAsignadaConTransaccionesTieneBalanceDistintoDe0
 	|portfolio account account2|
 	account := ReceptiveAccount new.
@@ -248,7 +254,7 @@ test03PortfolioConMasDeUnaCuentaAsignadaConTransaccionesTieneBalanceDistintoDe0
 	
 	account2 := ReceptiveAccount new.
 	portfolio addAccount: account2.
-	self assert: (portfolio balance > 0).! !
+	self assert: portfolio balancePositivo.! !
 
 !PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 12:10:21'!
 "aca la solucion es trivial. Me basta con chequear del portfolio, si alguna cuenta satisface hasRegistered"
@@ -334,9 +340,9 @@ test11CantidadTransaccionesPortfolioEsLaCantidadDeTransaccionesDelPortfolioQueGe
 	
 	self assert: (portfolio transactions size) = 1.! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 12:29:10'!
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 12:48:08'!
 "Aca empiezo con la rama transacciones con portfolios (me da igual si es uno o 2 portfolios. Ya probe lo de las cantidades)
-Aca me fuerza a agregar el contado de las transacciones de los portfolios
+Acá me fuerza a incluir en hasRegistered la búsqueda en portfolio.
 "
 test12PortfolioContieneTransaccionDeUnaCuentaAsociadaAUnPortfolioQueGestiona
 	|portfolio portfolio2 account deposit |
@@ -346,6 +352,16 @@ test12PortfolioContieneTransaccionDeUnaCuentaAsociadaAUnPortfolioQueGestiona
 	portfolio := Portfolio forPortfolio: portfolio2.
 	
 	self assert: (portfolio hasRegistered: deposit).! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 12:46:10'!
+test13PortfolioTieneBalancePositivoPorTransaccionDeUnaCuentaAsociadaAUnPortfolioQueGestiona
+	|portfolio portfolio2 account deposit |
+	account := ReceptiveAccount new.
+	deposit := Deposit register: 100 on: account.
+	portfolio2 := Portfolio forAccount: account.
+	portfolio := Portfolio forPortfolio: portfolio2.
+	
+	self assert: portfolio balancePositivo.! !
 
 
 !classDefinition: #ReceptiveAccountTest category: #'Portfolio-Ejercicio'!
@@ -432,5 +448,4 @@ test07AccountKnowsItsTransactions
 	
 	account1 := ReceptiveAccount new.
 	
-	deposit1 := Deposit register: 50 on: account1.
 ! !
