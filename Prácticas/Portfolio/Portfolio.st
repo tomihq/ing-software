@@ -123,9 +123,14 @@ accountsIncludes: anAccountable
 accountsSize
 	^accountables size.! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:51:56'!
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:23:35'!
 add: anAccountable
+	self assertNotAlreadyDirectChild: anAccountable."primer nivel"
 	accountables add: anAccountable! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:25:05'!
+assertNotAlreadyDirectChild: anAccountable
+	^ (self accountsIncludes: anAccountable) ifTrue: [self error: 'Ya existe la cuenta en este Portfolio']! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:52:22'!
 balance
@@ -308,8 +313,11 @@ test07PortfolioNoTieneAsociadoOtroPortfolio
 	
 	self assert: portfolio transactions size > 0.! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 13:00:08'!
-"caso O. Me obliga a hardcodear que es un unico portfolio"
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 14:13:35'!
+"caso O. Me obliga a hardcodear que es un unico portfolio.
+¿Tiene sentido que tenga un portfoliosAmount si necesito saber la cantidad de portfolios que hay en total manejados por el portfolio?
+Pregunto esto porque si bien Account y Portfolio se comportan igual, podría necesitar saber cuántos portfolios maneja un portfolio en total.
+"
 test08PortfolioManejaUnPortfolioDiferente
 	|portfolio portfolio2 |
 	portfolio2 := Portfolio new.
@@ -381,6 +389,17 @@ test14PortfolioIncluyeHijoDirecto
 	portfolio := Portfolio with: portfolio2.
 	
 	self assert: (portfolio accountsIncludes: portfolio2).! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 14:30:01'!
+test15DebeFallarSiSeQuiereAgregarMismaCuentaAlMismoPortfolio
+	|account portfolio|
+	account := ReceptiveAccount new.
+	portfolio := Portfolio with: account.
+	self should: [portfolio add: account] raise: Error withExceptionDo: [:anError |
+			self assert: (portfolio accountsSize = 1)
+	].
+	
+	! !
 
 
 !classDefinition: #ReceptiveAccountTest category: 'Portfolio'!
