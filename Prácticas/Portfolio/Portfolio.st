@@ -160,12 +160,17 @@ accountsIncludes: anAccountable
 accountsSize
 	^accountables size.! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:25:28'!
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 15:26:27'!
 add: anAccountable
+	self assertNoAutoreferencing: anAccountable.
 	self assertNoDuplicateAccountInPortfolio: anAccountable.
 	self assertNoDuplicateAccountsInChildrenOf: anAccountable.
 	accountables add: anAccountable.
 	anAccountable parent: self.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 15:25:23'!
+assertNoAutoreferencing: anAccountable
+	(self = anAccountable) ifTrue: [ self error: 'No se puede hacer autoreferencia a sí mismo.'].! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:25:17'!
 assertNoDuplicateAccountInPortfolio: anAccountable
@@ -446,8 +451,17 @@ test14PortfolioIncluyeHijoDirecto
 	
 	self assert: (portfolio accountsIncludes: portfolio2).! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/31/2025 14:16:36'!
-test15FallaSiAgregaCuentaQueYaEsHijoDirectoDePortfolio
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/31/2025 15:26:17'!
+test15FallaSiPortfolioSeQuiereAgregarASíMismo
+	 | portfolio |
+	 portfolio := Portfolio new.
+	
+	  self should: [ portfolio add: portfolio ] raise: Error withExceptionDo: [:anError |
+	        self assert: portfolio accountsSize equals: 0
+	    ].! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/31/2025 15:18:22'!
+test16FallaSiAgregaCuentaQueYaEsHijoDirectoDePortfolio
 	 | account portfolio |
 	 account := ReceptiveAccount new.
 	 portfolio := Portfolio new.
@@ -459,9 +473,9 @@ test15FallaSiAgregaCuentaQueYaEsHijoDirectoDePortfolio
 	
 	! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/31/2025 14:16:27'!
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/31/2025 15:18:19'!
 "Solo subís"
-test16FallaSiAgregaPortfolioQueContieneCuentaQueYaEsHijaDePortfolio
+test17FallaSiAgregaPortfolioQueContieneCuentaQueYaEsHijaDePortfolio
 	    | account portfolio portfolio2 |
 	    account := ReceptiveAccount new.
 	    portfolio := Portfolio new.
@@ -478,9 +492,9 @@ test16FallaSiAgregaPortfolioQueContieneCuentaQueYaEsHijaDePortfolio
 	    ].
 	! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/31/2025 14:16:47'!
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/31/2025 15:18:17'!
 "Mirás otra rama"
-test17FallaSiAgregaPortfolioConCuentaDuplicadaEnOtroPortfolioDeOtraRama
+test18FallaSiAgregaPortfolioConCuentaDuplicadaEnOtroPortfolioDeOtraRama
 	   | account account2 portfolio portfolio2 portfolio3 |
     
 	    account := ReceptiveAccount new.
