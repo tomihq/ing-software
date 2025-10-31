@@ -1,295 +1,4 @@
-!classDefinition: #AccountTransaction category: 'Portfolio'!
-Object subclass: #AccountTransaction
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio'!
-
-!AccountTransaction methodsFor: 'value' stamp: 'HernanWilkinson 9/12/2011 12:25'!
-value 
-
-	self subclassResponsibility ! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'AccountTransaction class' category: 'Portfolio'!
-AccountTransaction class
-	instanceVariableNames: ''!
-
-!AccountTransaction class methodsFor: 'instance creation' stamp: 'tomihq 10/30/2025 12:54:21'!
-register: aValue on: account
-
-	| transaction |
-	
-	transaction := self with: aValue.
-	account register: transaction.
-		
-	^ transaction! !
-
-
-!classDefinition: #Deposit category: 'Portfolio'!
-AccountTransaction subclass: #Deposit
-	instanceVariableNames: 'value'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio'!
-
-!Deposit methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:45'!
-initializeFor: aValue
-
-	value := aValue ! !
-
-
-!Deposit methodsFor: 'value' stamp: 'HernanWilkinson 7/13/2011 18:38'!
-value
-
-	^ value! !
-
-
-!Deposit methodsFor: 'as yet unclassified' stamp: 'tomihq 10/28/2025 14:23:17'!
-affectBalance: currentBalance
-	^currentBalance + self value! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Deposit class' category: 'Portfolio'!
-Deposit class
-	instanceVariableNames: ''!
-
-!Deposit class methodsFor: 'instance creation' stamp: 'tomihq 10/30/2025 12:54:21'!
-with: aValue
-
-	^ self new initializeFor: aValue ! !
-
-
-!classDefinition: #Withdraw category: 'Portfolio'!
-AccountTransaction subclass: #Withdraw
-	instanceVariableNames: 'value'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio'!
-
-!Withdraw methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:46'!
-initializeFor: aValue
-
-	value := aValue ! !
-
-
-!Withdraw methodsFor: 'value' stamp: 'HernanWilkinson 7/13/2011 18:33'!
-value
-
-	^ value! !
-
-
-!Withdraw methodsFor: 'as yet unclassified' stamp: 'tomihq 10/28/2025 14:23:07'!
-affectBalance: currentBalance
-	^currentBalance - self value! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Withdraw class' category: 'Portfolio'!
-Withdraw class
-	instanceVariableNames: ''!
-
-!Withdraw class methodsFor: 'instance creation' stamp: 'tomihq 10/30/2025 12:54:21'!
-with: aValue
-
-	^ self new initializeFor: aValue ! !
-
-
-!classDefinition: #Accountable category: 'Portfolio'!
-Object subclass: #Accountable
-	instanceVariableNames: 'parent'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio'!
-
-!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 15:10:24'!
-balance
-	^self subclassResponsibility.! !
-
-!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:04:55'!
-hasAccountable: anAccountable
-	 ^ self = anAccountable.! !
-
-!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 15:10:37'!
-hasRegistered
-	^self subclassResponsibility.! !
-
-!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:11:14'!
-parent: aParent
-	    parent := aParent.
-! !
-
-!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:11:00'!
-root
-	 ^ parent ifNil: [ self ] ifNotNil: [ parent root ].! !
-
-!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 15:10:29'!
-transactions
-	^self subclassResponsibility.! !
-
-
-!classDefinition: #Portfolio category: 'Portfolio'!
-Accountable subclass: #Portfolio
-	instanceVariableNames: 'accountables'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio'!
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:07:18'!
-"requerido por test de catedra. Responde si no tiene ninguna cuenta asignada."
-accountIsEmpty
-	^self accountsSize = 0! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:56:48'!
-accountables
-	^accountables.! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 13:02:59'!
-accountsAmount
-	^(accountables select: [:accountable | accountable isKindOf: ReceptiveAccount]) size.! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:06:25'!
-"requerido por test de catedra. Responde si tiene un portfolio o cuenta sin recursion"
-accountsIncludes: anAccountable
-	^accountables includes: anAccountable.! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:01:52'!
-"requerido por test de catedra. Devuelve la cantidad de ReceptiveAccounts o Portfolios tiene de forma directa sin recursion"
-accountsSize
-	^accountables size.! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 15:26:27'!
-add: anAccountable
-	self assertNoAutoreferencing: anAccountable.
-	self assertNoDuplicateAccountInPortfolio: anAccountable.
-	self assertNoDuplicateAccountsInChildrenOf: anAccountable.
-	accountables add: anAccountable.
-	anAccountable parent: self.! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 15:25:23'!
-assertNoAutoreferencing: anAccountable
-	(self = anAccountable) ifTrue: [ self error: 'No se puede hacer autoreferencia a sí mismo.'].! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:25:17'!
-assertNoDuplicateAccountInPortfolio: anAccountable
-	(self root hasAccountable: anAccountable) ifTrue: [ self error: 'Ya existe la cuenta en algún lugar del árbol'].! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:25:28'!
-assertNoDuplicateAccountsInChildrenOf: anAccountable
-	 accountables do: [ :child |
-	        (anAccountable hasAccountable: child) ifTrue: [
-	            self error: 'Nodo duplicado en algún nivel del árbol'
-	        ].
-	    ].! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:52:22'!
-balance
-	|currentBalance|
-	currentBalance := 0.
-	accountables do: [:accountable | currentBalance := currentBalance + accountable balance].
-	^currentBalance! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:05:22'!
-hasAccountable: anAccountable
-	^ accountables anySatisfy: [ :child | child hasAccountable: anAccountable ].! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:52:33'!
-hasRegistered: aTransaction
-	^ accountables anySatisfy: [:account | account hasRegistered: aTransaction].! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 15:33:20'!
-initialize
-	accountables := OrderedCollection new.! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:56:11'!
-initializeWithAccountables: aListOfAccountables
-	super initialize.
-	accountables := aListOfAccountables.! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:26:27'!
-isBalancePositive
-	^self balance > 0! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:41:48'!
-parent: aParent
-	parent := aParent! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 13:03:20'!
-portfoliosAmount
-	^(accountables select: [:accountable | accountable isKindOf: Portfolio]) size.! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:59:15'!
-transactions
-	|transactions|
-	transactions := OrderedCollection new.
-	accountables do: [:account | account transactions do: [:transaction | transactions add: transaction]. ].
-	
-	^transactions! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Portfolio class' category: 'Portfolio'!
-Portfolio class
-	instanceVariableNames: ''!
-
-!Portfolio class methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:55:41'!
-with: anAccount
-	|accounts|
-	accounts := OrderedCollection new.
-	accounts add: anAccount.
-	^self new initializeWithAccountables: accounts.! !
-
-!Portfolio class methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:58:53'!
-with: anAccount with: aSecondAccount
-	|portfolio|
-	portfolio := self with: anAccount.  
-	portfolio add: aSecondAccount.      
-	^portfolio! !
-
-
-!classDefinition: #ReceptiveAccount category: 'Portfolio'!
-Accountable subclass: #ReceptiveAccount
-	instanceVariableNames: 'transactions'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio'!
-
-!ReceptiveAccount methodsFor: 'initialization' stamp: 'tomihq 10/31/2025 15:33:30'!
-initialize
-	transactions := OrderedCollection new.! !
-
-
-!ReceptiveAccount methodsFor: 'transactions' stamp: 'HernanWilkinson 7/13/2011 18:37'!
-register: aTransaction
-
-	transactions add: aTransaction 
-! !
-
-!ReceptiveAccount methodsFor: 'transactions' stamp: 'HernanWilkinson 7/13/2011 18:37'!
-transactions 
-
-	^ transactions copy! !
-
-
-!ReceptiveAccount methodsFor: 'balance' stamp: 'tomihq 10/28/2025 14:24:08'!
-balance
-      |currentBalance|
-	currentBalance := 0.
-	transactions do: [ :aTransaction | 
-		currentBalance := aTransaction affectBalance: currentBalance
-	].
-	^currentBalance.
-	! !
-
-
-!ReceptiveAccount methodsFor: 'testing' stamp: 'tomihq 10/28/2025 14:34:43'!
-hasRegistered: aTransaction
-	^transactions includes: aTransaction.! !
-
-
-!classDefinition: #PortfolioTest category: 'Portfolio'!
+!classDefinition: #PortfolioTest category: #Portfolio!
 TestCase subclass: #PortfolioTest
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -514,7 +223,7 @@ test18FallaSiAgregaPortfolioConCuentaDuplicadaEnOtroPortfolioDeOtraRama
 	    ].! !
 
 
-!classDefinition: #ReceptiveAccountTest category: 'Portfolio'!
+!classDefinition: #ReceptiveAccountTest category: #Portfolio!
 TestCase subclass: #ReceptiveAccountTest
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -599,3 +308,293 @@ test07AccountKnowsItsTransactions
 	account1 := ReceptiveAccount new.
 	
 ! !
+
+
+!classDefinition: #AccountTransaction category: #Portfolio!
+Object subclass: #AccountTransaction
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio'!
+
+!AccountTransaction methodsFor: 'value' stamp: 'HernanWilkinson 9/12/2011 12:25'!
+value 
+
+	self subclassResponsibility ! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'AccountTransaction class' category: #Portfolio!
+AccountTransaction class
+	instanceVariableNames: ''!
+
+!AccountTransaction class methodsFor: 'instance creation' stamp: 'tomihq 10/30/2025 12:54:21'!
+register: aValue on: account
+
+	| transaction |
+	
+	transaction := self with: aValue.
+	account register: transaction.
+		
+	^ transaction! !
+
+
+!classDefinition: #Deposit category: #Portfolio!
+AccountTransaction subclass: #Deposit
+	instanceVariableNames: 'value'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio'!
+
+!Deposit methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:45'!
+initializeFor: aValue
+
+	value := aValue ! !
+
+
+!Deposit methodsFor: 'value' stamp: 'HernanWilkinson 7/13/2011 18:38'!
+value
+
+	^ value! !
+
+
+!Deposit methodsFor: 'as yet unclassified' stamp: 'tomihq 10/28/2025 14:23:17'!
+affectBalance: currentBalance
+	^currentBalance + self value! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Deposit class' category: #Portfolio!
+Deposit class
+	instanceVariableNames: ''!
+
+!Deposit class methodsFor: 'instance creation' stamp: 'tomihq 10/30/2025 12:54:21'!
+with: aValue
+
+	^ self new initializeFor: aValue ! !
+
+
+!classDefinition: #Withdraw category: #Portfolio!
+AccountTransaction subclass: #Withdraw
+	instanceVariableNames: 'value'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio'!
+
+!Withdraw methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:46'!
+initializeFor: aValue
+
+	value := aValue ! !
+
+
+!Withdraw methodsFor: 'value' stamp: 'HernanWilkinson 7/13/2011 18:33'!
+value
+
+	^ value! !
+
+
+!Withdraw methodsFor: 'as yet unclassified' stamp: 'tomihq 10/28/2025 14:23:07'!
+affectBalance: currentBalance
+	^currentBalance - self value! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Withdraw class' category: #Portfolio!
+Withdraw class
+	instanceVariableNames: ''!
+
+!Withdraw class methodsFor: 'instance creation' stamp: 'tomihq 10/30/2025 12:54:21'!
+with: aValue
+
+	^ self new initializeFor: aValue ! !
+
+
+!classDefinition: #Accountable category: #Portfolio!
+Object subclass: #Accountable
+	instanceVariableNames: 'parent'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio'!
+
+!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 15:10:24'!
+balance
+	^self subclassResponsibility.! !
+
+!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:04:55'!
+hasAccountable: anAccountable
+	 ^ self = anAccountable.! !
+
+!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 15:10:37'!
+hasRegistered
+	^self subclassResponsibility.! !
+
+!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:11:00'!
+root
+	 ^ parent ifNil: [ self ] ifNotNil: [ parent root ].! !
+
+!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 15:10:29'!
+transactions
+	^self subclassResponsibility.! !
+
+
+!classDefinition: #Portfolio category: #Portfolio!
+Accountable subclass: #Portfolio
+	instanceVariableNames: 'accountables'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio'!
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:07:18'!
+"requerido por test de catedra. Responde si no tiene ninguna cuenta asignada."
+accountIsEmpty
+	^self accountsSize = 0! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:56:48'!
+accountables
+	^accountables.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 13:02:59'!
+accountsAmount
+	^(accountables select: [:accountable | accountable isKindOf: ReceptiveAccount]) size.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:06:25'!
+"requerido por test de catedra. Responde si tiene un portfolio o cuenta sin recursion"
+accountsIncludes: anAccountable
+	^accountables includes: anAccountable.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:01:52'!
+"requerido por test de catedra. Devuelve la cantidad de ReceptiveAccounts o Portfolios tiene de forma directa sin recursion"
+accountsSize
+	^accountables size.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 15:26:27'!
+add: anAccountable
+	self assertNoAutoreferencing: anAccountable.
+	self assertNoDuplicateAccountInPortfolio: anAccountable.
+	self assertNoDuplicateAccountsInChildrenOf: anAccountable.
+	accountables add: anAccountable.
+	anAccountable parent: self.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 15:25:23'!
+assertNoAutoreferencing: anAccountable
+	(self = anAccountable) ifTrue: [ self error: 'No se puede hacer autoreferencia a sí mismo.'].! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:25:17'!
+assertNoDuplicateAccountInPortfolio: anAccountable
+	(self root hasAccountable: anAccountable) ifTrue: [ self error: 'Ya existe la cuenta en algún lugar del árbol'].! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:25:28'!
+assertNoDuplicateAccountsInChildrenOf: anAccountable
+	 accountables do: [ :child |
+	        (anAccountable hasAccountable: child) ifTrue: [
+	            self error: 'Nodo duplicado en algún nivel del árbol'
+	        ].
+	    ].! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:52:22'!
+balance
+	|currentBalance|
+	currentBalance := 0.
+	accountables do: [:accountable | currentBalance := currentBalance + accountable balance].
+	^currentBalance! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:05:22'!
+hasAccountable: anAccountable
+	^ accountables anySatisfy: [ :child | child hasAccountable: anAccountable ].! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:52:33'!
+hasRegistered: aTransaction
+	^ accountables anySatisfy: [:account | account hasRegistered: aTransaction].! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 15:33:20'!
+initialize
+	accountables := OrderedCollection new.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:56:11'!
+initializeWithAccountables: aListOfAccountables
+	super initialize.
+	accountables := aListOfAccountables.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:26:27'!
+isBalancePositive
+	^self balance > 0! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:41:48'!
+parent: aParent
+	parent := aParent! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 13:03:20'!
+portfoliosAmount
+	^(accountables select: [:accountable | accountable isKindOf: Portfolio]) size.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:59:15'!
+transactions
+	|transactions|
+	transactions := OrderedCollection new.
+	accountables do: [:account | account transactions do: [:transaction | transactions add: transaction]. ].
+	
+	^transactions! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Portfolio class' category: #Portfolio!
+Portfolio class
+	instanceVariableNames: ''!
+
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:55:41'!
+with: anAccount
+	|accounts|
+	accounts := OrderedCollection new.
+	accounts add: anAccount.
+	^self new initializeWithAccountables: accounts.! !
+
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:58:53'!
+with: anAccount with: aSecondAccount
+	|portfolio|
+	portfolio := self with: anAccount.  
+	portfolio add: aSecondAccount.      
+	^portfolio! !
+
+
+!classDefinition: #ReceptiveAccount category: #Portfolio!
+Accountable subclass: #ReceptiveAccount
+	instanceVariableNames: 'transactions'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio'!
+
+!ReceptiveAccount methodsFor: 'initialization' stamp: 'tomihq 10/31/2025 15:33:30'!
+initialize
+	transactions := OrderedCollection new.! !
+
+
+!ReceptiveAccount methodsFor: 'transactions' stamp: 'HernanWilkinson 7/13/2011 18:37'!
+register: aTransaction
+
+	transactions add: aTransaction 
+! !
+
+!ReceptiveAccount methodsFor: 'transactions' stamp: 'HernanWilkinson 7/13/2011 18:37'!
+transactions 
+
+	^ transactions copy! !
+
+
+!ReceptiveAccount methodsFor: 'balance' stamp: 'tomihq 10/28/2025 14:24:08'!
+balance
+      |currentBalance|
+	currentBalance := 0.
+	transactions do: [ :aTransaction | 
+		currentBalance := aTransaction affectBalance: currentBalance
+	].
+	^currentBalance.
+	! !
+
+
+!ReceptiveAccount methodsFor: 'testing' stamp: 'tomihq 10/28/2025 14:34:43'!
+hasRegistered: aTransaction
+	^transactions includes: aTransaction.! !
+
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'Tom 10/31/2025 20:11:42'!
+parent: anParent! !
