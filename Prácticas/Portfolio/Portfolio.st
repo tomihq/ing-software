@@ -99,7 +99,7 @@ with: aValue
 
 !classDefinition: #Accountable category: 'Portfolio'!
 Object subclass: #Accountable
-	instanceVariableNames: ''
+	instanceVariableNames: 'parent'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio'!
@@ -108,9 +108,22 @@ Object subclass: #Accountable
 balance
 	^self subclassResponsibility.! !
 
+!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:04:55'!
+hasAccountable: anAccountable
+	 ^ self = anAccountable.! !
+
 !Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 15:10:37'!
 hasRegistered
 	^self subclassResponsibility.! !
+
+!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:11:14'!
+parent: aParent
+	    parent := aParent.
+! !
+
+!Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:11:00'!
+root
+	 ^ parent ifNil: [ self ] ifNotNil: [ parent root ].! !
 
 !Accountable methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 15:10:29'!
 transactions
@@ -119,7 +132,7 @@ transactions
 
 !classDefinition: #Portfolio category: 'Portfolio'!
 Accountable subclass: #Portfolio
-	instanceVariableNames: 'accountables parent'
+	instanceVariableNames: 'accountables'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio'!
@@ -147,27 +160,24 @@ accountsIncludes: anAccountable
 accountsSize
 	^accountables size.! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 15:00:19'!
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:25:28'!
 add: anAccountable
-	"Nivel 1"
-	(self accountsIncludes: anAccountable) ifTrue: [self error: 'Ya existe la cuenta en este Portfolio']. "primer nivel"
-	
-	"Nivel >= 2"
-	(anAccountable isKindOf: Portfolio) ifTrue: [
-        | stack current |
-        stack := OrderedCollection with: anAccountable. 
-        [ stack isEmpty ] whileFalse: [
-            current := stack removeFirst.
-            current accountables do: [ :child | "claramente rompo encapsulamiento, esto deberia encargarse el objeto propio"
-                (accountables includes: child)
-                    ifTrue: [ self error: 'Nodo duplicado en algún nivel del árbol' ].
-                (child isKindOf: Portfolio) ifTrue: [ stack add: child ]
-            ].
-        ].
-    ].
-
+	self assertNoDuplicateAccountInPortfolio: anAccountable.
+	self assertNoDuplicateAccountsInChildrenOf: anAccountable.
 	accountables add: anAccountable.
-	(anAccountable isKindOf: Portfolio) ifTrue: [ anAccountable parent: self ]. "portfolios hijos pueden tener padres."! !
+	anAccountable parent: self.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:25:17'!
+assertNoDuplicateAccountInPortfolio: anAccountable
+	(self root hasAccountable: anAccountable) ifTrue: [ self error: 'Ya existe la cuenta en algún lugar del árbol'].! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:25:28'!
+assertNoDuplicateAccountsInChildrenOf: anAccountable
+	 accountables do: [ :child |
+	        (anAccountable hasAccountable: child) ifTrue: [
+	            self error: 'Nodo duplicado en algún nivel del árbol'
+	        ].
+	    ].! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:52:22'!
 balance
@@ -176,9 +186,9 @@ balance
 	accountables do: [:accountable | currentBalance := currentBalance + accountable balance].
 	^currentBalance! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:44:56'!
-balancePositivo
-	^self balance > 0! !
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:05:22'!
+hasAccountable: anAccountable
+	^ accountables anySatisfy: [ :child | child hasAccountable: anAccountable ].! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 12:52:33'!
 hasRegistered: aTransaction
@@ -193,6 +203,10 @@ initialize
 initializeWithAccountables: aListOfAccountables
 	super initialize.
 	accountables := aListOfAccountables.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/31/2025 14:26:27'!
+isBalancePositive
+	^self balance > 0! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'tomihq 10/30/2025 14:41:48'!
 parent: aParent
@@ -300,7 +314,7 @@ test02PortfolioTieneMasDeUnaCuentaAsignadaSinTransaccionesTieneBalance0
 	portfolio add: account2.
 	self assert: (portfolio accountsAmount) equals: 2.! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 12:54:21'!
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/31/2025 14:26:27'!
 "generalizo el calculo del balance para mas de una cuenta. Este claramente generaliza el O/M"
 test03PortfolioConMasDeUnaCuentaAsignadaConTransaccionesTieneBalanceDistintoDe0
 	|portfolio account account2|
@@ -311,7 +325,7 @@ test03PortfolioConMasDeUnaCuentaAsignadaConTransaccionesTieneBalanceDistintoDe0
 	
 	account2 := ReceptiveAccount new.
 	portfolio add: account2.
-	self assert: portfolio balancePositivo.! !
+	self assert: portfolio isBalancePositive.! !
 
 !PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 14:10:21'!
 "aca la solucion es trivial. Me basta con chequear del portfolio, si alguna cuenta satisface hasRegistered"
@@ -412,7 +426,7 @@ test12PortfolioContieneTransaccionDeUnaCuentaAsociadaAUnPortfolioQueGestiona
 	
 	self assert: (portfolio hasRegistered: deposit).! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 13:00:40'!
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/31/2025 14:26:27'!
 test13PortfolioTieneBalancePositivoPorTransaccionDeUnaCuentaAsociadaAUnPortfolioQueGestiona
 	|portfolio portfolio2 account deposit |
 	account := ReceptiveAccount new.
@@ -420,7 +434,7 @@ test13PortfolioTieneBalancePositivoPorTransaccionDeUnaCuentaAsociadaAUnPortfolio
 	portfolio2 := Portfolio with: account.
 	portfolio := Portfolio with: portfolio2.
 	
-	self assert: portfolio balancePositivo.! !
+	self assert: portfolio isBalancePositive.! !
 
 !PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 14:09:01'!
 "me obliga a implementar accountsIncludes que me dice si en la lista sin recursion esta el portfolio o cuenta. Como en este momento la lista es polimórfica no me preocupa diferenciar si es portfolio o cuenta."
@@ -432,29 +446,60 @@ test14PortfolioIncluyeHijoDirecto
 	
 	self assert: (portfolio accountsIncludes: portfolio2).! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 14:33:11'!
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/31/2025 14:16:36'!
 test15FallaSiAgregaCuentaQueYaEsHijoDirectoDePortfolio
-	|account portfolio|
-	account := ReceptiveAccount new.
-	portfolio := Portfolio with: account.
-	self should: [portfolio add: account] raise: Error withExceptionDo: [:anError |
-			self assert: (portfolio accountsSize = 1)
-	].
+	 | account portfolio |
+	 account := ReceptiveAccount new.
+	 portfolio := Portfolio new.
+	 portfolio add: account.
+
+	  self should: [portfolio add: account] raise: Error withExceptionDo: [:anError |
+	        self assert: portfolio accountsSize equals: 1
+	    ].
 	
 	! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/30/2025 14:50:40'!
-"acá falla inicialmente porque el portfolio2 lo agrega de una porque no hay chequeo recursivo de si la cuenta ya la tiene el padre."
-test16FallaSiAgregaPortfolioQueContieneCuentaQueYaEsHijaDirectaDePortfolio
-	|account portfolio portfolio2|
-	account := ReceptiveAccount new.
-	portfolio := Portfolio with: account.
-	portfolio2 := Portfolio with: account.
-	self should: [portfolio add: portfolio2] raise: Error withExceptionDo: [:anError |
-			self assert: (portfolio accountsSize = 1)
-	].
-	
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/31/2025 14:16:27'!
+"Solo subís"
+test16FallaSiAgregaPortfolioQueContieneCuentaQueYaEsHijaDePortfolio
+	    | account portfolio portfolio2 |
+	    account := ReceptiveAccount new.
+	    portfolio := Portfolio new.
+	    portfolio add: account.
+
+	    portfolio2 := Portfolio new.
+	    portfolio2 add: account.
+
+
+	    self should: [
+	        portfolio add: portfolio2
+	    ] raise: Error withExceptionDo: [:anError |
+	        self assert: portfolio accountsSize equals: 1
+	    ].
 	! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'tomihq 10/31/2025 14:16:47'!
+"Mirás otra rama"
+test17FallaSiAgregaPortfolioConCuentaDuplicadaEnOtroPortfolioDeOtraRama
+	   | account account2 portfolio portfolio2 portfolio3 |
+    
+	    account := ReceptiveAccount new.
+	    portfolio := Portfolio new.
+	    portfolio add: account.
+
+	    account2 := ReceptiveAccount new.
+	    portfolio2 := Portfolio new.
+	    portfolio2 add: account2.
+
+	
+	    portfolio add: portfolio2.
+	
+	    portfolio3 := Portfolio new.
+	    portfolio3 add: account.
+
+	    self should: [portfolio add: portfolio3] raise: Error withExceptionDo: [:anError |
+	        self assert: portfolio accountsSize equals: 2
+	    ].! !
 
 
 !classDefinition: #ReceptiveAccountTest category: 'Portfolio'!
