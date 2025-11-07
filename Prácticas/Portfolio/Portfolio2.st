@@ -728,27 +728,9 @@ addedTo: aPortfolio
 	! !
 
 
-!ReceptiveAccount methodsFor: 'reports' stamp: 'en 11/4/2025 12:09:44'!
+!ReceptiveAccount methodsFor: 'reports' stamp: 'Tom 11/7/2025 13:40:56'!
 summary
-	| accountSummary |
-	
-	accountSummary := OrderedCollection new.
-	self addTransactionsTo: accountSummary.
-	
-	accountSummary := accountSummary collect: [:aTransaction |
-		| transactionAsString |
-		
-		(aTransaction isKindOf: Withdraw) ifTrue: [transactionAsString := 'Extracción por ', aTransaction value asString].
-		(aTransaction isKindOf: Deposit) ifTrue: [transactionAsString := 'Depósito por ', aTransaction value asString].
-		(aTransaction isKindOf: TransferenceWithdraw ) ifTrue: [transactionAsString := 'Salida por transferencia de ', aTransaction value asString].
-		(aTransaction isKindOf: TransferenceDeposit ) ifTrue: [transactionAsString := 'Entrada por transferencia de ', aTransaction value asString].
-		
-		transactionAsString
-	].
-
-	accountSummary add: 'Balance = ', self balance asString.
-
-	^accountSummary! !
+	^(AccountSummary on: self) summary.! !
 
 !ReceptiveAccount methodsFor: 'reports' stamp: 'en 11/4/2025 12:30:01'!
 transferNet
@@ -764,32 +746,43 @@ transferNet
 
 !classDefinition: #AccountSummary category: 'Portfolio2'!
 Object subclass: #AccountSummary
-	instanceVariableNames: ''
+	instanceVariableNames: 'summary account'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio2'!
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:24:03'!
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:28:20'!
+addBalance
+	^summary add: 'Balance = ', account balance asString.
+! !
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:39:17'!
+generateTransactionSummary
+	account addTransactionsTo: summary.
+	
+	summary := summary collect: [:aTransaction | aTransaction a].! !
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:41:34'!
+initializeWith: anAccount
+	account := anAccount.! !
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:30:55'!
 summary
-	| accountSummary |
 	
-	accountSummary := OrderedCollection new.
-	self addTransactionsTo: accountSummary.
-	
-	accountSummary := accountSummary collect: [:aTransaction |
-		| transactionAsString |
-		
-		(aTransaction isKindOf: Withdraw) ifTrue: [transactionAsString := 'Extracción por ', aTransaction value asString].
-		(aTransaction isKindOf: Deposit) ifTrue: [transactionAsString := 'Depósito por ', aTransaction value asString].
-		(aTransaction isKindOf: TransferenceWithdraw ) ifTrue: [transactionAsString := 'Salida por transferencia de ', aTransaction value asString].
-		(aTransaction isKindOf: TransferenceDeposit ) ifTrue: [transactionAsString := 'Entrada por transferencia de ', aTransaction value asString].
-		
-		transactionAsString
-	].
+	summary := OrderedCollection new.
+	self generateTransactionSummary.
+	self addBalance.
+	^summary! !
 
-	accountSummary add: 'Balance = ', self balance asString.
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-	^accountSummary! !
+!classDefinition: 'AccountSummary class' category: 'Portfolio2'!
+AccountSummary class
+	instanceVariableNames: ''!
+
+!AccountSummary class methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:41:22'!
+on: anAccount
+	^self new initializeWith: anAccount.! !
 
 
 !classDefinition: #GenericTransaction category: 'Portfolio2'!
@@ -868,6 +861,11 @@ affectBalance: aBalance
 
 	^aBalance + value ! !
 
+
+!Deposit methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:37:30'!
+a
+	^'Depósito por ', self value asString! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Deposit class' category: 'Portfolio2'!
@@ -903,6 +901,11 @@ value
 affectBalance: aBalance
 
 	^aBalance - value! !
+
+
+!Withdraw methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:36:41'!
+a
+	^'Extracción por ', self value asString! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -970,6 +973,11 @@ TransferenceTransaction subclass: #TransferenceDeposit
 affectBalance: aBalance
 	^aBalance + self value! !
 
+
+!TransferenceDeposit methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:38:05'!
+a
+	^'Entrada por transferencia de ', self value asString! !
+
 
 !classDefinition: #TransferenceWithdraw category: 'Portfolio2'!
 TransferenceTransaction subclass: #TransferenceWithdraw
@@ -981,6 +989,11 @@ TransferenceTransaction subclass: #TransferenceWithdraw
 !TransferenceWithdraw methodsFor: 'balance' stamp: 'en 11/4/2025 11:07:19'!
 affectBalance: aBalance
 	^aBalance - self value! !
+
+
+!TransferenceWithdraw methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:38:22'!
+a
+	^'Salida por transferencia de ', self value asString! !
 
 
 !classDefinition: #Transference category: 'Portfolio2'!
