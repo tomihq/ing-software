@@ -312,19 +312,19 @@ TestCase subclass: #ReportTest
 	poolDictionaries: ''
 	category: 'Portfolio2'!
 
-!ReportTest methodsFor: 'tests' stamp: 'en 11/4/2025 12:40:20'!
+!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 13:53:39'!
 testAccountSummaryWithDepositHasCorrectFormatting
 	| account accountSummary |
 	
 	account := ReceptiveAccount new.
 	Deposit register: 5 on: account.
 	
-	accountSummary := account summary.
+	accountSummary := account lines.
 	
 	self assert: accountSummary first = 'Depósito por 5'.
 	self assert: accountSummary last = 'Balance = 5'.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'en 11/4/2025 12:40:50'!
+!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 13:53:39'!
 testAccountSummaryWithTransferenceDepositHasCorrectFormatting
 	| sourceAccount receptorAccount receptorAccountSummary |
 	
@@ -332,12 +332,12 @@ testAccountSummaryWithTransferenceDepositHasCorrectFormatting
 	receptorAccount := ReceptiveAccount new.
 	Transference take: 5 from: sourceAccount to: receptorAccount.
 	
-	receptorAccountSummary := receptorAccount summary.
+	receptorAccountSummary := receptorAccount lines.
 	
 	self assert: receptorAccountSummary first = 'Entrada por transferencia de 5'.
 	self assert: receptorAccountSummary last = 'Balance = 5'.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'en 11/4/2025 12:40:42'!
+!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 13:53:39'!
 testAccountSummaryWithTransferenceWithdrawHasCorrectFormatting
 	| sourceAccount receptorAccount sourceAccountSummary |
 	
@@ -345,29 +345,29 @@ testAccountSummaryWithTransferenceWithdrawHasCorrectFormatting
 	receptorAccount := ReceptiveAccount new.
 	Transference take: 5 from: sourceAccount to: receptorAccount.
 	
-	sourceAccountSummary := sourceAccount summary.
+	sourceAccountSummary := sourceAccount lines.
 	
 	self assert: sourceAccountSummary first = 'Salida por transferencia de 5'.
 	self assert: sourceAccountSummary last = 'Balance = -5'.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'en 11/4/2025 12:40:25'!
+!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 13:53:39'!
 testAccountSummaryWithWithdrawHasCorrectFormatting
 	| account accountSummary |
 	
 	account := ReceptiveAccount new.
 	Withdraw register: 5 on: account.
 	
-	accountSummary := account summary.
+	accountSummary := account lines.
 	
 	self assert: accountSummary first = 'Extracción por 5'.
 	self assert: accountSummary last = 'Balance = -5'.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'en 11/4/2025 12:38:54'!
+!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 13:53:39'!
 testEmptyAccountSummaryOnlyKnowsBalance
 	| account accountSummary |
 	
 	account := ReceptiveAccount new.
-	accountSummary := account summary.
+	accountSummary := account lines.
 	
 	self assert: accountSummary last = 'Balance = 0'.! !
 
@@ -728,9 +728,9 @@ addedTo: aPortfolio
 	! !
 
 
-!ReceptiveAccount methodsFor: 'reports' stamp: 'Tom 11/7/2025 13:40:56'!
-summary
-	^(AccountSummary on: self) summary.! !
+!ReceptiveAccount methodsFor: 'reports' stamp: 'Tom 11/7/2025 13:53:39'!
+lines
+	^(AccountSummary on: self) lines.! !
 
 !ReceptiveAccount methodsFor: 'reports' stamp: 'Tom 11/7/2025 13:50:12'!
 transferNet
@@ -739,33 +739,34 @@ transferNet
 
 !classDefinition: #AccountSummary category: 'Portfolio2'!
 Object subclass: #AccountSummary
-	instanceVariableNames: 'summary account'
+	instanceVariableNames: 'reportSummary account'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio2'!
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:28:20'!
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:58:15'!
 addBalance
-	^summary add: 'Balance = ', account balance asString.
+	^reportSummary add: 'Balance = ', account balance asString.
 ! !
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:39:17'!
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:58:12'!
 generateTransactionSummary
-	account addTransactionsTo: summary.
+	account addTransactionsTo: reportSummary.
 	
-	summary := summary collect: [:aTransaction | aTransaction a].! !
+	reportSummary := reportSummary collect: [:aTransaction | aTransaction a].! !
 
 !AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:41:34'!
 initializeWith: anAccount
 	account := anAccount.! !
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:30:55'!
-summary
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:58:06'!
+lines
 	
-	summary := OrderedCollection new.
-	self generateTransactionSummary.
-	self addBalance.
-	^summary! !
+	reportSummary := OrderedCollection new.
+	account addTransactionsTo: reportSummary.
+	reportSummary := reportSummary collect: [:aTransaction | aTransaction a].
+	reportSummary add: 'Balance = ', account balance asString.
+	^reportSummary! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -780,7 +781,7 @@ on: anAccount
 
 !classDefinition: #AccountTransferNet category: 'Portfolio2'!
 Object subclass: #AccountTransferNet
-	instanceVariableNames: 'account'
+	instanceVariableNames: 'account reportTransactions'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio2'!
@@ -789,16 +790,15 @@ Object subclass: #AccountTransferNet
 initializeWith: anAccount
 	account := anAccount.! !
 
-!AccountTransferNet methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:52:26'!
+!AccountTransferNet methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:58:36'!
 value
-	| transferenceTransactions |
 	
-	transferenceTransactions := OrderedCollection new.
-	account addTransactionsTo: transferenceTransactions.
+	reportTransactions := OrderedCollection new.
+	account addTransactionsTo: reportTransactions.
 	
-	transferenceTransactions := transferenceTransactions select: [:aTransaction | aTransaction isKindOf: TransferenceTransaction].
+	reportTransactions := reportTransactions select: [:aTransaction | aTransaction isKindOf: TransferenceTransaction].
 
-	^transferenceTransactions sum: [:aTransaction | aTransaction affectBalance: 0] ifEmpty: [0]! !
+	^reportTransactions sum: [:aTransaction | aTransaction affectBalance: 0] ifEmpty: [0]! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
