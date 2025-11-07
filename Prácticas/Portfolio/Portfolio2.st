@@ -762,6 +762,36 @@ transferNet
 	^transferenceTransactions sum: [:aTransaction | aTransaction affectBalance: 0] ifEmpty: [0]! !
 
 
+!classDefinition: #AccountSummary category: 'Portfolio2'!
+Object subclass: #AccountSummary
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio2'!
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:24:03'!
+summary
+	| accountSummary |
+	
+	accountSummary := OrderedCollection new.
+	self addTransactionsTo: accountSummary.
+	
+	accountSummary := accountSummary collect: [:aTransaction |
+		| transactionAsString |
+		
+		(aTransaction isKindOf: Withdraw) ifTrue: [transactionAsString := 'Extracción por ', aTransaction value asString].
+		(aTransaction isKindOf: Deposit) ifTrue: [transactionAsString := 'Depósito por ', aTransaction value asString].
+		(aTransaction isKindOf: TransferenceWithdraw ) ifTrue: [transactionAsString := 'Salida por transferencia de ', aTransaction value asString].
+		(aTransaction isKindOf: TransferenceDeposit ) ifTrue: [transactionAsString := 'Entrada por transferencia de ', aTransaction value asString].
+		
+		transactionAsString
+	].
+
+	accountSummary add: 'Balance = ', self balance asString.
+
+	^accountSummary! !
+
+
 !classDefinition: #GenericTransaction category: 'Portfolio2'!
 Object subclass: #GenericTransaction
 	instanceVariableNames: ''
