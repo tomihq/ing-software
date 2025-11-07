@@ -312,19 +312,19 @@ TestCase subclass: #ReportTest
 	poolDictionaries: ''
 	category: 'Portfolio2'!
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/6/2025 21:49:23'!
+!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:53:05'!
 testAccountSummaryWithDepositHasCorrectFormatting
 	| account accountSummary |
 	
 	account := ReceptiveAccount new.
 	Deposit register: 5 on: account.
 	
-	accountSummary := (ReportObject of: account) summary.
+	accountSummary := (AccountSummary on: account) lines.
 	
 	self assert: accountSummary first = 'Depósito por 5'.
 	self assert: accountSummary last = 'Balance = 5'.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/6/2025 21:50:07'!
+!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:51:46'!
 testAccountSummaryWithTransferenceDepositHasCorrectFormatting
 	| sourceAccount receptorAccount receptorAccountSummary |
 	
@@ -332,12 +332,12 @@ testAccountSummaryWithTransferenceDepositHasCorrectFormatting
 	receptorAccount := ReceptiveAccount new.
 	Transference take: 5 from: sourceAccount to: receptorAccount.
 	
-	receptorAccountSummary :=  (ReportObject of: receptorAccount) summary.
+	receptorAccountSummary :=  (AccountSummary on: receptorAccount) lines.
 	
 	self assert: receptorAccountSummary first = 'Entrada por transferencia de 5'.
 	self assert: receptorAccountSummary last = 'Balance = 5'.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/6/2025 21:50:22'!
+!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:51:43'!
 testAccountSummaryWithTransferenceWithdrawHasCorrectFormatting
 	| sourceAccount receptorAccount sourceAccountSummary |
 	
@@ -345,41 +345,41 @@ testAccountSummaryWithTransferenceWithdrawHasCorrectFormatting
 	receptorAccount := ReceptiveAccount new.
 	Transference take: 5 from: sourceAccount to: receptorAccount.
 	
-	sourceAccountSummary :=  (ReportObject of: sourceAccount) summary.
+	sourceAccountSummary :=  (AccountSummary on: sourceAccount) lines.
 	
 	self assert: sourceAccountSummary first = 'Salida por transferencia de 5'.
 	self assert: sourceAccountSummary last = 'Balance = -5'.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/6/2025 21:50:29'!
+!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:51:39'!
 testAccountSummaryWithWithdrawHasCorrectFormatting
 	| account accountSummary |
 	
 	account := ReceptiveAccount new.
 	Withdraw register: 5 on: account.
 	
-	accountSummary :=  (ReportObject of: account) summary.
+	accountSummary :=  (AccountSummary on: account) lines.
 	
 	self assert: accountSummary first = 'Extracción por 5'.
 	self assert: accountSummary last = 'Balance = -5'.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/6/2025 21:50:47'!
+!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:51:56'!
 testEmptyAccountSummaryOnlyKnowsBalance
 	| account accountSummary |
 	
 	account := ReceptiveAccount new.
-	accountSummary :=  (ReportObject of: account) summary.
+	accountSummary :=  (AccountSummary on: account) lines.
 	
 	self assert: accountSummary last = 'Balance = 0'.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/6/2025 21:51:13'!
+!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:52:17'!
 testNetTransferIsZeroForAccountWithoutTransactions
 	| account |
 	
 	account := ReceptiveAccount new.
 	
-	self assert:  (ReportObject of: account) transferNet = 0.! !
+	self assert:  (AccountTransferNet on: account) value = 0.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/6/2025 21:51:26'!
+!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:52:31'!
 testTransferenceAffectsNetTransferenceOfReceptorAccount
 	| sourceAccount receptorAccount |
 	
@@ -388,9 +388,9 @@ testTransferenceAffectsNetTransferenceOfReceptorAccount
 	
 	Transference take: 5 from: sourceAccount to: receptorAccount.
 	
-	self assert: (ReportObject of: receptorAccount) transferNet = 5.! !
+	self assert: (AccountTransferNet on: receptorAccount) value = 5.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/6/2025 21:51:41'!
+!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:52:42'!
 testTransferenceAffectsNetTransferenceOfSourceAccount
 	| sourceAccount receptorAccount |
 	
@@ -399,7 +399,7 @@ testTransferenceAffectsNetTransferenceOfSourceAccount
 	
 	Transference take: 5 from: sourceAccount to: receptorAccount.
 	
-	self assert: (ReportObject of: sourceAccount) transferNet = -5.! !
+	self assert: (AccountTransferNet on: sourceAccount) value= -5.! !
 
 
 !classDefinition: #TransferenceTest category: 'Portfolio2'!
@@ -728,15 +728,13 @@ addedTo: aPortfolio
 	! !
 
 
-!ReceptiveAccount methodsFor: 'reports' stamp: 'Tom 11/7/2025 01:04:05'!
-"no es responsabilidad de la account el calcular un summary"
+!ReceptiveAccount methodsFor: 'reports' stamp: 'Tom 11/7/2025 01:58:52'!
 summary
-	^(transactions collect: [:aTransaction |aTransaction stringForSummary ]) add: ('Balance = ', self balance asString) ; yourself.! !
+	^self linesOn: self transactions andBalance: self balance.! !
 
-!ReceptiveAccount methodsFor: 'reports' stamp: 'Tom 11/7/2025 01:02:14'!
-"no es responsabilidad de un account tener un transfernet"
+!ReceptiveAccount methodsFor: 'reports' stamp: 'Tom 11/7/2025 02:00:05'!
 transferNet
-	^transactions sum: [:aTransaction | aTransaction valueForTransferNet] ifEmpty: [0]! !
+	^self valueOf: transactions.! !
 
 
 !classDefinition: #AccountReport category: 'Portfolio2'!
@@ -768,6 +766,15 @@ AccountReport subclass: #AccountSummary
 	poolDictionaries: ''
 	category: 'Portfolio2'!
 
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 01:56:52'!
+lines
+	^account summary! !
+
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 01:58:22'!
+"nico creo que este es el double dispatch que se llama desde AccountSummary. Esto rompe el encapsulamiento del balance del account. Pero lo hice así porque las stransferencias son radioactivas"
+linesOn: aListOfTransferences andBalance: aBalance
+	^(aListOfTransferences collect: [:aTransaction |aTransaction stringForSummary ]) add: ('Balance = ', aBalance asString) ; yourself.! !
+
 
 !classDefinition: #AccountTransferNet category: 'Portfolio2'!
 AccountReport subclass: #AccountTransferNet
@@ -775,6 +782,15 @@ AccountReport subclass: #AccountTransferNet
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio2'!
+
+!AccountTransferNet methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 01:49:53'!
+value
+	^account transferNet.! !
+
+!AccountTransferNet methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:04:55'!
+"nico, creo que esto hace del double dispatch AccountTransferNet -> Account -> AccountTransferNet. No obstante ¿lo estamos atando a usar AccountTransferNet como objeto particular? ¿Estaría bien? ¿Qué opinás? ¿O el propio 'Account' debería conocer a estos objetos? Para mí, está bien así. Si querés el reporte, creá el Account, creá el reporte y prepará el objeto para esa acount en particular "
+valueOf: aListOfTransactions
+	^aListOfTransactions sum: [:aTransaction | aTransaction valueForTransferNet] ifEmpty: [0]! !
 
 
 !classDefinition: #GenericTransaction category: 'Portfolio2'!
@@ -1011,36 +1027,6 @@ stringForSummary
 !TransferenceWithdraw methodsFor: 'as yet unclassified' stamp: 'Tom 11/6/2025 21:30:11'!
 valueForTransferNet
 	^self value negated.! !
-
-
-!classDefinition: #ReportObject category: 'Portfolio2'!
-Object subclass: #ReportObject
-	instanceVariableNames: 'account'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio2'!
-
-!ReportObject methodsFor: 'as yet unclassified' stamp: 'Tom 11/6/2025 21:47:31'!
-initializeWith: anAccount
-	account := anAccount.! !
-
-!ReportObject methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 01:30:51'!
-summary
-	^account summary! !
-
-!ReportObject methodsFor: 'as yet unclassified' stamp: 'Tom 11/6/2025 21:48:34'!
-transferNet
-	^account transferNet! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'ReportObject class' category: 'Portfolio2'!
-ReportObject class
-	instanceVariableNames: ''!
-
-!ReportObject class methodsFor: 'as yet unclassified' stamp: 'Tom 11/6/2025 21:47:20'!
-of: anAccount
-	^ self new initializeWith: anAccount! !
 
 
 !classDefinition: #Transference category: 'Portfolio2'!
