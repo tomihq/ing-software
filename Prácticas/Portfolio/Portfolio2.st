@@ -766,12 +766,15 @@ AccountReport subclass: #AccountSummary
 	poolDictionaries: ''
 	category: 'Portfolio2'!
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 01:56:52'!
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:06:11'!
+"aca arranca el double dispatch para que account nos provea lo que necesitamos (o eso creo) "
 lines
 	^account summary! !
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 01:58:22'!
-"nico creo que este es el double dispatch que se llama desde AccountSummary. Esto rompe el encapsulamiento del balance del account. Pero lo hice así porque las stransferencias son radioactivas"
+!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:11:08'!
+"nico creo que este es el double dispatch que se llama desde AccountSummary. Esto rompe el encapsulamiento del balance del account. Pero lo hice así porque las stransferencias son radioactivas.
+Pensé en dejar esta lógica en account pero creo que sería bastante tedioso de mantener si el día de mañana cambia el 'formato de la salida', y no debería ser responsabilidad de la clase Account saber de eso. 
+"
 linesOn: aListOfTransferences andBalance: aBalance
 	^(aListOfTransferences collect: [:aTransaction |aTransaction stringForSummary ]) add: ('Balance = ', aBalance asString) ; yourself.! !
 
