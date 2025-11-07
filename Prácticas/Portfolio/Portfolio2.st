@@ -213,6 +213,26 @@ test15PortfolioCanNotIncludeAnyOfTheComposedAccountOfPortfolioToAdd
 			self assert: Portfolio canNotAddAccountErrorMessage equals: anError messageText.
 			self assert: portfolioToModify accountsIsEmpty ]! !
 
+!PortfolioTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 02:35:39'!
+"no creo que sea relevante este test. Pero parece relevante por el simple hecho de que los portfolios tienen 'nombre'. Me obliga a crear el mensaje de creación de instancia."
+test16PortfolioIsNamed
+	| portfolio |
+	portfolio := Portfolio named: 'Portfolio de la familia'.
+	self assert: portfolio isNamed.
+	
+	! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 02:48:21'!
+"no creo que sea relevante este test. Pero parece relevante por el simple hecho de que los portfolios tienen 'nombre'. Me obliga a crear el mensaje de creación de instancia."
+test17PortfolioTreeReportIncludesAnAccount
+	| portfolio account expectedReport |
+	account := ReceptiveAccount named: 'Cuenta de Furfi'.
+	portfolio := Portfolio named: 'Portfolio de la familia' with: account.
+	expectedReport := OrderedCollection new; yourself; add: 'Portfolio de la familia'; add: '   Cuenta de Furfi'.
+	self assert: portfolio report equals: expectedReport.
+	
+	! !
+
 
 !classDefinition: #ReceptiveAccountTest category: 'Portfolio2'!
 TestCase subclass: #ReceptiveAccountTest
@@ -302,6 +322,16 @@ test07AccountKnowsItsTransactions
 		
 	self assert: 1 equals: account1 transactions size .
 	self assert: (account1 transactions includes: deposit1).
+! !
+
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 02:38:33'!
+test08AccountCanBeNamed
+
+	| account |
+	
+	account := ReceptiveAccount named: 'Cuenta de Furfi'.
+
+	self assert: (account isNamed).
 ! !
 
 
@@ -494,7 +524,7 @@ initializeEqualAccounts
 
 !classDefinition: #Account category: 'Portfolio2'!
 Object subclass: #Account
-	instanceVariableNames: ''
+	instanceVariableNames: 'name'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio2'!
@@ -531,6 +561,11 @@ transactions
 addedTo: aPortfolio
 
 	self subclassResponsibility ! !
+
+
+!Account methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:40:09'!
+initialize
+	name := ''.! !
 
 
 !classDefinition: #Portfolio category: 'Portfolio2'!
@@ -575,9 +610,8 @@ rootParents
 	^ rootParents! !
 
 
-!Portfolio methodsFor: 'initialization' stamp: 'HAW 5/25/2019 12:03:18'!
+!Portfolio methodsFor: 'initialization' stamp: 'Tom 11/7/2025 02:39:26'!
 initialize
-
 	accounts := OrderedCollection new.
 	parents := OrderedCollection new.! !
 
@@ -644,6 +678,21 @@ signalCanNotAddAccount
 	
 	self error: self class canNotAddAccountErrorMessage! !
 
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:35:08'!
+isNamed
+	^name size > 0.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:46:36'!
+withName: aPortfolioName
+	name := aPortfolioName.
+! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:46:50'!
+withName: aPortfolioName andAccount: anAccount
+	self withName: aPortfolioName.
+	accounts add: anAccount.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Portfolio class' category: 'Portfolio2'!
@@ -654,6 +703,14 @@ Portfolio class
 canNotAddAccountErrorMessage
 	
 	^'Can not add repeated account to a portfolio'! !
+
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:33:48'!
+named: aNameForPortfolio
+	^self new withName: aNameForPortfolio! !
+
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:44:36'!
+named: aNameForPortfolio with: anAccount
+	^self new withName: aNameForPortfolio andAccount: anAccount.! !
 
 !Portfolio class methodsFor: 'as yet unclassified' stamp: 'HAW 5/25/2019 11:18:21'!
 with: anAccount
@@ -678,7 +735,7 @@ Account subclass: #ReceptiveAccount
 	poolDictionaries: ''
 	category: 'Portfolio2'!
 
-!ReceptiveAccount methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:35'!
+!ReceptiveAccount methodsFor: 'initialization' stamp: 'Tom 11/7/2025 02:39:21'!
 initialize
 
 	super initialize.
@@ -735,6 +792,26 @@ summary
 !ReceptiveAccount methodsFor: 'reports' stamp: 'Tom 11/7/2025 02:00:05'!
 transferNet
 	^self valueOf: transactions.! !
+
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:41:22'!
+initializeWithName: aReceptiveAccountName
+	self initialize.
+	name := aReceptiveAccountName.! !
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:41:50'!
+isNamed
+	^name size > 0.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'ReceptiveAccount class' category: 'Portfolio2'!
+ReceptiveAccount class
+	instanceVariableNames: ''!
+
+!ReceptiveAccount class methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:39:00'!
+named: aNameForAReceptiveAccount
+	^self new initializeWithName: aNameForAReceptiveAccount.! !
 
 
 !classDefinition: #AccountReport category: 'Portfolio2'!
