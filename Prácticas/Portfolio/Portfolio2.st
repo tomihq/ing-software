@@ -732,16 +732,9 @@ addedTo: aPortfolio
 summary
 	^(AccountSummary on: self) summary.! !
 
-!ReceptiveAccount methodsFor: 'reports' stamp: 'en 11/4/2025 12:30:01'!
+!ReceptiveAccount methodsFor: 'reports' stamp: 'Tom 11/7/2025 13:50:12'!
 transferNet
-	| transferenceTransactions |
-	
-	transferenceTransactions := OrderedCollection new.
-	self addTransactionsTo: transferenceTransactions.
-	
-	transferenceTransactions := transferenceTransactions select: [:aTransaction | aTransaction isKindOf: TransferenceTransaction].
-
-	^transferenceTransactions sum: [:aTransaction | aTransaction affectBalance: 0] ifEmpty: [0]! !
+	^(AccountTransferNet on: self) value.! !
 
 
 !classDefinition: #AccountSummary category: 'Portfolio2'!
@@ -783,6 +776,39 @@ AccountSummary class
 !AccountSummary class methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:41:22'!
 on: anAccount
 	^self new initializeWith: anAccount.! !
+
+
+!classDefinition: #AccountTransferNet category: 'Portfolio2'!
+Object subclass: #AccountTransferNet
+	instanceVariableNames: 'account'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio2'!
+
+!AccountTransferNet methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:51:55'!
+initializeWith: anAccount
+	account := anAccount.! !
+
+!AccountTransferNet methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:52:26'!
+value
+	| transferenceTransactions |
+	
+	transferenceTransactions := OrderedCollection new.
+	account addTransactionsTo: transferenceTransactions.
+	
+	transferenceTransactions := transferenceTransactions select: [:aTransaction | aTransaction isKindOf: TransferenceTransaction].
+
+	^transferenceTransactions sum: [:aTransaction | aTransaction affectBalance: 0] ifEmpty: [0]! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'AccountTransferNet class' category: 'Portfolio2'!
+AccountTransferNet class
+	instanceVariableNames: ''!
+
+!AccountTransferNet class methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 13:52:51'!
+on: anAccount
+	^self new initializeWith: anAccount! !
 
 
 !classDefinition: #GenericTransaction category: 'Portfolio2'!
