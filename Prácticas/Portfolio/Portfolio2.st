@@ -213,26 +213,6 @@ test15PortfolioCanNotIncludeAnyOfTheComposedAccountOfPortfolioToAdd
 			self assert: Portfolio canNotAddAccountErrorMessage equals: anError messageText.
 			self assert: portfolioToModify accountsIsEmpty ]! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 02:35:39'!
-"no creo que sea relevante este test. Pero parece relevante por el simple hecho de que los portfolios tienen 'nombre'. Me obliga a crear el mensaje de creación de instancia."
-test16PortfolioIsNamed
-	| portfolio |
-	portfolio := Portfolio named: 'Portfolio de la familia'.
-	self assert: portfolio isNamed.
-	
-	! !
-
-!PortfolioTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 02:48:21'!
-"no creo que sea relevante este test. Pero parece relevante por el simple hecho de que los portfolios tienen 'nombre'. Me obliga a crear el mensaje de creación de instancia."
-test17PortfolioTreeReportIncludesAnAccount
-	| portfolio account expectedReport |
-	account := ReceptiveAccount named: 'Cuenta de Furfi'.
-	portfolio := Portfolio named: 'Portfolio de la familia' with: account.
-	expectedReport := OrderedCollection new; yourself; add: 'Portfolio de la familia'; add: '   Cuenta de Furfi'.
-	self assert: portfolio report equals: expectedReport.
-	
-	! !
-
 
 !classDefinition: #ReceptiveAccountTest category: 'Portfolio2'!
 TestCase subclass: #ReceptiveAccountTest
@@ -324,16 +304,6 @@ test07AccountKnowsItsTransactions
 	self assert: (account1 transactions includes: deposit1).
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 02:38:33'!
-test08AccountCanBeNamed
-
-	| account |
-	
-	account := ReceptiveAccount named: 'Cuenta de Furfi'.
-
-	self assert: (account isNamed).
-! !
-
 
 !classDefinition: #ReportTest category: 'Portfolio2'!
 TestCase subclass: #ReportTest
@@ -342,19 +312,19 @@ TestCase subclass: #ReportTest
 	poolDictionaries: ''
 	category: 'Portfolio2'!
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:53:05'!
+!ReportTest methodsFor: 'tests' stamp: 'en 11/4/2025 12:40:20'!
 testAccountSummaryWithDepositHasCorrectFormatting
 	| account accountSummary |
 	
 	account := ReceptiveAccount new.
 	Deposit register: 5 on: account.
 	
-	accountSummary := (AccountSummary on: account) lines.
+	accountSummary := account summary.
 	
 	self assert: accountSummary first = 'Depósito por 5'.
 	self assert: accountSummary last = 'Balance = 5'.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:51:46'!
+!ReportTest methodsFor: 'tests' stamp: 'en 11/4/2025 12:40:50'!
 testAccountSummaryWithTransferenceDepositHasCorrectFormatting
 	| sourceAccount receptorAccount receptorAccountSummary |
 	
@@ -362,12 +332,12 @@ testAccountSummaryWithTransferenceDepositHasCorrectFormatting
 	receptorAccount := ReceptiveAccount new.
 	Transference take: 5 from: sourceAccount to: receptorAccount.
 	
-	receptorAccountSummary :=  (AccountSummary on: receptorAccount) lines.
+	receptorAccountSummary := receptorAccount summary.
 	
 	self assert: receptorAccountSummary first = 'Entrada por transferencia de 5'.
 	self assert: receptorAccountSummary last = 'Balance = 5'.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:51:43'!
+!ReportTest methodsFor: 'tests' stamp: 'en 11/4/2025 12:40:42'!
 testAccountSummaryWithTransferenceWithdrawHasCorrectFormatting
 	| sourceAccount receptorAccount sourceAccountSummary |
 	
@@ -375,41 +345,41 @@ testAccountSummaryWithTransferenceWithdrawHasCorrectFormatting
 	receptorAccount := ReceptiveAccount new.
 	Transference take: 5 from: sourceAccount to: receptorAccount.
 	
-	sourceAccountSummary :=  (AccountSummary on: sourceAccount) lines.
+	sourceAccountSummary := sourceAccount summary.
 	
 	self assert: sourceAccountSummary first = 'Salida por transferencia de 5'.
 	self assert: sourceAccountSummary last = 'Balance = -5'.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:51:39'!
+!ReportTest methodsFor: 'tests' stamp: 'en 11/4/2025 12:40:25'!
 testAccountSummaryWithWithdrawHasCorrectFormatting
 	| account accountSummary |
 	
 	account := ReceptiveAccount new.
 	Withdraw register: 5 on: account.
 	
-	accountSummary :=  (AccountSummary on: account) lines.
+	accountSummary := account summary.
 	
 	self assert: accountSummary first = 'Extracción por 5'.
 	self assert: accountSummary last = 'Balance = -5'.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:51:56'!
+!ReportTest methodsFor: 'tests' stamp: 'en 11/4/2025 12:38:54'!
 testEmptyAccountSummaryOnlyKnowsBalance
 	| account accountSummary |
 	
 	account := ReceptiveAccount new.
-	accountSummary :=  (AccountSummary on: account) lines.
+	accountSummary := account summary.
 	
 	self assert: accountSummary last = 'Balance = 0'.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:52:17'!
+!ReportTest methodsFor: 'tests' stamp: 'en 11/4/2025 12:41:14'!
 testNetTransferIsZeroForAccountWithoutTransactions
 	| account |
 	
 	account := ReceptiveAccount new.
 	
-	self assert:  (AccountTransferNet on: account) value = 0.! !
+	self assert: account transferNet = 0.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:52:31'!
+!ReportTest methodsFor: 'tests' stamp: 'en 11/4/2025 12:41:42'!
 testTransferenceAffectsNetTransferenceOfReceptorAccount
 	| sourceAccount receptorAccount |
 	
@@ -418,9 +388,9 @@ testTransferenceAffectsNetTransferenceOfReceptorAccount
 	
 	Transference take: 5 from: sourceAccount to: receptorAccount.
 	
-	self assert: (AccountTransferNet on: receptorAccount) value = 5.! !
+	self assert: receptorAccount transferNet = 5.! !
 
-!ReportTest methodsFor: 'tests' stamp: 'Tom 11/7/2025 01:52:42'!
+!ReportTest methodsFor: 'tests' stamp: 'en 11/4/2025 12:41:34'!
 testTransferenceAffectsNetTransferenceOfSourceAccount
 	| sourceAccount receptorAccount |
 	
@@ -429,7 +399,7 @@ testTransferenceAffectsNetTransferenceOfSourceAccount
 	
 	Transference take: 5 from: sourceAccount to: receptorAccount.
 	
-	self assert: (AccountTransferNet on: sourceAccount) value= -5.! !
+	self assert: sourceAccount transferNet = -5.! !
 
 
 !classDefinition: #TransferenceTest category: 'Portfolio2'!
@@ -524,7 +494,7 @@ initializeEqualAccounts
 
 !classDefinition: #Account category: 'Portfolio2'!
 Object subclass: #Account
-	instanceVariableNames: 'name'
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio2'!
@@ -561,11 +531,6 @@ transactions
 addedTo: aPortfolio
 
 	self subclassResponsibility ! !
-
-
-!Account methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:40:09'!
-initialize
-	name := ''.! !
 
 
 !classDefinition: #Portfolio category: 'Portfolio2'!
@@ -610,8 +575,9 @@ rootParents
 	^ rootParents! !
 
 
-!Portfolio methodsFor: 'initialization' stamp: 'Tom 11/7/2025 02:39:26'!
+!Portfolio methodsFor: 'initialization' stamp: 'HAW 5/25/2019 12:03:18'!
 initialize
+
 	accounts := OrderedCollection new.
 	parents := OrderedCollection new.! !
 
@@ -678,21 +644,6 @@ signalCanNotAddAccount
 	
 	self error: self class canNotAddAccountErrorMessage! !
 
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:35:08'!
-isNamed
-	^name size > 0.! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:46:36'!
-withName: aPortfolioName
-	name := aPortfolioName.
-! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:46:50'!
-withName: aPortfolioName andAccount: anAccount
-	self withName: aPortfolioName.
-	accounts add: anAccount.! !
-
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Portfolio class' category: 'Portfolio2'!
@@ -703,14 +654,6 @@ Portfolio class
 canNotAddAccountErrorMessage
 	
 	^'Can not add repeated account to a portfolio'! !
-
-!Portfolio class methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:33:48'!
-named: aNameForPortfolio
-	^self new withName: aNameForPortfolio! !
-
-!Portfolio class methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:44:36'!
-named: aNameForPortfolio with: anAccount
-	^self new withName: aNameForPortfolio andAccount: anAccount.! !
 
 !Portfolio class methodsFor: 'as yet unclassified' stamp: 'HAW 5/25/2019 11:18:21'!
 with: anAccount
@@ -735,7 +678,7 @@ Account subclass: #ReceptiveAccount
 	poolDictionaries: ''
 	category: 'Portfolio2'!
 
-!ReceptiveAccount methodsFor: 'initialization' stamp: 'Tom 11/7/2025 02:39:21'!
+!ReceptiveAccount methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:35'!
 initialize
 
 	super initialize.
@@ -785,92 +728,38 @@ addedTo: aPortfolio
 	! !
 
 
-!ReceptiveAccount methodsFor: 'reports' stamp: 'Tom 11/7/2025 01:58:52'!
+!ReceptiveAccount methodsFor: 'reports' stamp: 'en 11/4/2025 12:09:44'!
 summary
-	^self linesOn: self transactions andBalance: self balance.! !
+	| accountSummary |
+	
+	accountSummary := OrderedCollection new.
+	self addTransactionsTo: accountSummary.
+	
+	accountSummary := accountSummary collect: [:aTransaction |
+		| transactionAsString |
+		
+		(aTransaction isKindOf: Withdraw) ifTrue: [transactionAsString := 'Extracción por ', aTransaction value asString].
+		(aTransaction isKindOf: Deposit) ifTrue: [transactionAsString := 'Depósito por ', aTransaction value asString].
+		(aTransaction isKindOf: TransferenceWithdraw ) ifTrue: [transactionAsString := 'Salida por transferencia de ', aTransaction value asString].
+		(aTransaction isKindOf: TransferenceDeposit ) ifTrue: [transactionAsString := 'Entrada por transferencia de ', aTransaction value asString].
+		
+		transactionAsString
+	].
 
-!ReceptiveAccount methodsFor: 'reports' stamp: 'Tom 11/7/2025 02:00:05'!
+	accountSummary add: 'Balance = ', self balance asString.
+
+	^accountSummary! !
+
+!ReceptiveAccount methodsFor: 'reports' stamp: 'en 11/4/2025 12:30:01'!
 transferNet
-	^self valueOf: transactions.! !
+	| transferenceTransactions |
+	
+	transferenceTransactions := OrderedCollection new.
+	self addTransactionsTo: transferenceTransactions.
+	
+	transferenceTransactions := transferenceTransactions select: [:aTransaction | aTransaction isKindOf: TransferenceTransaction].
 
-
-!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:41:22'!
-initializeWithName: aReceptiveAccountName
-	self initialize.
-	name := aReceptiveAccountName.! !
-
-!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:41:50'!
-isNamed
-	^name size > 0.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'ReceptiveAccount class' category: 'Portfolio2'!
-ReceptiveAccount class
-	instanceVariableNames: ''!
-
-!ReceptiveAccount class methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:39:00'!
-named: aNameForAReceptiveAccount
-	^self new initializeWithName: aNameForAReceptiveAccount.! !
-
-
-!classDefinition: #AccountReport category: 'Portfolio2'!
-Object subclass: #AccountReport
-	instanceVariableNames: 'account'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio2'!
-
-!AccountReport methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 01:32:54'!
-initializeWith: anAccount
-	account := anAccount.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'AccountReport class' category: 'Portfolio2'!
-AccountReport class
-	instanceVariableNames: ''!
-
-!AccountReport class methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 01:33:16'!
-on: anAccount
-	^self new initializeWith: anAccount.! !
-
-
-!classDefinition: #AccountSummary category: 'Portfolio2'!
-AccountReport subclass: #AccountSummary
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio2'!
-
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:06:11'!
-"aca arranca el double dispatch para que account nos provea lo que necesitamos (o eso creo) "
-lines
-	^account summary! !
-
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:11:08'!
-"nico creo que este es el double dispatch que se llama desde AccountSummary. Esto rompe el encapsulamiento del balance del account. Pero lo hice así porque las stransferencias son radioactivas.
-Pensé en dejar esta lógica en account pero creo que sería bastante tedioso de mantener si el día de mañana cambia el 'formato de la salida', y no debería ser responsabilidad de la clase Account saber de eso. 
-"
-linesOn: aListOfTransferences andBalance: aBalance
-	^(aListOfTransferences collect: [:aTransaction |aTransaction stringForSummary ]) add: ('Balance = ', aBalance asString) ; yourself.! !
-
-
-!classDefinition: #AccountTransferNet category: 'Portfolio2'!
-AccountReport subclass: #AccountTransferNet
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio2'!
-
-!AccountTransferNet methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 01:49:53'!
-value
-	^account transferNet.! !
-
-!AccountTransferNet methodsFor: 'as yet unclassified' stamp: 'Tom 11/7/2025 02:04:55'!
-"nico, creo que esto hace del double dispatch AccountTransferNet -> Account -> AccountTransferNet. No obstante ¿lo estamos atando a usar AccountTransferNet como objeto particular? ¿Estaría bien? ¿Qué opinás? ¿O el propio 'Account' debería conocer a estos objetos? Para mí, está bien así. Si querés el reporte, creá el Account, creá el reporte y prepará el objeto para esa acount en particular "
-valueOf: aListOfTransactions
-	^aListOfTransactions sum: [:aTransaction | aTransaction valueForTransferNet] ifEmpty: [0]! !
+	^transferenceTransactions sum: [:aTransaction | aTransaction affectBalance: 0] ifEmpty: [0]! !
 
 
 !classDefinition: #GenericTransaction category: 'Portfolio2'!
@@ -888,15 +777,6 @@ value
 !GenericTransaction methodsFor: 'balance' stamp: 'en 11/4/2025 10:58:46'!
 affectBalance: aBalance
 	self subclassResponsibility! !
-
-
-!GenericTransaction methodsFor: 'as yet unclassified' stamp: 'Tom 11/6/2025 21:19:46'!
-stringForSummary
-	^self subclassResponsibility! !
-
-!GenericTransaction methodsFor: 'as yet unclassified' stamp: 'Tom 11/6/2025 21:29:41'!
-valueForTransferNet
-	^0.! !
 
 
 !classDefinition: #AccountTransaction category: 'Portfolio2'!
@@ -958,15 +838,6 @@ affectBalance: aBalance
 
 	^aBalance + value ! !
 
-
-!Deposit methodsFor: 'as yet unclassified' stamp: 'Tom 11/6/2025 21:21:31'!
-stringForSummary
-	^'Depósito por ', self value asString! !
-
-!Deposit methodsFor: 'as yet unclassified' stamp: 'Tom 11/6/2025 21:29:15'!
-valueForTransferNet
-	^0.! !
-
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Deposit class' category: 'Portfolio2'!
@@ -1002,15 +873,6 @@ value
 affectBalance: aBalance
 
 	^aBalance - value! !
-
-!Withdraw methodsFor: 'balance' stamp: 'Tom 11/6/2025 21:29:32'!
-valueForTransferNet
-	^0.! !
-
-
-!Withdraw methodsFor: 'as yet unclassified' stamp: 'Tom 11/6/2025 21:21:25'!
-stringForSummary
-	^'Extracción por ', self value asString! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1078,15 +940,6 @@ TransferenceTransaction subclass: #TransferenceDeposit
 affectBalance: aBalance
 	^aBalance + self value! !
 
-
-!TransferenceDeposit methodsFor: 'as yet unclassified' stamp: 'Tom 11/6/2025 21:21:50'!
-stringForSummary
-	^'Entrada por transferencia de ', self value asString! !
-
-!TransferenceDeposit methodsFor: 'as yet unclassified' stamp: 'Tom 11/6/2025 21:30:00'!
-valueForTransferNet
-	^self value.! !
-
 
 !classDefinition: #TransferenceWithdraw category: 'Portfolio2'!
 TransferenceTransaction subclass: #TransferenceWithdraw
@@ -1098,15 +951,6 @@ TransferenceTransaction subclass: #TransferenceWithdraw
 !TransferenceWithdraw methodsFor: 'balance' stamp: 'en 11/4/2025 11:07:19'!
 affectBalance: aBalance
 	^aBalance - self value! !
-
-
-!TransferenceWithdraw methodsFor: 'as yet unclassified' stamp: 'Tom 11/6/2025 21:21:58'!
-stringForSummary
-	^'Salida por transferencia de ', self value asString! !
-
-!TransferenceWithdraw methodsFor: 'as yet unclassified' stamp: 'Tom 11/6/2025 21:30:11'!
-valueForTransferNet
-	^self value negated.! !
 
 
 !classDefinition: #Transference category: 'Portfolio2'!
