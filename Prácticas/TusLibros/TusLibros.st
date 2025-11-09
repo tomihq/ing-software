@@ -11,11 +11,11 @@ test001CarritoComienzaVacio
 	carrito := Carrito new. 
 	self assert: carrito cantLibros equals: 0.! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:18:19'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:10:49'!
 test002AgregarLibroPresenteEnCatalogoACarrito
 	| carrito book catalogo|
 	catalogo := OrderedCollection new.
-	catalogo añadir: '1'.
+	catalogo add: '1'.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -27,12 +27,12 @@ test002AgregarLibroPresenteEnCatalogoACarrito
 	
 	self assert: carrito cantLibros equals: 1.! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:28:15'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:10:53'!
 test003NoSeAdmiteAgregarLibroNoPresenteEnElCatalogoAlCarrito
 	| carrito book catalogo|
 
 	catalogo := OrderedCollection new.
-	catalogo añadir: '1'.
+	catalogo add: '1'.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -53,12 +53,12 @@ test003NoSeAdmiteAgregarLibroNoPresenteEnElCatalogoAlCarrito
 	
 	! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:18:22'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:10:57'!
 test004AgregaMásDeUnaUnidadDeUnLibroAlCarrito
 	| carrito book catalogo|
 
 	catalogo := OrderedCollection new.
-	catalogo añadir: '1'.
+	catalogo add: '1'.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -79,13 +79,13 @@ test004AgregaMásDeUnaUnidadDeUnLibroAlCarrito
 	
 	! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:19:49'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:11:02'!
 test005ObtenerElementosEnElCarrito
 	| carrito book catalogo book2 |
 
 	catalogo := OrderedCollection new.
-	catalogo añadir: '1'.
-	catalogo añadir: '2'.
+	catalogo add: '1'.
+	catalogo add: '2'.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -110,12 +110,12 @@ test005ObtenerElementosEnElCarrito
 	
 	! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:30:00'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:11:06'!
 test006NoSePuedeAgregarMenosDeUnaUnidadDeUnLibroAlCarrito
 	| carrito book catalogo |
 
 	catalogo := OrderedCollection new.
-	catalogo añadir: '1'.
+	catalogo add: '1'.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
