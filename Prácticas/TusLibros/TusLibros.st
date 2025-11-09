@@ -11,11 +11,13 @@ test001CarritoComienzaVacio
 	carrito := Carrito new. 
 	self assert: carrito cantLibros equals: 0.! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:16:56'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:25:02'!
 test002AgregarLibroPresenteEnCatalogoACarrito
-	| carrito book catalogo|
-	catalogo := Dictionary new.
-	catalogo at: '1' put: 1.
+	| carrito book catalogo libros|
+	libros := Dictionary new.
+	libros at: '1' put: 1.
+	catalogo := Catalogo con: libros.
+	
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -27,12 +29,13 @@ test002AgregarLibroPresenteEnCatalogoACarrito
 	
 	self assert: carrito cantLibros equals: 1.! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:17:02'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:25:13'!
 test003NoSeAdmiteAgregarLibroNoPresenteEnElCatalogoAlCarrito
-	| carrito book catalogo|
+	| carrito book catalogo libros|
 
-	catalogo := Dictionary new.
-	catalogo at: '1' put: 1.
+	libros := Dictionary new.
+	libros at: '1' put: 1.
+	catalogo := Catalogo con: libros.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -53,12 +56,13 @@ test003NoSeAdmiteAgregarLibroNoPresenteEnElCatalogoAlCarrito
 	
 	! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:17:09'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:25:21'!
 test004AgregaMásDeUnaUnidadDeUnLibroAlCarrito
-	| carrito book catalogo|
+	| carrito book catalogo libros|
 
-	catalogo := Dictionary new.
-	catalogo at: '1' put: 2.
+	libros := Dictionary new.
+	libros at: '1' put:2.
+	catalogo := Catalogo con: libros.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -79,13 +83,14 @@ test004AgregaMásDeUnaUnidadDeUnLibroAlCarrito
 	
 	! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:17:34'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:40:06'!
 test005ObtenerElementosEnElCarrito
-	| carrito book catalogo book2 |
+	| carrito book catalogo book2 libros|
 
-	catalogo := Dictionary new.
-	catalogo at: '1' put: 2.
-	catalogo at: '2' put: 3.
+	libros := Dictionary new.
+	libros at: '1' put: 2.
+	libros at: '2' put: 3.
+	catalogo := Catalogo con: libros.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -110,12 +115,13 @@ test005ObtenerElementosEnElCarrito
 	
 	! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:17:55'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:25:48'!
 test006NoSePuedeAgregarMenosDeUnaUnidadDeUnLibroAlCarrito
-	| carrito book catalogo |
+	| carrito book catalogo libros |
 
-	catalogo := Dictionary new.
-	catalogo at: '1' put: 1.
+	libros := Dictionary new.
+	libros at: '1' put: 1.
+	catalogo := Catalogo con: libros.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -137,12 +143,13 @@ test006NoSePuedeAgregarMenosDeUnaUnidadDeUnLibroAlCarrito
 	
 	! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:16:33'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:26:01'!
 test007NoSePuedeAgregarUnLibroQueNoTieneStock
-	| carrito book catalogo |
+	| carrito book catalogo libros |
 
-	catalogo := Dictionary new.
-	catalogo at: '1' put: 1.
+	libros := Dictionary new.
+	libros at: '1' put: 1.
+	catalogo := Catalogo con: libros.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -159,53 +166,87 @@ test007NoSePuedeAgregarUnLibroQueNoTieneStock
 
 !classDefinition: #Carrito category: #TusLibros!
 Object subclass: #Carrito
-	instanceVariableNames: 'books catalogo'
+	instanceVariableNames: 'libros catalogo'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Carrito methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:16:06'!
+!Carrito methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:38:51'!
 añadir: aBook
     | isbn unidades |
     isbn := aBook keys first.
     unidades := aBook at: isbn.
-    
-    (catalogo includesKey: isbn) ifFalse: [
-        self error: 'Libro no presente en el catálogo'
-    ].
+    catalogo assertContieneLibroConIsbn: isbn.
+  
 
    (unidades <= 0) ifTrue: [self error: 'La cantidad de unidades del libro debe ser positiva'].
-   ((catalogo at: isbn) < unidades) ifTrue: [self error: 'No hay stock suficiente del libro seleccionado']. 
+   catalogo assertA: isbn b: unidades.
     
     
-    books at: isbn put: unidades.
+    libros at: isbn put: unidades.
 
 ! !
 
-!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:53:28'!
+!Carrito methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:22:15'!
 cantLibros
-    ^(books values) inject: 0 into: [:sum :val | sum + val]
+    ^(libros values) inject: 0 into: [:sum :val | sum + val]
 ! !
 
 !Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:30:46'!
 catalogo: unCatalogo
 	catalogo := unCatalogo.! !
 
-!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:49:45'!
+!Carrito methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:22:15'!
 initialize
-	books := Dictionary new.! !
+	libros := Dictionary new.! !
 
-!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:22:09'!
+!Carrito methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:22:15'!
 mostrarContenido
     | stream first sortedKeys |
     stream := WriteStream on: String new.
     first := true.
-    sortedKeys := (books keys asSortedCollection). 
+    sortedKeys := (libros keys asSortedCollection). 
     sortedKeys do: [:key |
         first ifTrue: [ first := false ] ifFalse: [ stream nextPutAll: ' | ' ].
         stream nextPutAll: key asString.
         stream nextPutAll: ' | '.
-        stream nextPutAll: (books at: key) printString.
+        stream nextPutAll: (libros at: key) printString.
     ].
     ^stream contents
 ! !
+
+
+!classDefinition: #Catalogo category: #TusLibros!
+Object subclass: #Catalogo
+	instanceVariableNames: 'libros'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!Catalogo methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:39:49'!
+assertA: unIsbn b: unStockSolicitado
+	((libros at: unIsbn) < unStockSolicitado) ifTrue: [self error: 'No hay stock suficiente del libro seleccionado']. ! !
+
+!Catalogo methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:35:02'!
+assertContieneLibroConIsbn: unIsbn
+ (libros includesKey: unIsbn) ifFalse: [
+        self error: 'Libro no presente en el catálogo'
+    ].! !
+
+!Catalogo methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:24:32'!
+inicializarCon: unConjuntoDeLibros
+	libros := unConjuntoDeLibros.! !
+
+!Catalogo methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:22:53'!
+initialize
+	libros := Dictionary new.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Catalogo class' category: #TusLibros!
+Catalogo class
+	instanceVariableNames: ''!
+
+!Catalogo class methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:24:08'!
+con: unConjuntoDeLibros
+	^self new inicializarCon: unConjuntoDeLibros.! !
