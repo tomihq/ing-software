@@ -76,6 +76,32 @@ test004AgregaMásDeUnaUnidadDeUnLibroAlCarrito
 	
 	! !
 
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:10:06'!
+test005ObtenerElementoDelCarrito
+	| carrito book catalogo |
+
+	catalogo := OrderedCollection new.
+	catalogo add: '1'.
+	
+	carrito := Carrito new. 
+	carrito catalogo: catalogo.
+	
+	book := Dictionary new.
+	book at: '1' put: 2.
+	
+	carrito add: book.
+	
+	self assert: (carrito obtenerLibro: '1') equals: '1 | 2'.
+	
+
+
+
+
+	
+	
+	
+	! !
+
 
 !classDefinition: #Carrito category: #TusLibros!
 Object subclass: #Carrito
@@ -111,3 +137,8 @@ catalogo: unCatalogo
 !Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:49:45'!
 initialize
 	books := Dictionary new.! !
+
+!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:11:21'!
+obtenerLibro: aBookIsbn
+	^aBookIsbn , ' | ' , ((books at: aBookIsbn) printString)
+	! !
