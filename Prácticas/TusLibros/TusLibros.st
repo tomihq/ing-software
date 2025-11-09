@@ -163,6 +163,27 @@ test007NoSePuedeAgregarUnLibroQueNoTieneStock
 	].
 	! !
 
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:50:24'!
+test008AgregarLibroPresenteEnCatalogoACarritoDisminuyeStock
+	| carrito book catalogo libros |
+
+	libros := Dictionary new.
+	libros at: '1' put: 3.
+	catalogo := Catalogo con: libros.
+	
+	carrito := Carrito new. 
+	carrito catalogo: catalogo.
+	
+	book := Dictionary new.
+	book at: '1' put: 2.
+	carrito añadir: book.
+	
+	
+	self assert:  (carrito cantLibros) equals: 2.
+	self assert: (catalogo stockDisponibleDeLibro: '1') equals: 1.
+	
+	! !
+
 
 !classDefinition: #Carrito category: #TusLibros!
 Object subclass: #Carrito
@@ -171,7 +192,7 @@ Object subclass: #Carrito
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Carrito methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:38:51'!
+!Carrito methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:44:01'!
 añadir: aBook
     | isbn unidades |
     isbn := aBook keys first.
@@ -182,7 +203,7 @@ añadir: aBook
    (unidades <= 0) ifTrue: [self error: 'La cantidad de unidades del libro debe ser positiva'].
    catalogo assertA: isbn b: unidades.
     
-    
+    catalogo a: isbn b: unidades.
     libros at: isbn put: unidades.
 
 ! !
@@ -223,6 +244,14 @@ Object subclass: #Catalogo
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
+!Catalogo methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:45:42'!
+a: unIsbn b: unaCantidadDeUnidades
+	| unidadesActuales unidadesRestantes |
+	unidadesActuales := libros at: unIsbn.
+	unidadesRestantes := unidadesActuales - unaCantidadDeUnidades.
+	libros at: unIsbn put: unidadesRestantes.
+	! !
+
 !Catalogo methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:39:49'!
 assertA: unIsbn b: unStockSolicitado
 	((libros at: unIsbn) < unStockSolicitado) ifTrue: [self error: 'No hay stock suficiente del libro seleccionado']. ! !
@@ -240,6 +269,10 @@ inicializarCon: unConjuntoDeLibros
 !Catalogo methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:22:53'!
 initialize
 	libros := Dictionary new.! !
+
+!Catalogo methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:46:36'!
+stockDisponibleDeLibro: unIsbnDeUnLibro
+	^ libros at: unIsbnDeUnLibro.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
