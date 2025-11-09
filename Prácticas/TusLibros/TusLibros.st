@@ -76,8 +76,8 @@ test004AgregaMásDeUnaUnidadDeUnLibroAlCarrito
 	
 	! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:10:06'!
-test005ObtenerElementoDelCarrito
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:14:33'!
+test005ObtenerInformacionDeElementoPresenteEnElCarrito
 	| carrito book catalogo |
 
 	catalogo := OrderedCollection new.
@@ -91,7 +91,7 @@ test005ObtenerElementoDelCarrito
 	
 	carrito add: book.
 	
-	self assert: (carrito obtenerLibro: '1') equals: '1 | 2'.
+	self assert: (carrito contenido) equals: '1 | 2'.
 	
 
 
@@ -134,11 +134,20 @@ cantLibros
 catalogo: unCatalogo
 	catalogo := unCatalogo.! !
 
+!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:17:03'!
+contenido
+    | stream first |
+    stream := WriteStream on: String new.
+    first := true.
+    books associations do: [:assoc |
+        first ifTrue: [ first := false ] ifFalse: [ stream nextPutAll: String cr ].
+        stream nextPutAll: (assoc key) asString.  
+        stream nextPutAll: ' | '.
+        stream nextPutAll: (assoc value) printString.
+    ].
+    ^stream contents
+! !
+
 !Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:49:45'!
 initialize
 	books := Dictionary new.! !
-
-!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:11:21'!
-obtenerLibro: aBookIsbn
-	^aBookIsbn , ' | ' , ((books at: aBookIsbn) printString)
-	! !
