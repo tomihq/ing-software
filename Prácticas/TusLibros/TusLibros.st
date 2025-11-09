@@ -11,11 +11,11 @@ test001CarritoComienzaVacio
 	carrito := Carrito new. 
 	self assert: carrito cantLibros equals: 0.! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:56:00'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:18:19'!
 test002AgregarLibroPresenteEnCatalogoACarrito
 	| carrito book catalogo|
 	catalogo := OrderedCollection new.
-	catalogo add: '1'.
+	catalogo añadir: '1'.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -23,24 +23,27 @@ test002AgregarLibroPresenteEnCatalogoACarrito
 	book := Dictionary new.
 	book at: '1' put: 1.
 	
-	carrito add: book.
+	carrito añadir: book.
 	
 	self assert: carrito cantLibros equals: 1.! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:59:44'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:28:15'!
 test003NoSeAdmiteAgregarLibroNoPresenteEnElCatalogoAlCarrito
 	| carrito book catalogo|
 
 	catalogo := OrderedCollection new.
-	catalogo add: '1'.
+	catalogo añadir: '1'.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
 	
 	book := Dictionary new. "isbn"
 	book at: '2' put: 1.
-	self should: [ carrito add: book ] 
-       raise: Error withExceptionDo: [:anError | self assert: carrito cantLibros equals: 0.].
+	self should: [ carrito añadir: book ] 
+       raise: Error withExceptionDo: [:anError | 
+		self assert: carrito cantLibros equals: 0.
+		self assert: (anError messageText = 'Libro no presente en el catálogo').
+	].
 
 
 
@@ -50,12 +53,12 @@ test003NoSeAdmiteAgregarLibroNoPresenteEnElCatalogoAlCarrito
 	
 	! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:59:24'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:18:22'!
 test004AgregaMásDeUnaUnidadDeUnLibroAlCarrito
 	| carrito book catalogo|
 
 	catalogo := OrderedCollection new.
-	catalogo add: '1'.
+	catalogo añadir: '1'.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -63,7 +66,7 @@ test004AgregaMásDeUnaUnidadDeUnLibroAlCarrito
 	book := Dictionary new.
 	book at: '1' put: 2.
 	
-	carrito add: book.
+	carrito añadir: book.
 	
 	self assert: carrito cantLibros equals: 2.
 	
@@ -76,12 +79,13 @@ test004AgregaMásDeUnaUnidadDeUnLibroAlCarrito
 	
 	! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:14:33'!
-test005ObtenerInformacionDeElementoPresenteEnElCarrito
-	| carrito book catalogo |
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:19:49'!
+test005ObtenerElementosEnElCarrito
+	| carrito book catalogo book2 |
 
 	catalogo := OrderedCollection new.
-	catalogo add: '1'.
+	catalogo añadir: '1'.
+	catalogo añadir: '2'.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -89,9 +93,40 @@ test005ObtenerInformacionDeElementoPresenteEnElCarrito
 	book := Dictionary new.
 	book at: '1' put: 2.
 	
-	carrito add: book.
+	book2 := Dictionary new.
+	book2 at: '2' put: 3.
 	
-	self assert: (carrito contenido) equals: '1 | 2'.
+	carrito añadir: book.
+	carrito añadir: book2.
+	
+	self assert: (carrito mostrarContenido) equals: '1 | 2 | 2 | 3'.
+	
+
+
+
+
+	
+	
+	
+	! !
+
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:30:00'!
+test006NoSePuedeAgregarMenosDeUnaUnidadDeUnLibroAlCarrito
+	| carrito book catalogo |
+
+	catalogo := OrderedCollection new.
+	catalogo añadir: '1'.
+	
+	carrito := Carrito new. 
+	carrito catalogo: catalogo.
+	
+	book := Dictionary new.
+	book at: '1' put: 0.
+	
+	self should: [carrito añadir: book] raise: Error withExceptionDo: [:anError |
+		self assert:  (carrito cantLibros) equals: 0.
+		self assert: (anError messageText = 'La cantidad de unidades del libro debe ser positiva').
+	].
 	
 
 
@@ -110,8 +145,8 @@ Object subclass: #Carrito
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:57:40'!
-add: aBook
+!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:28:41'!
+añadir: aBook
     | key value |
     key := aBook keys first.
     value := aBook at: key.
@@ -119,6 +154,8 @@ add: aBook
     (catalogo includes: key) ifFalse: [
         self error: 'Libro no presente en el catálogo'
     ].
+
+   (value <= 0) ifTrue: [self error: 'La cantidad de unidades del libro debe ser positiva'].
     
     
     books at: key put: value.
@@ -134,20 +171,21 @@ cantLibros
 catalogo: unCatalogo
 	catalogo := unCatalogo.! !
 
-!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:17:03'!
-contenido
-    | stream first |
-    stream := WriteStream on: String new.
-    first := true.
-    books associations do: [:assoc |
-        first ifTrue: [ first := false ] ifFalse: [ stream nextPutAll: String cr ].
-        stream nextPutAll: (assoc key) asString.  
-        stream nextPutAll: ' | '.
-        stream nextPutAll: (assoc value) printString.
-    ].
-    ^stream contents
-! !
-
 !Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:49:45'!
 initialize
 	books := Dictionary new.! !
+
+!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:22:09'!
+mostrarContenido
+    | stream first sortedKeys |
+    stream := WriteStream on: String new.
+    first := true.
+    sortedKeys := (books keys asSortedCollection). 
+    sortedKeys do: [:key |
+        first ifTrue: [ first := false ] ifFalse: [ stream nextPutAll: ' | ' ].
+        stream nextPutAll: key asString.
+        stream nextPutAll: ' | '.
+        stream nextPutAll: (books at: key) printString.
+    ].
+    ^stream contents
+! !
