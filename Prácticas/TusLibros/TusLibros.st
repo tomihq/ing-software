@@ -11,33 +11,62 @@ test001CarritoComienzaVacio
 	carrito := Carrito new. 
 	self assert: carrito cantLibros equals: 0.! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:33:06'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:56:00'!
 test002AgregarLibroPresenteEnCatalogoACarrito
 	| carrito book catalogo|
 	catalogo := OrderedCollection new.
-	catalogo add: 1.
+	catalogo add: '1'.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
-	book := 1. "isbn"
+	
+	book := Dictionary new.
+	book at: '1' put: 1.
 	
 	carrito add: book.
 	
 	self assert: carrito cantLibros equals: 1.! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:37:21'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:59:44'!
 test003NoSeAdmiteAgregarLibroNoPresenteEnElCatalogoAlCarrito
 	| carrito book catalogo|
 
 	catalogo := OrderedCollection new.
-	catalogo add: 1.
+	catalogo add: '1'.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
 	
-	book := 2. "isbn"
+	book := Dictionary new. "isbn"
+	book at: '2' put: 1.
 	self should: [ carrito add: book ] 
        raise: Error withExceptionDo: [:anError | self assert: carrito cantLibros equals: 0.].
+
+
+
+
+	
+	
+	
+	! !
+
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:59:24'!
+test004AgregaMásDeUnaUnidadDeUnLibroAlCarrito
+	| carrito book catalogo|
+
+	catalogo := OrderedCollection new.
+	catalogo add: '1'.
+	
+	carrito := Carrito new. 
+	carrito catalogo: catalogo.
+	
+	book := Dictionary new.
+	book at: '1' put: 2.
+	
+	carrito add: book.
+	
+	self assert: carrito cantLibros equals: 2.
+	
 
 
 
@@ -55,20 +84,30 @@ Object subclass: #Carrito
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:31:41'!
+!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:57:40'!
 add: aBook
-	(catalogo includes: aBook) not ifTrue: [self error: 'Libro no presente en el catálogo']. 
-	books add: aBook
-	! !
+    | key value |
+    key := aBook keys first.
+    value := aBook at: key.
+    
+    (catalogo includes: key) ifFalse: [
+        self error: 'Libro no presente en el catálogo'
+    ].
+    
+    
+    books at: key put: value.
 
-!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:24:56'!
+! !
+
+!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:53:28'!
 cantLibros
-	^books size.! !
+    ^(books values) inject: 0 into: [:sum :val | sum + val]
+! !
 
 !Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:30:46'!
 catalogo: unCatalogo
 	catalogo := unCatalogo.! !
 
-!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:25:20'!
+!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 20:49:45'!
 initialize
-	books := OrderedCollection new.! !
+	books := Dictionary new.! !
