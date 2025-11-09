@@ -11,11 +11,11 @@ test001CarritoComienzaVacio
 	carrito := Carrito new. 
 	self assert: carrito cantLibros equals: 0.! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:10:49'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:16:56'!
 test002AgregarLibroPresenteEnCatalogoACarrito
 	| carrito book catalogo|
-	catalogo := OrderedCollection new.
-	catalogo add: '1'.
+	catalogo := Dictionary new.
+	catalogo at: '1' put: 1.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -27,12 +27,12 @@ test002AgregarLibroPresenteEnCatalogoACarrito
 	
 	self assert: carrito cantLibros equals: 1.! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:10:53'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:17:02'!
 test003NoSeAdmiteAgregarLibroNoPresenteEnElCatalogoAlCarrito
 	| carrito book catalogo|
 
-	catalogo := OrderedCollection new.
-	catalogo add: '1'.
+	catalogo := Dictionary new.
+	catalogo at: '1' put: 1.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -53,12 +53,12 @@ test003NoSeAdmiteAgregarLibroNoPresenteEnElCatalogoAlCarrito
 	
 	! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:10:57'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:17:09'!
 test004AgregaMásDeUnaUnidadDeUnLibroAlCarrito
 	| carrito book catalogo|
 
-	catalogo := OrderedCollection new.
-	catalogo add: '1'.
+	catalogo := Dictionary new.
+	catalogo at: '1' put: 2.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -79,13 +79,13 @@ test004AgregaMásDeUnaUnidadDeUnLibroAlCarrito
 	
 	! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:11:02'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:17:34'!
 test005ObtenerElementosEnElCarrito
 	| carrito book catalogo book2 |
 
-	catalogo := OrderedCollection new.
-	catalogo add: '1'.
-	catalogo add: '2'.
+	catalogo := Dictionary new.
+	catalogo at: '1' put: 2.
+	catalogo at: '2' put: 3.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -110,12 +110,12 @@ test005ObtenerElementosEnElCarrito
 	
 	! !
 
-!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:11:06'!
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:17:55'!
 test006NoSePuedeAgregarMenosDeUnaUnidadDeUnLibroAlCarrito
 	| carrito book catalogo |
 
-	catalogo := OrderedCollection new.
-	catalogo add: '1'.
+	catalogo := Dictionary new.
+	catalogo at: '1' put: 1.
 	
 	carrito := Carrito new. 
 	carrito catalogo: catalogo.
@@ -137,6 +137,25 @@ test006NoSePuedeAgregarMenosDeUnaUnidadDeUnLibroAlCarrito
 	
 	! !
 
+!CarritoTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:16:33'!
+test007NoSePuedeAgregarUnLibroQueNoTieneStock
+	| carrito book catalogo |
+
+	catalogo := Dictionary new.
+	catalogo at: '1' put: 1.
+	
+	carrito := Carrito new. 
+	carrito catalogo: catalogo.
+	
+	book := Dictionary new.
+	book at: '1' put: 2.
+	
+	self should: [carrito añadir: book.] raise: Error withExceptionDo: [:anError |
+		self assert:  (carrito cantLibros) equals: 0.
+		self assert: (anError messageText = 'No hay stock suficiente del libro seleccionado').
+	].
+	! !
+
 
 !classDefinition: #Carrito category: #TusLibros!
 Object subclass: #Carrito
@@ -145,20 +164,21 @@ Object subclass: #Carrito
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Carrito methodsFor: 'as yet unclassified' stamp: 'tomihq 11/8/2025 21:28:41'!
+!Carrito methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:16:06'!
 añadir: aBook
-    | key value |
-    key := aBook keys first.
-    value := aBook at: key.
+    | isbn unidades |
+    isbn := aBook keys first.
+    unidades := aBook at: isbn.
     
-    (catalogo includes: key) ifFalse: [
+    (catalogo includesKey: isbn) ifFalse: [
         self error: 'Libro no presente en el catálogo'
     ].
 
-   (value <= 0) ifTrue: [self error: 'La cantidad de unidades del libro debe ser positiva'].
+   (unidades <= 0) ifTrue: [self error: 'La cantidad de unidades del libro debe ser positiva'].
+   ((catalogo at: isbn) < unidades) ifTrue: [self error: 'No hay stock suficiente del libro seleccionado']. 
     
     
-    books at: key put: value.
+    books at: isbn put: unidades.
 
 ! !
 
