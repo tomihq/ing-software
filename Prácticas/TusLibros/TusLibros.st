@@ -9,36 +9,33 @@ TestCase subclass: #CartTest
 test001CartStartsEmpty
 	self assert: Cart new isEmpty.! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:15:09'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:22:47'!
 test002AddBookFromCatalogToCart
-	| carrito catalogo libros|
-	libros := OrderedCollection new.
-	libros add: '1'.
-	catalogo := OurCatalog con: libros.
+	| cart catalog catalogBooks|
+	catalogBooks := OrderedCollection new.
+	catalogBooks add: '1'.
+	catalog := OurCatalog with: catalogBooks.
 	
+	cart := Cart acceptingItemsOf: catalog. 
 	
-	carrito := Cart acceptingItemsOf: catalogo. 
+	cart add: 1 of: '1'.
 	
-	carrito add: 1 of: '1'.
-	
-	self assert: (carrito ocurrencesOf: '1') equals: 1.! !
+	self assert: (cart ocurrencesOf: '1') equals: 1.! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:12:54'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:21:49'!
 test003CannotAddToCartABookNotPresentInCatalog
-	| carrito book catalogo libros|
+	| cart catalog catalogBooks|
 
-	libros := OrderedCollection new.
-	libros add: '1'.
-	catalogo := OurCatalog con: libros.
+	catalogBooks := OrderedCollection new.
+	catalogBooks add: '1'.
+	catalog := OurCatalog with: catalogBooks.
 	
-	carrito := Cart acceptingItemsOf: catalogo.
+	cart := Cart acceptingItemsOf: catalog.
 	
-	book := Dictionary new. "isbn"
-	book at: '2' put: 1.
-	self should: [ carrito add: book ] 
+	self should: [ cart add: 1 of: '2' ] 
        raise: Error withExceptionDo: [:anError | 
-		self assert: carrito booksAmount equals: 0.
-		self assert: (anError messageText = catalogo bookNotPresentAtCatalogMessage ).
+		self assert: cart booksAmount equals: 0.
+		self assert: (anError messageText = catalog bookNotPresentAtCatalogMessage ).
 	].
 
 
@@ -49,70 +46,57 @@ test003CannotAddToCartABookNotPresentInCatalog
 	
 	! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:14:48'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:22:30'!
 test004AddMultipleUnitsOfSameBookToCart
-	| carrito catalogo libros|
+	| cart catalog catalogBooks|
 
-	libros := OrderedCollection new.
-	libros add: '1'.
-	catalogo := OurCatalog con: libros.
+	catalogBooks := OrderedCollection new.
+	catalogBooks add: '1'.
+	catalog := OurCatalog with: catalogBooks.
+	cart := Cart acceptingItemsOf: catalog.
 	
-	carrito := Cart acceptingItemsOf: catalogo.
+	cart add: 2 of: '1'.
 	
-	
-	carrito add: 2 of: '1'.
-	
-	self assert: (carrito ocurrencesOf: '1') equals: 2.
-	
+	self assert: (cart ocurrencesOf: '1') equals: 2.
 
-
-
-
-	
 	
 	
 	! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:06:43'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:22:37'!
 test005GetCartElements
-	| carrito catalogo libros|
+	| cart catalog catalogBooks|
 
-	libros := OrderedCollection new.
-	libros add: '1'.
-	libros add: '2'.
-	catalogo := OurCatalog con: libros.
+	catalogBooks := OrderedCollection new.
+	catalogBooks add: '1'.
+	catalogBooks add: '2'.
+	catalog := OurCatalog with: catalogBooks.
+	cart := Cart acceptingItemsOf: catalog.
 	
-	carrito := Cart acceptingItemsOf: catalogo.
 	
+	cart add: 2 of: '1'.
+	cart add: 3 of: '2'.
 	
-	carrito add: 2 of: '1'.
-	carrito add: 3 of: '2'.
-	
-	self assert: (carrito showBooks) equals: '1 | 2 | 2 | 3'.
-	
-
-
-
-
+	self assert: (cart showBooks) equals: '1 | 2 | 2 | 3'.
 	
 	
 	
 	! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:09:54'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:20:27'!
 test006BookQuantityShouldBePositiveToAddToCart
-	| carrito catalogo libros |
+	| cart catalog catalogBooks |
 
-	libros := OrderedCollection new.
-	libros add: '1'.
-	catalogo := OurCatalog con: libros.
+	catalogBooks := OrderedCollection new.
+	catalogBooks add: '1'.
+	catalog := OurCatalog with: catalogBooks.
 	
-	carrito := Cart acceptingItemsOf: catalogo.
+	cart := Cart acceptingItemsOf: catalog.
 
 	
-	self should: [carrito add: 0 of: '1'] raise: Error withExceptionDo: [:anError |
-		self assert:  (carrito booksAmount) equals: 0.
-		self assert: (anError messageText = carrito amountOfCopiesShouldBePositiveMessage).
+	self should: [cart add: 0 of: '1'] raise: Error withExceptionDo: [:anError |
+		self assert:  (cart booksAmount) equals: 0.
+		self assert: (anError messageText = cart amountOfCopiesShouldBePositiveMessage).
 	].
 	
 
@@ -223,9 +207,9 @@ includes: anIsbn
 initialize
 	books := OrderedCollection new.! !
 
-!OurCatalog methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:11:43'!
-initializeWith: unConjuntoDeLibros
-	books := unConjuntoDeLibros.! !
+!OurCatalog methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:17:33'!
+initializeWith: aListOfBooks
+	books := aListOfBooks.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -233,6 +217,6 @@ initializeWith: unConjuntoDeLibros
 OurCatalog class
 	instanceVariableNames: ''!
 
-!OurCatalog class methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:11:43'!
-con: unConjuntoDeLibros
-	^self new initializeWith: unConjuntoDeLibros.! !
+!OurCatalog class methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:17:41'!
+with: aListOfBooks
+	^self new initializeWith: aListOfBooks.! !
