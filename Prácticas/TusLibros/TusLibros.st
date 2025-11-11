@@ -5,11 +5,11 @@ TestCase subclass: #CartTest
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:10:07'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:13:39'!
 test001CartStartsEmpty
-	self assert: Cart new booksAmount equals: 0.! !
+	self assert: Cart new isEmpty.! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:05:18'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:15:09'!
 test002AddBookFromCatalogToCart
 	| carrito catalogo libros|
 	libros := OrderedCollection new.
@@ -21,9 +21,9 @@ test002AddBookFromCatalogToCart
 	
 	carrito add: 1 of: '1'.
 	
-	self assert: carrito booksAmount equals: 1.! !
+	self assert: (carrito ocurrencesOf: '1') equals: 1.! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:01:59'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:12:54'!
 test003CannotAddToCartABookNotPresentInCatalog
 	| carrito book catalogo libros|
 
@@ -38,7 +38,7 @@ test003CannotAddToCartABookNotPresentInCatalog
 	self should: [ carrito add: book ] 
        raise: Error withExceptionDo: [:anError | 
 		self assert: carrito booksAmount equals: 0.
-		self assert: (anError messageText = 'Libro no presente en el catálogo').
+		self assert: (anError messageText = catalogo bookNotPresentAtCatalogMessage ).
 	].
 
 
@@ -49,7 +49,7 @@ test003CannotAddToCartABookNotPresentInCatalog
 	
 	! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:05:43'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:14:48'!
 test004AddMultipleUnitsOfSameBookToCart
 	| carrito catalogo libros|
 
@@ -62,7 +62,7 @@ test004AddMultipleUnitsOfSameBookToCart
 	
 	carrito add: 2 of: '1'.
 	
-	self assert: carrito booksAmount equals: 2.
+	self assert: (carrito ocurrencesOf: '1') equals: 2.
 	
 
 
@@ -132,24 +132,24 @@ Object subclass: #Cart
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:08:38'!
+!Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:11:57'!
 add: aBook
-    catalog assertContieneLibroConIsbn: aBook.
+    catalog assertContainsBook: aBook.
     books at: aBook put: 1.
 
 ! !
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:08:04'!
+!Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:13:07'!
 add: anAmountOfCopies of: aBook    
-    catalog assertContieneLibroConIsbn: aBook.
-   (anAmountOfCopies <= 0) ifTrue: [self error: 'The number of copies should be positive.'].
+    catalog assertContainsBook: aBook.
+   (anAmountOfCopies <= 0) ifTrue: [self error: self amountOfCopiesShouldBePositiveMessage ].
     books at: aBook put: anAmountOfCopies.
 
 ! !
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:09:41'!
+!Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:13:13'!
 amountOfCopiesShouldBePositiveMessage
-^'The number of copies should be positive.'.! !
+	^'The number of copies should be positive.'.! !
 
 !Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/10/2025 23:56:13'!
 booksAmount
@@ -163,6 +163,14 @@ initialize
 !Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:01:34'!
 initializeWith: aCatalog
 	catalog := aCatalog.! !
+
+!Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:13:29'!
+isEmpty
+	^books size = 0.! !
+
+!Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:14:11'!
+ocurrencesOf: aBook
+	^books at: aBook.! !
 
 !Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/10/2025 23:56:30'!
 showBooks
@@ -192,24 +200,32 @@ acceptingItemsOf: aCatalog
 
 !classDefinition: #OurCatalog category: #TusLibros!
 Object subclass: #OurCatalog
-	instanceVariableNames: 'libros'
+	instanceVariableNames: 'books'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!OurCatalog methodsFor: 'as yet unclassified' stamp: 'Tom 11/10/2025 23:49:07'!
-assertContieneLibroConIsbn: unIsbn
- (libros includes: unIsbn) ifFalse: [
-        self error: 'Libro no presente en el catálogo'
+!OurCatalog methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:12:24'!
+assertContainsBook: unIsbn
+ (books includes: unIsbn) ifFalse: [
+        self error: self bookNotPresentAtCatalogMessage
     ].! !
 
-!OurCatalog methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:24:32'!
-inicializarCon: unConjuntoDeLibros
-	libros := unConjuntoDeLibros.! !
+!OurCatalog methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:12:43'!
+bookNotPresentAtCatalogMessage
+	^'Book is not present at the Catalog.'.! !
 
-!OurCatalog methodsFor: 'as yet unclassified' stamp: 'Tom 11/10/2025 23:49:18'!
+!OurCatalog methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:11:34'!
+includes: anIsbn
+	^books includes: anIsbn.! !
+
+!OurCatalog methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:11:34'!
 initialize
-	libros := OrderedCollection new.! !
+	books := OrderedCollection new.! !
+
+!OurCatalog methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:11:43'!
+initializeWith: unConjuntoDeLibros
+	books := unConjuntoDeLibros.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -217,6 +233,6 @@ initialize
 OurCatalog class
 	instanceVariableNames: ''!
 
-!OurCatalog class methodsFor: 'as yet unclassified' stamp: 'Tom 11/8/2025 22:24:08'!
+!OurCatalog class methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:11:43'!
 con: unConjuntoDeLibros
-	^self new inicializarCon: unConjuntoDeLibros.! !
+	^self new initializeWith: unConjuntoDeLibros.! !
