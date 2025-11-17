@@ -109,6 +109,25 @@ test006BookQuantityShouldBePositiveToAddToCart
 	! !
 
 
+!classDefinition: #CashierTest category: #TusLibros!
+TestCase subclass: #CashierTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!CashierTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/16/2025 23:08:58'!
+test001CannotCheckoutAEmptyCart
+	self should: [Cashier toCheckout: self createCart]
+	raise: Error - MessageNotUnderstood
+	withExceptionDo: [:anError | self assert: anError messageText = Cashier cartCannotBeEmptyErrorMessage].! !
+
+
+!CashierTest methodsFor: 'initializations' stamp: 'tomihq 11/16/2025 23:07:13'!
+createCart
+	^ Cart new.! !
+
+
 !classDefinition: #Cart category: #TusLibros!
 Object subclass: #Cart
 	instanceVariableNames: 'books catalog'
@@ -188,10 +207,33 @@ acceptingItemsOf: aCatalog
 
 !classDefinition: #Cashier category: #TusLibros!
 Object subclass: #Cashier
-	instanceVariableNames: ''
+	instanceVariableNames: 'cart'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
+
+!Cashier methodsFor: 'as yet unclassified' stamp: 'tomihq 11/16/2025 23:08:24'!
+toCheckoutCart: aCart
+	cart := aCart.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Cashier class' category: #TusLibros!
+Cashier class
+	instanceVariableNames: ''!
+
+!Cashier class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/16/2025 23:10:56'!
+assertIsNotEmpty: aCart
+	aCart isEmpty ifTrue: [^self error: self cartCannotBeEmptyErrorMessage ]! !
+
+!Cashier class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/16/2025 23:08:45'!
+cartCannotBeEmptyErrorMessage
+	^'Cart cannot be empty'! !
+
+!Cashier class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/16/2025 23:10:47'!
+toCheckout: aCart
+	self assertIsNotEmpty: aCart.
+	^self new toCheckoutCart: aCart.! !
 
 
 !classDefinition: #OurCatalog category: #TusLibros!
