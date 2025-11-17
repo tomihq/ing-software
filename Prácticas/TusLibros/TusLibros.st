@@ -116,37 +116,10 @@ Object subclass: #Cart
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:11:57'!
-add: aBook
-    catalog assertContainsBook: aBook.
-    books at: aBook put: 1.
-
-! !
-
-!Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:13:07'!
-add: anAmountOfCopies of: aBook    
-    catalog assertContainsBook: aBook.
-   (anAmountOfCopies <= 0) ifTrue: [self error: self amountOfCopiesShouldBePositiveMessage ].
-    books at: aBook put: anAmountOfCopies.
-
-! !
-
-!Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:13:13'!
-amountOfCopiesShouldBePositiveMessage
-	^'The number of copies should be positive.'.! !
-
 !Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/10/2025 23:56:13'!
 booksAmount
     ^(books values) inject: 0 into: [:sum :val | sum + val]
 ! !
-
-!Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/10/2025 23:55:59'!
-initialize
-	books := Dictionary new.! !
-
-!Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:01:34'!
-initializeWith: aCatalog
-	catalog := aCatalog.! !
 
 !Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:13:29'!
 isEmpty
@@ -156,7 +129,38 @@ isEmpty
 ocurrencesOf: aBook
 	^books at: aBook.! !
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'Tom 11/10/2025 23:56:30'!
+
+!Cart methodsFor: 'adding' stamp: 'Tom 11/11/2025 00:11:57'!
+add: aBook
+    catalog assertContainsBook: aBook.
+    books at: aBook put: 1.
+
+! !
+
+!Cart methodsFor: 'adding' stamp: 'Tom 11/11/2025 00:13:07'!
+add: anAmountOfCopies of: aBook    
+    catalog assertContainsBook: aBook.
+   (anAmountOfCopies <= 0) ifTrue: [self error: self amountOfCopiesShouldBePositiveMessage ].
+    books at: aBook put: anAmountOfCopies.
+
+! !
+
+
+!Cart methodsFor: 'messages' stamp: 'Tom 11/11/2025 00:13:13'!
+amountOfCopiesShouldBePositiveMessage
+	^'The number of copies should be positive.'.! !
+
+
+!Cart methodsFor: 'initializations' stamp: 'Tom 11/10/2025 23:55:59'!
+initialize
+	books := Dictionary new.! !
+
+!Cart methodsFor: 'initializations' stamp: 'Tom 11/11/2025 00:01:34'!
+initializeWith: aCatalog
+	catalog := aCatalog.! !
+
+
+!Cart methodsFor: 'print' stamp: 'Tom 11/10/2025 23:56:30'!
 showBooks
     | stream first sortedKeys |
     stream := WriteStream on: String new.
@@ -180,6 +184,14 @@ Cart class
 !Cart class methodsFor: 'as yet unclassified' stamp: 'Tom 11/11/2025 00:01:18'!
 acceptingItemsOf: aCatalog
 	^self new initializeWith: aCatalog.! !
+
+
+!classDefinition: #Cashier category: #TusLibros!
+Object subclass: #Cashier
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
 
 
 !classDefinition: #OurCatalog category: #TusLibros!
