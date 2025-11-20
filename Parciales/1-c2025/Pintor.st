@@ -1,17 +1,31 @@
 !classDefinition: #Pared category: #Pintor!
 Object subclass: #Pared
-	instanceVariableNames: 'pinturas'
+	instanceVariableNames: 'pinturas area'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Pintor'!
+
+!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:00:15'!
+area
+	^area.! !
 
 !Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 22:11:38'!
 cantidadPinturas: unaCantidadDePinturas
 	^pinturas size = unaCantidadDePinturas.! !
 
-!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 22:10:26'!
-initialize
-	pinturas := OrderedCollection new.! !
+!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:11:10'!
+colocarPintura: unaPinturaAColocar
+	(area containsRect: unaPinturaAColocar) not ifTrue: [^self error: 'Dimensiones de la pintura inválidas'].
+	pinturas addLast: unaPinturaAColocar.! !
+
+!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:06:46'!
+contieneA: unaPintura
+	^pinturas includes: unaPintura.! !
+
+!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 22:57:10'!
+initializeCon: unaExtension
+	pinturas := OrderedCollection new.
+	area := Rectangle center: 0@0 extent: unaExtension. ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -19,9 +33,9 @@ initialize
 Pared class
 	instanceVariableNames: ''!
 
-!Pared class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 22:08:50'!
-inicializar
-	^self new.! !
+!Pared class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:00:01'!
+inicializarParedConExtension: unaExtension
+	^self new initializeCon: unaExtension.! !
 
 
 !classDefinition: #TestPared category: #Pintor!
@@ -31,14 +45,51 @@ TestCase subclass: #TestPared
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 22:08:43'!
-inicializarPared
-	^Pared inicializar! !
+!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 22:58:11'!
+inicializarParedConExtension: unaExtension
+	^Pared inicializarParedConExtension: unaExtension! !
 
-!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 22:11:14'!
+!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:00:33'!
 test001LaParedArrancaSinPinturas
 	| pared |
-	pared := self inicializarPared.
+	pared := self inicializarParedConExtension: 3@2.
 	
 	self assert: (pared cantidadPinturas: 0) equals: true.
+	! !
+
+!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:00:46'!
+"este test la idea era que me permita definir cual es la maxima extensión de la pared desde el 0@0"
+test002ParedTieneUnAreaDefinidaBasadoEnSuExtension
+	| pared area|
+	area := Rectangle center: 0@0 extent: 3@2. 
+	pared := self inicializarParedConExtension: 3@2.
+	
+	self assert: (pared area) equals:  area.
+	
+	! !
+
+!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:07:43'!
+test003PinturaQueContieneDimensionesInvalidasNoEsColocadaEnLaPared
+	| pared area pintura|
+	pintura := Rectangle center: 0@1 extent: 3@3.
+	area := Rectangle center: 0@0 extent: 3@2. 
+	pared := self inicializarParedConExtension: 3@2.
+	
+	self should: [pared colocarPintura: pintura.]  raise: Error withExceptionDo: [:error | 
+			self assert: (pared cantidadPinturas: 0).
+			self deny: (pared contieneA: pintura).
+	]
+	
+	! !
+
+!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:10:24'!
+test004PinturaQueContieneDimensionesValidasEsColocadaEnLaPared
+	| pared area pintura|
+	pintura := Rectangle center: 0@0 extent: 2@1.
+	area := Rectangle center: 0@0 extent: 3@2. 
+	pared := self inicializarParedConExtension: 3@2.
+	pared colocarPintura: pintura.
+	self assert: (pared cantidadPinturas: 1).
+	self assert: (pared contieneA: pintura).
+	
 	! !
