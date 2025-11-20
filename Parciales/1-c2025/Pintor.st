@@ -31,9 +31,9 @@ initializeCon: unaExtension
 	"origin es la esquina superior izquierda y corner el punto de la esquina inferior derecha"
 	area := Rectangle origin: 0@0 corner: unaExtension.! !
 
-!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:35:41'!
+!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/20/2025 00:40:04'!
 obtenerPintura: unaPintura
-	^pinturas detect: [:pintura | pintura = unaPintura].! !
+	^pinturas detect: [:pintura | pintura == unaPintura].! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -52,6 +52,10 @@ Object subclass: #Pintor
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Pintor'!
+
+!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/20/2025 00:44:07'!
+alinearPinturasAIzquierda
+	 ! !
 
 !Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:49:32'!
 cantidadPinturasSeleccionadas
@@ -199,6 +203,30 @@ test002PintorNoPuedeSeleccionarUnaPinturaYaSeleccionada
 	self should: [pintor seleccionarPintura: (pared obtenerPintura: pintura)] raise: Error  withExceptionDo: [:error | 
 		self assert: pintor cantidadPinturasSeleccionadas equals: 1.
 		].
+	
+	
+	
+	
+! !
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/20/2025 00:38:22'!
+test003PintorPuedeAlinearPinturasALaIzquierda
+	| pared pintura pintor pintura2|
+	pintor := Pintor new.
+	pintura := Rectangle origin: 0@0 corner: 5@5.
+	pintura2 := Rectangle origin: 5@3 corner: 10@10.
+	
+	pared := Pared inicializarParedConExtension: 20@20.
+	pared colocarPintura: pintura.
+	pared colocarPintura: pintura2.
+	
+	pintor seleccionarPintura: (pared obtenerPintura: pintura).
+	pintor seleccionarPintura: (pared obtenerPintura: pintura2).
+	
+	pintor alinearPinturasAIzquierda.
+	
+	self assert: pintura equals: (Rectangle origin: 0@0 extent: 5@5).
+	self assert: pintura2 equals: (Rectangle origin: 0@3 extent: 10@10)
 	
 	
 	
