@@ -25,10 +25,11 @@ colocarPintura: unaPinturaAColocar
 contieneA: unaPintura
 	^pinturas includes: unaPintura.! !
 
-!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 22:57:10'!
+!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/20/2025 00:00:23'!
 initializeCon: unaExtension
 	pinturas := OrderedCollection new.
-	area := Rectangle center: 0@0 extent: unaExtension. ! !
+	"origin es la esquina superior izquierda y corner el punto de la esquina inferior derecha"
+	area := Rectangle origin: 0@0 corner: unaExtension.! !
 
 !Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:35:41'!
 obtenerPintura: unaPintura
@@ -88,22 +89,22 @@ test001LaParedArrancaSinPinturas
 	self assert: (pared cantidadPinturas: 0) equals: true.
 	! !
 
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:00:46'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:58:28'!
 "este test la idea era que me permita definir cual es la maxima extensión de la pared desde el 0@0"
 test002ParedTieneUnAreaDefinidaBasadoEnSuExtension
 	| pared area|
-	area := Rectangle center: 0@0 extent: 3@2. 
+	area := Rectangle origin: 0@0 corner: 3@2. 
 	pared := self inicializarParedConExtension: 3@2.
 	
 	self assert: (pared area) equals:  area.
 	
 	! !
 
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:07:43'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:58:48'!
 test003PinturaQueContieneDimensionesInvalidasNoEsColocadaEnLaPared
 	| pared area pintura|
-	pintura := Rectangle center: 0@1 extent: 3@3.
-	area := Rectangle center: 0@0 extent: 3@2. 
+	pintura := Rectangle origin: 0@1 corner: 3@3.
+	area := Rectangle origin: 0@0 corner: 3@2. 
 	pared := self inicializarParedConExtension: 3@2.
 	
 	self should: [pared colocarPintura: pintura.]  raise: Error withExceptionDo: [:error | 
@@ -113,11 +114,11 @@ test003PinturaQueContieneDimensionesInvalidasNoEsColocadaEnLaPared
 	
 	! !
 
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:10:24'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:59:01'!
 test004PinturaQueContieneDimensionesValidasEsColocadaEnLaPared
 	| pared area pintura|
-	pintura := Rectangle center: 0@0 extent: 2@1.
-	area := Rectangle center: 0@0 extent: 3@2. 
+	pintura := Rectangle origin: 0@0 corner: 2@1.
+	area := Rectangle origin: 0@0 corner: 3@2. 
 	pared := self inicializarParedConExtension: 3@2.
 	pared colocarPintura: pintura.
 	self assert: (pared cantidadPinturas: 1).
@@ -125,12 +126,12 @@ test004PinturaQueContieneDimensionesValidasEsColocadaEnLaPared
 	
 	! !
 
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:20:51'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:59:12'!
 test005PinturaQueContieneMismoOrigenYExtensionQueOtraQueEstaEnParedNoSePuedeAgregar
 	| pared area pintura pintura2|
-	pintura := Rectangle center: 0@0 extent: 2@1.
-	pintura2 := Rectangle center: 0@0 extent: 2@1.
-	area := Rectangle center: 0@0 extent: 3@2. 
+	pintura := Rectangle origin: 0@0 corner: 2@1.
+	pintura2 := Rectangle origin: 0@0 corner: 2@1.
+	area := Rectangle origin: 0@0 corner: 3@2. 
 	
 	pared := self inicializarParedConExtension: 3@2.
 	pared colocarPintura: pintura.
@@ -143,10 +144,10 @@ test005PinturaQueContieneMismoOrigenYExtensionQueOtraQueEstaEnParedNoSePuedeAgre
 	
 	! !
 
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:38:39'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:59:24'!
 test150NoSePuedeAlinearPinturasSiNoHayMasDeUnaPinturaSeleccionada
 	| pared pintura pinturaSeleccionada |
-	pintura := Rectangle center: 0@0 extent: 2@1.
+	pintura := Rectangle origin: 0@0 corner: 2@1.
 	
 	pared := self inicializarParedConExtension: 3@2.
 	pared colocarPintura: pintura.
@@ -165,18 +166,21 @@ TestCase subclass: #PintorTest
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:50:57'!
-test001PintorPuedeSeleccionarPinturaDeLaPared
-	| pared pintura pintor |
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:56:20'!
+test001PintorPuedeSeleccionarPinturasDeLaPared
+	| pared pintura pintor pintura2 |
 	pintor := Pintor new.
-	pintura := Rectangle center: 0@0 extent: 2@1.
+	pintura := Rectangle origin: 0@0 corner: 2@0.
+	pintura2 := Rectangle origin: 2@1 corner: 3@1.
 	
 	pared := Pared inicializarParedConExtension: 3@2.
 	pared colocarPintura: pintura.
+	pared colocarPintura: pintura2.
 	
 	pintor seleccionarPintura: (pared obtenerPintura: pintura).
+	pintor seleccionarPintura: (pared obtenerPintura: pintura2).
 	
-	self assert: pintor cantidadPinturasSeleccionadas equals: 1.
-	self assert: (pintor tienePinturaSeleccionada: pintura) equals: true.
+	self assert: pintor cantidadPinturasSeleccionadas equals: 2.
+	
 	
 ! !
