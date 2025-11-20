@@ -13,9 +13,12 @@ area
 cantidadPinturas: unaCantidadDePinturas
 	^pinturas size = unaCantidadDePinturas.! !
 
-!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:11:10'!
+!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:19:22'!
 colocarPintura: unaPinturaAColocar
 	(area containsRect: unaPinturaAColocar) not ifTrue: [^self error: 'Dimensiones de la pintura inválidas'].
+	pinturas do: [:pintura | 
+		(pintura = unaPinturaAColocar) ifTrue: [^self error: 'Ya existe una pintura con el mismo origen y extensión'].
+	].
 	pinturas addLast: unaPinturaAColocar.! !
 
 !Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:06:46'!
@@ -26,6 +29,10 @@ contieneA: unaPintura
 initializeCon: unaExtension
 	pinturas := OrderedCollection new.
 	area := Rectangle center: 0@0 extent: unaExtension. ! !
+
+!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:35:41'!
+obtenerPintura: unaPintura
+	^pinturas detect: [:pintura | pintura = unaPintura].! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -93,3 +100,35 @@ test004PinturaQueContieneDimensionesValidasEsColocadaEnLaPared
 	self assert: (pared contieneA: pintura).
 	
 	! !
+
+!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:20:51'!
+test005PinturaQueContieneMismoOrigenYExtensionQueOtraQueEstaEnParedNoSePuedeAgregar
+	| pared area pintura pintura2|
+	pintura := Rectangle center: 0@0 extent: 2@1.
+	pintura2 := Rectangle center: 0@0 extent: 2@1.
+	area := Rectangle center: 0@0 extent: 3@2. 
+	
+	pared := self inicializarParedConExtension: 3@2.
+	pared colocarPintura: pintura.
+	
+	self should: [pared colocarPintura: pintura2.] raise: Error  withExceptionDo: [:error | 
+		self assert: (pared cantidadPinturas: 1).
+		self assert: (pared contieneA: pintura).
+		
+	]
+	
+	! !
+
+!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:36:25'!
+test006SePuedeSeleccionarUnaPinturaDeLaParedQueSeEncuentreEnUnaRegion
+	| pared pintura pinturaSeleccionada |
+	pintura := Rectangle center: 0@0 extent: 2@1.
+	
+	pared := self inicializarParedConExtension: 3@2.
+	pared colocarPintura: pintura.
+	
+	pinturaSeleccionada := pared obtenerPintura: pintura.
+	
+	self assert: pinturaSeleccionada equals: pintura.
+	
+! !
