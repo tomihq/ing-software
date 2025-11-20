@@ -61,8 +61,9 @@ cantidadPinturasSeleccionadas
 initialize
 	pinturasSeleccionadas := OrderedCollection new.! !
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:48:34'!
+!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/20/2025 00:03:40'!
 seleccionarPintura: unaPinturaASeleccionar
+	(pinturasSeleccionadas includes: unaPinturaASeleccionar) ifTrue: [^self error: 'No se puede volver a seleccionar una pintura que ya seleccionaste']. "agregué esto porque sino el test no tenia sentido. El modelo le enseña. "
 	pinturasSeleccionadas addFirst: unaPinturaASeleccionar.! !
 
 !Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:49:58'!
@@ -181,6 +182,25 @@ test001PintorPuedeSeleccionarPinturasDeLaPared
 	pintor seleccionarPintura: (pared obtenerPintura: pintura2).
 	
 	self assert: pintor cantidadPinturasSeleccionadas equals: 2.
+	
+	
+! !
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/20/2025 00:04:43'!
+test002PintorNoPuedeSeleccionarUnaPinturaYaSeleccionada
+	| pared pintura pintor |
+	pintor := Pintor new.
+	pintura := Rectangle origin: 0@0 corner: 2@0.
+	
+	pared := Pared inicializarParedConExtension: 3@2.
+	pared colocarPintura: pintura.
+	
+	pintor seleccionarPintura: (pared obtenerPintura: pintura).
+	self should: [pintor seleccionarPintura: (pared obtenerPintura: pintura)] raise: Error  withExceptionDo: [:error | 
+		self assert: pintor cantidadPinturasSeleccionadas equals: 1.
+		].
+	
+	
 	
 	
 ! !
