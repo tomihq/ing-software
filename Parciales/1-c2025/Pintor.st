@@ -45,18 +45,42 @@ inicializarParedConExtension: unaExtension
 	^self new initializeCon: unaExtension.! !
 
 
-!classDefinition: #TestPared category: #Pintor!
-TestCase subclass: #TestPared
+!classDefinition: #Pintor category: #Pintor!
+Object subclass: #Pintor
+	instanceVariableNames: 'pinturasSeleccionadas'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Pintor'!
+
+!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:49:32'!
+cantidadPinturasSeleccionadas
+	^pinturasSeleccionadas size.! !
+
+!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:48:16'!
+initialize
+	pinturasSeleccionadas := OrderedCollection new.! !
+
+!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:48:34'!
+seleccionarPintura: unaPinturaASeleccionar
+	pinturasSeleccionadas addFirst: unaPinturaASeleccionar.! !
+
+!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:49:58'!
+tienePinturaSeleccionada: unaPinturaSeleccionada
+	^pinturasSeleccionadas includes: unaPinturaSeleccionada.! !
+
+
+!classDefinition: #ParedTest category: #Pintor!
+TestCase subclass: #ParedTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 22:58:11'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 22:58:11'!
 inicializarParedConExtension: unaExtension
 	^Pared inicializarParedConExtension: unaExtension! !
 
-!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:00:33'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:00:33'!
 test001LaParedArrancaSinPinturas
 	| pared |
 	pared := self inicializarParedConExtension: 3@2.
@@ -64,7 +88,7 @@ test001LaParedArrancaSinPinturas
 	self assert: (pared cantidadPinturas: 0) equals: true.
 	! !
 
-!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:00:46'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:00:46'!
 "este test la idea era que me permita definir cual es la maxima extensión de la pared desde el 0@0"
 test002ParedTieneUnAreaDefinidaBasadoEnSuExtension
 	| pared area|
@@ -75,7 +99,7 @@ test002ParedTieneUnAreaDefinidaBasadoEnSuExtension
 	
 	! !
 
-!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:07:43'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:07:43'!
 test003PinturaQueContieneDimensionesInvalidasNoEsColocadaEnLaPared
 	| pared area pintura|
 	pintura := Rectangle center: 0@1 extent: 3@3.
@@ -89,7 +113,7 @@ test003PinturaQueContieneDimensionesInvalidasNoEsColocadaEnLaPared
 	
 	! !
 
-!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:10:24'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:10:24'!
 test004PinturaQueContieneDimensionesValidasEsColocadaEnLaPared
 	| pared area pintura|
 	pintura := Rectangle center: 0@0 extent: 2@1.
@@ -101,7 +125,7 @@ test004PinturaQueContieneDimensionesValidasEsColocadaEnLaPared
 	
 	! !
 
-!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:20:51'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:20:51'!
 test005PinturaQueContieneMismoOrigenYExtensionQueOtraQueEstaEnParedNoSePuedeAgregar
 	| pared area pintura pintura2|
 	pintura := Rectangle center: 0@0 extent: 2@1.
@@ -119,8 +143,8 @@ test005PinturaQueContieneMismoOrigenYExtensionQueOtraQueEstaEnParedNoSePuedeAgre
 	
 	! !
 
-!TestPared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:36:25'!
-test006SePuedeSeleccionarUnaPinturaDeLaParedQueSeEncuentreEnUnaRegion
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:38:39'!
+test150NoSePuedeAlinearPinturasSiNoHayMasDeUnaPinturaSeleccionada
 	| pared pintura pinturaSeleccionada |
 	pintura := Rectangle center: 0@0 extent: 2@1.
 	
@@ -130,5 +154,29 @@ test006SePuedeSeleccionarUnaPinturaDeLaParedQueSeEncuentreEnUnaRegion
 	pinturaSeleccionada := pared obtenerPintura: pintura.
 	
 	self assert: pinturaSeleccionada equals: pintura.
+	
+! !
+
+
+!classDefinition: #PintorTest category: #Pintor!
+TestCase subclass: #PintorTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Pintor'!
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:50:57'!
+test001PintorPuedeSeleccionarPinturaDeLaPared
+	| pared pintura pintor |
+	pintor := Pintor new.
+	pintura := Rectangle center: 0@0 extent: 2@1.
+	
+	pared := Pared inicializarParedConExtension: 3@2.
+	pared colocarPintura: pintura.
+	
+	pintor seleccionarPintura: (pared obtenerPintura: pintura).
+	
+	self assert: pintor cantidadPinturasSeleccionadas equals: 1.
+	self assert: (pintor tienePinturaSeleccionada: pintura) equals: true.
 	
 ! !
