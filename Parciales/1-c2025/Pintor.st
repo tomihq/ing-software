@@ -306,25 +306,25 @@ Object subclass: #Pintor
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:26:07'!
+!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 00:58:38'!
 "agarro posicion x minima de origen. Me la guardo."
 alinearPinturasAIzquierda
 	| minX |
 	minX := (pinturasSeleccionadas collect: [:pintura | pintura origin x]) min.
 	
 	pinturasSeleccionadas do: [:pinturaSeleccionada | 
-			pinturaSeleccionada setOrigin: (minX @ pinturaSeleccionada origin y) corner: (pinturaSeleccionada corner x @ pinturaSeleccionada corner y).
+			pinturaSeleccionada setOrigin: (minX @ pinturaSeleccionada origin y) corner: pinturaSeleccionada corner.
 	].
 	 ! !
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:32:55'!
+!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 00:59:10'!
 "agarro posicion x minima de origen. Me la guardo."
 alinearPinturasALaDerecha
 	| maxX |
 	maxX := (pinturasSeleccionadas collect: [:pintura | pintura corner x ]) max.
 	
 	pinturasSeleccionadas do: [:pinturaSeleccionada | 
-			pinturaSeleccionada setOrigin: (maxX - pinturaSeleccionada origin x @ pinturaSeleccionada origin y) corner: (pinturaSeleccionada corner x @ pinturaSeleccionada corner y).
+			pinturaSeleccionada setOrigin: (maxX - pinturaSeleccionada origin x @ pinturaSeleccionada origin y) corner: pinturaSeleccionada corner.
 	].
 	 ! !
 
