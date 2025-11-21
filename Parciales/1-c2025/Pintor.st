@@ -5,15 +5,7 @@ Object subclass: #Pared
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:00:15'!
-area
-	^area.! !
-
-!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 22:11:38'!
-cantidadPinturas: unaCantidadDePinturas
-	^pinturas size = unaCantidadDePinturas.! !
-
-!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:19:22'!
+!Pared methodsFor: 'pared functions' stamp: 'tomihq 11/19/2025 23:19:22'!
 colocarPintura: unaPinturaAColocar
 	(area containsRect: unaPinturaAColocar) not ifTrue: [^self error: 'Dimensiones de la pintura inválidas'].
 	pinturas do: [:pintura | 
@@ -21,26 +13,35 @@ colocarPintura: unaPinturaAColocar
 	].
 	pinturas addLast: unaPinturaAColocar.! !
 
-!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:06:46'!
-contieneA: unaPintura
-	^pinturas includes: unaPintura.! !
-
-!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/20/2025 00:40:04'!
-obtenerPintura: unaPintura
-	^pinturas detect: [:pintura | pintura == unaPintura].! !
-
-
-!Pared methodsFor: 'acciones' stamp: 'Tom 11/20/2025 23:59:44'!
+!Pared methodsFor: 'pared functions' stamp: 'Tom 11/20/2025 23:59:44'!
 removerPintura: unaPintura
 	pinturas := pinturas select: [:pintura | (pintura = unaPintura) not].
 	! !
 
 
-!Pared methodsFor: 'inicializadores' stamp: 'tomihq 11/20/2025 00:00:23'!
+!Pared methodsFor: 'initializers' stamp: 'tomihq 11/20/2025 00:00:23'!
 initializeCon: unaExtension
 	pinturas := OrderedCollection new.
 	"origin es la esquina superior izquierda y corner el punto de la esquina inferior derecha"
 	area := Rectangle origin: 0@0 corner: unaExtension.! !
+
+
+!Pared methodsFor: 'testing' stamp: 'tomihq 11/19/2025 22:11:38'!
+cantidadPinturas: unaCantidadDePinturas
+	^pinturas size = unaCantidadDePinturas.! !
+
+!Pared methodsFor: 'testing' stamp: 'tomihq 11/19/2025 23:06:46'!
+contieneA: unaPintura
+	^pinturas includes: unaPintura.! !
+
+!Pared methodsFor: 'testing' stamp: 'tomihq 11/20/2025 00:40:04'!
+obtenerPintura: unaPintura
+	^pinturas detect: [:pintura | pintura == unaPintura].! !
+
+
+!Pared methodsFor: 'accessing' stamp: 'tomihq 11/19/2025 23:00:15'!
+area
+	^area.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -60,7 +61,7 @@ Object subclass: #Pintor
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:12:02'!
+!Pintor methodsFor: 'alignment' stamp: 'tomihq 11/21/2025 14:12:02'!
 alinearPinturasAIzquierda
     | minX |
     minX := (pinturasSeleccionadas collect: [:p | p origin x]) min.
@@ -68,7 +69,7 @@ alinearPinturasAIzquierda
     self alinearPinturasSegun: [:p | minX ].
 ! !
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:12:10'!
+!Pintor methodsFor: 'alignment' stamp: 'tomihq 11/21/2025 14:12:10'!
 "Usamos extent acá porque necesito preservar tamaños relativos. Si movés el rectángulo a la derecha pero el corner lo dejás igual, la estás acahicando en ancho.
 Para eso, necesitamos modificar también el corner basado en el nuevo origen x + el extent actual.
 extent = nuevoOrigen + extentVieja
@@ -80,7 +81,7 @@ alinearPinturasALaDerecha
     self alinearPinturasSegun: [:p | maxX - p extent x ].
 ! !
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:16:52'!
+!Pintor methodsFor: 'alignment' stamp: 'tomihq 11/21/2025 14:16:52'!
 "Usamos extent acá porque necesito preservar tamaños relativos. Si movés el rectángulo a la derecha pero el corner lo dejás igual, la estás acahicando en ancho.
 Para eso, necesitamos modificar también el corner basado en el nuevo origen x + el extent actual.
 extent = nuevoOrigen + extentVieja
@@ -93,42 +94,33 @@ alinearPinturasCalculandoOrigenHorizontalUsando: unBloque
     ].
 ! !
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:13:32'!
-"Usamos extent acá porque necesito preservar tamaños relativos. Si movés el rectángulo a la derecha pero el corner lo dejás igual, la estás acahicando en ancho.
-Para eso, necesitamos modificar también el corner basado en el nuevo origen x + el extent actual.
-extent = nuevoOrigen + extentVieja
- - Tomás"
-alinearPinturasSegun: configuracionBloquePosicionador
-     pinturasSeleccionadas do: [:p |
-        | x |
-        x := configuracionBloquePosicionador value: p.
-        p setOrigin: x @ p origin y corner: (x @ p origin y) + p extent
-    ].
-! !
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:49:32'!
+!Pintor methodsFor: 'initializers' stamp: 'Tom 11/20/2025 23:55:04'!
+initialize
+	pinturasSeleccionadas := OrderedCollection new.
+	historialAcciones := OrderedCollection new.! !
+
+
+!Pintor methodsFor: 'testing' stamp: 'tomihq 11/19/2025 23:49:58'!
+tienePinturaSeleccionada: unaPinturaSeleccionada
+	^pinturasSeleccionadas includes: unaPinturaSeleccionada.! !
+
+
+!Pintor methodsFor: 'accessing' stamp: 'tomihq 11/19/2025 23:49:32'!
 cantidadPinturasSeleccionadas
 	^pinturasSeleccionadas size.! !
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:56:41'!
+
+!Pintor methodsFor: 'pintor functions' stamp: 'Tom 11/20/2025 23:56:41'!
 "esto claramente rompe encapsulamiento, y lo hago aproposito para hacer una categorizacion del efecto del undo - Tomás"
 deshacerAccionAgregarPintura: unaPintura en: unaPared
 	unaPared removerPintura: unaPintura
 	! !
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:55:04'!
-initialize
-	pinturasSeleccionadas := OrderedCollection new.
-	historialAcciones := OrderedCollection new.! !
-
-!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/20/2025 00:03:40'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/20/2025 00:03:40'!
 seleccionarPintura: unaPinturaASeleccionar
 	(pinturasSeleccionadas includes: unaPinturaASeleccionar) ifTrue: [^self error: 'No se puede volver a seleccionar una pintura que ya seleccionaste']. "agregué esto porque sino el test no tenia sentido. El modelo le enseña. "
 	pinturasSeleccionadas addFirst: unaPinturaASeleccionar.! !
-
-!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:49:58'!
-tienePinturaSeleccionada: unaPinturaSeleccionada
-	^pinturasSeleccionadas includes: unaPinturaSeleccionada.! !
 
 
 !classDefinition: #ParedTest category: #Pintor!
