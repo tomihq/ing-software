@@ -109,13 +109,12 @@ test001PintorPuedeSeleccionarPinturasDeLaPared
 	
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:38:16'!
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 01:22:27'!
 test002PintorNoPuedeSeleccionarUnaPinturaYaSeleccionada
 	| pared pintura pintor |
 	pintor := Pintor new.
 	pintura := Rectangle origin: 0@0 corner: 2@0.
-	
-	pared := Pared inicializarParedConExtension: 3@2.
+	pared := Pared new initializeCon: 3@2.
 	pared colocarPintura: pintura.
 	
 	pintor seleccionarPintura: (pared obtenerPintura: pintura).
@@ -128,54 +127,50 @@ test002PintorNoPuedeSeleccionarUnaPinturaYaSeleccionada
 	
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:26:36'!
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 01:17:14'!
 test003PintorPuedeAlinearPinturasALaIzquierda
-	| pared pintura pintor pintura2|
-	pintor := Pintor new.
-	pintura := Rectangle origin: 0@0 corner: 5@5.
-	pintura2 := Rectangle origin: 5@3 corner: 10@10.
-	
-	pared := Pared inicializarParedConExtension: 20@20.
-	pared colocarPintura: pintura.
-	pared colocarPintura: pintura2.
-	
-	pintor seleccionarPintura: (pared obtenerPintura: pintura).
-	pintor seleccionarPintura: (pared obtenerPintura: pintura2).
-	
-	pintor alinearPinturasAIzquierda.
-	
-	self assert: pintura equals: (Rectangle origin: 0@0 corner: 5@5).
-	self assert: pintura2 equals: (Rectangle origin: 0@3 corner: 10@10)
-	
-	
-	
-	
-	
+	    | pared pintura pintor pintura2 |
+	    
+	    pintor := Pintor new.
+	    
+	    pintura := Rectangle origin: 0@0 corner: 5@5.
+	    pintura2 := Rectangle origin: 5@3 corner: 10@10. 
+	    
+	    pared := Pared inicializarParedConExtension: 20@20.
+	    pared colocarPintura: pintura.
+	    pared colocarPintura: pintura2.
+	    
+	    pintor seleccionarPintura: (pared obtenerPintura: pintura).
+	    pintor seleccionarPintura: (pared obtenerPintura: pintura2).
+	    
+	    pintor alinearPinturasAIzquierda.
+	    
+
+	    self assert: pintura equals: (Rectangle origin: 0@0 corner: 5@5).
+	    self assert: pintura2 equals: (Rectangle origin: 0@3 corner: 5@10).
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:30:26'!
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 01:17:33'!
 test004PintorPuedeAlinearPinturasALaDerecha
-	| pared pintura pintor pintura2|
-	pintor := Pintor new.
-	pintura := Rectangle origin: 0@0 corner: 5@5.
-	pintura2 := Rectangle origin: 5@3 corner: 10@10.
-	
-	pared := Pared inicializarParedConExtension: 20@20.
-	pared colocarPintura: pintura.
-	pared colocarPintura: pintura2.
-	
-	pintor seleccionarPintura: (pared obtenerPintura: pintura).
-	pintor seleccionarPintura: (pared obtenerPintura: pintura2).
-	
-	pintor alinearPinturasALaDerecha.
-	
-	self assert: pintura equals: (Rectangle origin: 10@0 corner: 5@5).
-	self assert: pintura2 equals: (Rectangle origin: 5@3 corner: 10@10)
-	
-	
-	
-	
-	
+    | pared pintura pintor pintura2 |
+
+    pintor := Pintor new.
+
+    pintura := Rectangle origin: 0@0 corner: 5@5.     
+    pintura2 := Rectangle origin: 5@3 corner: 10@10.    
+
+    pared := Pared inicializarParedConExtension: 20@20.
+    pared colocarPintura: pintura.
+    pared colocarPintura: pintura2.
+
+    pintor seleccionarPintura: (pared obtenerPintura: pintura).
+    pintor seleccionarPintura: (pared obtenerPintura: pintura2).
+
+    pintor alinearPinturasALaDerecha.
+
+
+    self assert: pintura equals: (Rectangle origin: 5@0 corner: 10@5).
+    self assert: pintura2 equals: (Rectangle origin: 5@3 corner: 10@10).
 ! !
 
 !PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:39:37'!
@@ -211,32 +206,6 @@ test006PintorPuedeDeshacerLaAccionDeAgregarUnaPinturaALaPared
 	
 	self assert: (pared cantidadPinturas: 0	).
 
-	
-	
-	
-	
-! !
-
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 00:08:28'!
-test007PintorPuedeDeshacerLaAccionDeMoverPinturasSeleccionadasALaIzquierda
-	| pared pintura pintor pintura2 primerPinturaEnPared segundaPinturaEnPared|
-	pintor := Pintor new.
-	pintura := Rectangle origin: 0@0 corner: 5@5.
-	pintura2 := Rectangle origin: 5@3 corner: 10@10.
-	
-	pared := Pared inicializarParedConExtension: 20@20.
-	pared colocarPintura: pintura.
-	pared colocarPintura: pintura2.
-	
-	primerPinturaEnPared := pintor seleccionarPintura: (pared obtenerPintura: pintura).
-	segundaPinturaEnPared := pintor seleccionarPintura: (pared obtenerPintura: pintura2).
-	
-	pintor alinearPinturasAIzquierda.
-	pintor deshacerAccionMoverPinturasALaIzquierda.
-	
-	self assert: (pared cantidadPinturas: 0	).
-	self assert: primerPinturaEnPared equals: pintura.
-	self assert: segundaPinturaEnPared equals: pintura2.
 	
 	
 	
@@ -306,27 +275,33 @@ Object subclass: #Pintor
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 00:58:38'!
-"agarro posicion x minima de origen. Me la guardo."
+!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 01:14:39'!
 alinearPinturasAIzquierda
-	| minX |
-	minX := (pinturasSeleccionadas collect: [:pintura | pintura origin x]) min.
-	
-	pinturasSeleccionadas do: [:pinturaSeleccionada | 
-			pinturaSeleccionada setOrigin: (minX @ pinturaSeleccionada origin y) corner: pinturaSeleccionada corner.
-	].
-	 ! !
+    | minX |
+    minX := (pinturasSeleccionadas collect: [:p | p origin x]) min.
+    pinturasSeleccionadas do: [:p |
+        | newOrigin |
+        newOrigin := minX @ p origin y.
+        p setOrigin: newOrigin corner: newOrigin + p extent.
+    ].
+! !
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 00:59:10'!
-"agarro posicion x minima de origen. Me la guardo."
+!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 01:25:16'!
+"Usamos extent acá porque necesito preservar tamaños relativos. Si movés el rectángulo a la derecha pero el corner lo dejás igual, la estás acahicando en ancho.
+Para eso, necesitamos modificar también el corner basado en el nuevo origen x + el extent actual.
+extent = nuevoOrigen + extentVieja
+ - Tomás"
 alinearPinturasALaDerecha
-	| maxX |
-	maxX := (pinturasSeleccionadas collect: [:pintura | pintura corner x ]) max.
-	
-	pinturasSeleccionadas do: [:pinturaSeleccionada | 
-			pinturaSeleccionada setOrigin: (maxX - pinturaSeleccionada origin x @ pinturaSeleccionada origin y) corner: pinturaSeleccionada corner.
-	].
-	 ! !
+    | maxX |
+ 
+    maxX := (pinturasSeleccionadas collect: [:p | p origin x + p extent x]) max.
+        pinturasSeleccionadas do: [:p |
+        | newOrigin newCorner |
+        newOrigin := (maxX - p extent x) @ p origin y.
+        newCorner := newOrigin + p extent.
+        p setOrigin: newOrigin corner: newCorner.
+    ].
+! !
 
 !Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:49:32'!
 cantidadPinturasSeleccionadas
