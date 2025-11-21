@@ -157,6 +157,31 @@ test003PintorPuedeAlinearPinturasALaIzquierda
 	
 ! !
 
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:30:26'!
+test004PintorPuedeAlinearPinturasALaDerecha
+	| pared pintura pintor pintura2|
+	pintor := Pintor new.
+	pintura := Rectangle origin: 0@0 corner: 5@5.
+	pintura2 := Rectangle origin: 5@3 corner: 10@10.
+	
+	pared := Pared inicializarParedConExtension: 20@20.
+	pared colocarPintura: pintura.
+	pared colocarPintura: pintura2.
+	
+	pintor seleccionarPintura: (pared obtenerPintura: pintura).
+	pintor seleccionarPintura: (pared obtenerPintura: pintura2).
+	
+	pintor alinearPinturasALaDerecha.
+	
+	self assert: pintura equals: (Rectangle origin: 10@0 corner: 5@5).
+	self assert: pintura2 equals: (Rectangle origin: 5@3 corner: 10@10)
+	
+	
+	
+	
+	
+! !
+
 
 !classDefinition: #Pared category: #Pintor!
 Object subclass: #Pared
@@ -221,6 +246,17 @@ alinearPinturasAIzquierda
 	
 	pinturasSeleccionadas do: [:pinturaSeleccionada | 
 			pinturaSeleccionada setOrigin: (minX @ pinturaSeleccionada origin y) corner: (pinturaSeleccionada corner x @ pinturaSeleccionada corner y).
+	].
+	 ! !
+
+!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:32:55'!
+"agarro posicion x minima de origen. Me la guardo."
+alinearPinturasALaDerecha
+	| maxX |
+	maxX := (pinturasSeleccionadas collect: [:pintura | pintura corner x ]) max.
+	
+	pinturasSeleccionadas do: [:pinturaSeleccionada | 
+			pinturaSeleccionada setOrigin: (maxX - pinturaSeleccionada origin x @ pinturaSeleccionada origin y) corner: (pinturaSeleccionada corner x @ pinturaSeleccionada corner y).
 	].
 	 ! !
 
