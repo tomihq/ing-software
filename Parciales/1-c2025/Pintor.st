@@ -61,24 +61,23 @@ Object subclass: #Pintor
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!Pintor methodsFor: 'alignment' stamp: 'tomihq 11/21/2025 14:12:02'!
+!Pintor methodsFor: 'alignment' stamp: 'tomihq 11/21/2025 14:56:18'!
 alinearPinturasAIzquierda
     | minX |
     minX := (pinturasSeleccionadas collect: [:p | p origin x]) min.
-
-    self alinearPinturasSegun: [:p | minX ].
+    self alinearPinturasCalculandoOrigenHorizontalUsando: [:p | minX ].
 ! !
 
-!Pintor methodsFor: 'alignment' stamp: 'tomihq 11/21/2025 14:12:10'!
+!Pintor methodsFor: 'alignment' stamp: 'tomihq 11/21/2025 14:40:17'!
 "Usamos extent acá porque necesito preservar tamaños relativos. Si movés el rectángulo a la derecha pero el corner lo dejás igual, la estás acahicando en ancho.
 Para eso, necesitamos modificar también el corner basado en el nuevo origen x + el extent actual.
 extent = nuevoOrigen + extentVieja
  - Tomás"
 alinearPinturasALaDerecha
     | maxX |
+    self assertPintorTieneMasDeUnaPinturaSeleccionada.
     maxX := (pinturasSeleccionadas collect: [:p | p origin x + p extent x]) max.
-
-    self alinearPinturasSegun: [:p | maxX - p extent x ].
+    self alinearPinturasCalculandoOrigenHorizontalUsando: [:p | maxX - p extent x ].
 ! !
 
 !Pintor methodsFor: 'alignment' stamp: 'tomihq 11/21/2025 14:16:52'!
@@ -121,6 +120,17 @@ deshacerAccionAgregarPintura: unaPintura en: unaPared
 seleccionarPintura: unaPinturaASeleccionar
 	(pinturasSeleccionadas includes: unaPinturaASeleccionar) ifTrue: [^self error: 'No se puede volver a seleccionar una pintura que ya seleccionaste']. "agregué esto porque sino el test no tenia sentido. El modelo le enseña. "
 	pinturasSeleccionadas addFirst: unaPinturaASeleccionar.! !
+
+
+!Pintor methodsFor: 'error messages' stamp: 'tomihq 11/21/2025 14:54:40'!
+pintorDebeTenerAlMenosDosPinturasSeleccionadasMensajeError
+
+	^ 'El Pintor debe tener al menos dos pinturas seleccionadas para alinearlas'! !
+
+
+!Pintor methodsFor: 'assertions' stamp: 'tomihq 11/21/2025 14:54:40'!
+assertPintorTieneMasDeUnaPinturaSeleccionada
+	pinturasSeleccionadas size < 2 ifTrue: [^self error: self pintorDebeTenerAlMenosDosPinturasSeleccionadasMensajeError.].! !
 
 
 !classDefinition: #ParedTest category: #Pintor!
@@ -192,20 +202,6 @@ test005PinturaQueContieneMismoOrigenYExtensionQueOtraQueEstaEnParedNoSePuedeAgre
 	]
 	
 	! !
-
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:59:24'!
-test150NoSePuedeAlinearPinturasSiNoHayMasDeUnaPinturaSeleccionada
-	| pared pintura pinturaSeleccionada |
-	pintura := Rectangle origin: 0@0 corner: 2@1.
-	
-	pared := self inicializarParedConExtension: 3@2.
-	pared colocarPintura: pintura.
-	
-	pinturaSeleccionada := pared obtenerPintura: pintura.
-	
-	self assert: pinturaSeleccionada equals: pintura.
-	
-! !
 
 
 !classDefinition: #PintorTest category: #Pintor!
@@ -298,9 +294,9 @@ test004PintorPuedeAlinearPinturasALaDerecha
     self assert: pintura2 equals: (Rectangle origin: 5@3 corner: 10@10).
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:39:37'!
-"TODO: zzz"
-test005PintorSoloPuedeAlinearSiTieneMasDeUnaPinturaSeleccionada
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:56:34'!
+"Alinear a la derecha con una pintura debe fallar. El objetivo de este es demostrar que alinearPinturasALaDerecha llama al método correspondiente que termina arrojando el error."
+test005PintorSoloPuedeAlinearAIzquierdaSiTieneMasDeUnaPinturaSeleccionada
 	| pared pintura pintor|
 	pintor := Pintor new.
 	pintura := Rectangle origin: 0@0 corner: 5@5.	
@@ -309,9 +305,12 @@ test005PintorSoloPuedeAlinearSiTieneMasDeUnaPinturaSeleccionada
 	pared colocarPintura: pintura.	
 	pintor seleccionarPintura: (pared obtenerPintura: pintura).
 	
-	pintor alinearPinturasALaDerecha.
+	self should: [ pintor alinearPinturasAIzquierda ] raise: Error withExceptionDo: [:exception |
+	        self assert: exception messageText equals: pintor pintorDebeTenerAlMenosDosPinturasSeleccionadasMensajeError .
+	        self assert: pintura equals: (Rectangle origin: 0@0 corner: 5@5).
+	    ].
+		
 	
-	self assert: pintura equals: (Rectangle origin: 0@0 corner: 5@5).
 
 	
 	
@@ -319,8 +318,32 @@ test005PintorSoloPuedeAlinearSiTieneMasDeUnaPinturaSeleccionada
 	
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 00:07:19'!
-test006PintorPuedeDeshacerLaAccionDeAgregarUnaPinturaALaPared
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:56:39'!
+"Alinear a la derecha con una pintura debe fallar. El objetivo de este es demostrar que alinearPinturasALaDerecha llama al método correspondiente que termina arrojando el error."
+test006PintorSoloPuedeAlinearADerechaSiTieneMasDeUnaPinturaSeleccionada
+	| pared pintura pintor|
+	pintor := Pintor new.
+	pintura := Rectangle origin: 0@0 corner: 5@5.	
+	pared := Pared inicializarParedConExtension: 20@20.
+	
+	pared colocarPintura: pintura.	
+	pintor seleccionarPintura: (pared obtenerPintura: pintura).
+	
+	self should: [ pintor alinearPinturasALaDerecha ] raise: Error withExceptionDo: [:exception |
+	        self assert: exception messageText equals: pintor pintorDebeTenerAlMenosDosPinturasSeleccionadasMensajeError .
+	        self assert: pintura equals: (Rectangle origin: 0@0 corner: 5@5).
+	    ].
+		
+	
+
+	
+	
+	
+	
+! !
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:55:49'!
+test007PintorPuedeDeshacerLaAccionDeAgregarUnaPinturaALaPared
 	| pared pintura pintor|
 	pintor := Pintor new.
 	pintura := Rectangle origin: 0@0 corner: 5@5.	
