@@ -60,25 +60,49 @@ Object subclass: #Pintor
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 13:54:18'!
+!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:12:02'!
 alinearPinturasAIzquierda
     | minX |
     minX := (pinturasSeleccionadas collect: [:p | p origin x]) min.
-    pinturasSeleccionadas do: [:p | p setOrigin: minX @ p origin y corner: minX @ p origin y + p extent.].
+
+    self alinearPinturasSegun: [:p | minX ].
 ! !
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 13:58:48'!
+!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:12:10'!
 "Usamos extent acá porque necesito preservar tamaños relativos. Si movés el rectángulo a la derecha pero el corner lo dejás igual, la estás acahicando en ancho.
 Para eso, necesitamos modificar también el corner basado en el nuevo origen x + el extent actual.
 extent = nuevoOrigen + extentVieja
  - Tomás"
 alinearPinturasALaDerecha
     | maxX |
- 
     maxX := (pinturasSeleccionadas collect: [:p | p origin x + p extent x]) max.
-        pinturasSeleccionadas do: [:p |
 
-        p setOrigin: (maxX - p extent x) @ p origin y corner: ((maxX - p extent x) @ p origin y) + p extent.
+    self alinearPinturasSegun: [:p | maxX - p extent x ].
+! !
+
+!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:16:52'!
+"Usamos extent acá porque necesito preservar tamaños relativos. Si movés el rectángulo a la derecha pero el corner lo dejás igual, la estás acahicando en ancho.
+Para eso, necesitamos modificar también el corner basado en el nuevo origen x + el extent actual.
+extent = nuevoOrigen + extentVieja
+ - Tomás"
+alinearPinturasCalculandoOrigenHorizontalUsando: unBloque
+     pinturasSeleccionadas do: [:p |
+        | x |
+        x := unBloque value: p.
+        p setOrigin: x @ p origin y corner: (x @ p origin y) + p extent
+    ].
+! !
+
+!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:13:32'!
+"Usamos extent acá porque necesito preservar tamaños relativos. Si movés el rectángulo a la derecha pero el corner lo dejás igual, la estás acahicando en ancho.
+Para eso, necesitamos modificar también el corner basado en el nuevo origen x + el extent actual.
+extent = nuevoOrigen + extentVieja
+ - Tomás"
+alinearPinturasSegun: configuracionBloquePosicionador
+     pinturasSeleccionadas do: [:p |
+        | x |
+        x := configuracionBloquePosicionador value: p.
+        p setOrigin: x @ p origin y corner: (x @ p origin y) + p extent
     ].
 ! !
 
