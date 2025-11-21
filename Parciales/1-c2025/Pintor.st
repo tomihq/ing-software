@@ -113,7 +113,7 @@ test001PintorPuedeSeleccionarPinturasDeLaPared
 	
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/20/2025 00:04:43'!
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:38:16'!
 test002PintorNoPuedeSeleccionarUnaPinturaYaSeleccionada
 	| pared pintura pintor |
 	pintor := Pintor new.
@@ -125,7 +125,7 @@ test002PintorNoPuedeSeleccionarUnaPinturaYaSeleccionada
 	pintor seleccionarPintura: (pared obtenerPintura: pintura).
 	self should: [pintor seleccionarPintura: (pared obtenerPintura: pintura)] raise: Error  withExceptionDo: [:error | 
 		self assert: pintor cantidadPinturasSeleccionadas equals: 1.
-		].
+	].
 	
 	
 	
@@ -182,6 +182,45 @@ test004PintorPuedeAlinearPinturasALaDerecha
 	
 ! !
 
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:39:37'!
+"TODO: zzz"
+test005PintorSoloPuedeAlinearSiTieneMasDeUnaPinturaSeleccionada
+	| pared pintura pintor|
+	pintor := Pintor new.
+	pintura := Rectangle origin: 0@0 corner: 5@5.	
+	pared := Pared inicializarParedConExtension: 20@20.
+	
+	pared colocarPintura: pintura.	
+	pintor seleccionarPintura: (pared obtenerPintura: pintura).
+	
+	pintor alinearPinturasALaDerecha.
+	
+	self assert: pintura equals: (Rectangle origin: 0@0 corner: 5@5).
+
+	
+	
+	
+	
+! !
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 00:00:01'!
+test006PintorPuedeDeshacerLaAccionDeAgregarUnaPinturaALaPared
+	| pared pintura pintor|
+	pintor := Pintor new.
+	pintura := Rectangle origin: 0@0 corner: 5@5.	
+	pared := Pared inicializarParedConExtension: 20@20.
+	
+	pared colocarPintura: pintura.	
+	pintor deshacerAccionAgregarPintura: pintura en: pared.
+	
+	self assert: (pared cantidadPinturas: 0	).
+	self assert: pintor historialAccionesEmpty .
+	
+	
+	
+	
+! !
+
 
 !classDefinition: #Pared category: #Pintor!
 Object subclass: #Pared
@@ -210,15 +249,22 @@ colocarPintura: unaPinturaAColocar
 contieneA: unaPintura
 	^pinturas includes: unaPintura.! !
 
-!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/20/2025 00:00:23'!
+!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/20/2025 00:40:04'!
+obtenerPintura: unaPintura
+	^pinturas detect: [:pintura | pintura == unaPintura].! !
+
+
+!Pared methodsFor: 'acciones' stamp: 'Tom 11/20/2025 23:59:44'!
+removerPintura: unaPintura
+	pinturas := pinturas select: [:pintura | (pintura = unaPintura) not].
+	! !
+
+
+!Pared methodsFor: 'inicializadores' stamp: 'tomihq 11/20/2025 00:00:23'!
 initializeCon: unaExtension
 	pinturas := OrderedCollection new.
 	"origin es la esquina superior izquierda y corner el punto de la esquina inferior derecha"
 	area := Rectangle origin: 0@0 corner: unaExtension.! !
-
-!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/20/2025 00:40:04'!
-obtenerPintura: unaPintura
-	^pinturas detect: [:pintura | pintura == unaPintura].! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -233,7 +279,7 @@ inicializarParedConExtension: unaExtension
 
 !classDefinition: #Pintor category: #Pintor!
 Object subclass: #Pintor
-	instanceVariableNames: 'pinturasSeleccionadas'
+	instanceVariableNames: 'pinturasSeleccionadas historialAcciones'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Pintor'!
@@ -264,9 +310,20 @@ alinearPinturasALaDerecha
 cantidadPinturasSeleccionadas
 	^pinturasSeleccionadas size.! !
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:48:16'!
+!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:56:41'!
+"esto claramente rompe encapsulamiento, y lo hago aproposito para hacer una categorizacion del efecto del undo - Tomás"
+deshacerAccionAgregarPintura: unaPintura en: unaPared
+	unaPared removerPintura: unaPintura
+	! !
+
+!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:55:53'!
+historialAccionesEmpty
+	^historialAcciones  size = 0.! !
+
+!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:55:04'!
 initialize
-	pinturasSeleccionadas := OrderedCollection new.! !
+	pinturasSeleccionadas := OrderedCollection new.
+	historialAcciones := OrderedCollection new.! !
 
 !Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/20/2025 00:03:40'!
 seleccionarPintura: unaPinturaASeleccionar
