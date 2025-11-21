@@ -61,9 +61,10 @@ Object subclass: #Pintor
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!Pintor methodsFor: 'alignment' stamp: 'tomihq 11/21/2025 14:56:18'!
+!Pintor methodsFor: 'alignment' stamp: 'tomihq 11/21/2025 14:57:21'!
 alinearPinturasAIzquierda
     | minX |
+    self assertPintorTieneMasDeUnaPinturaSeleccionada.
     minX := (pinturasSeleccionadas collect: [:p | p origin x]) min.
     self alinearPinturasCalculandoOrigenHorizontalUsando: [:p | minX ].
 ! !
@@ -140,31 +141,31 @@ TestCase subclass: #ParedTest
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 00:44:01'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:58:21'!
 test001LaParedArrancaSinPinturas
 	| pared |
-	pared := Rectangle origin: 0@0 corner: 3@2. 
+	pared := Pared inicializarParedConExtension: 3@2. 
 	
 	self assert: (pared cantidadPinturas: 0) equals: true.
 	! !
 
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:58:28'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:59:16'!
 "este test la idea era que me permita definir cual es la maxima extensión de la pared desde el 0@0"
 test002ParedTieneUnAreaDefinidaBasadoEnSuExtension
 	| pared area|
 	area := Rectangle origin: 0@0 corner: 3@2. 
-	pared := self inicializarParedConExtension: 3@2.
+	pared := Pared inicializarParedConExtension: 3@2.
 	
 	self assert: (pared area) equals:  area.
 	
 	! !
 
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:58:48'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:59:19'!
 test003PinturaQueContieneDimensionesInvalidasNoEsColocadaEnLaPared
 	| pared area pintura|
 	pintura := Rectangle origin: 0@1 corner: 3@3.
-	area := Rectangle origin: 0@0 corner: 3@2. 
-	pared := self inicializarParedConExtension: 3@2.
+	area := Pared inicializarParedConExtension: 3@1. 
+	pared := Pared inicializarParedConExtension: 3@2.
 	
 	self should: [pared colocarPintura: pintura.]  raise: Error withExceptionDo: [:error | 
 			self assert: (pared cantidadPinturas: 0).
@@ -173,26 +174,26 @@ test003PinturaQueContieneDimensionesInvalidasNoEsColocadaEnLaPared
 	
 	! !
 
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:59:01'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:59:24'!
 test004PinturaQueContieneDimensionesValidasEsColocadaEnLaPared
 	| pared area pintura|
 	pintura := Rectangle origin: 0@0 corner: 2@1.
 	area := Rectangle origin: 0@0 corner: 3@2. 
-	pared := self inicializarParedConExtension: 3@2.
+	pared := Pared inicializarParedConExtension: 3@2.
 	pared colocarPintura: pintura.
 	self assert: (pared cantidadPinturas: 1).
 	self assert: (pared contieneA: pintura).
 	
 	! !
 
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:59:12'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:59:28'!
 test005PinturaQueContieneMismoOrigenYExtensionQueOtraQueEstaEnParedNoSePuedeAgregar
 	| pared area pintura pintura2|
 	pintura := Rectangle origin: 0@0 corner: 2@1.
 	pintura2 := Rectangle origin: 0@0 corner: 2@1.
 	area := Rectangle origin: 0@0 corner: 3@2. 
 	
-	pared := self inicializarParedConExtension: 3@2.
+	pared := Pared inicializarParedConExtension: 3@2.
 	pared colocarPintura: pintura.
 	
 	self should: [pared colocarPintura: pintura2.] raise: Error  withExceptionDo: [:error | 
