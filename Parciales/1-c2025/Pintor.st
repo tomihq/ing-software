@@ -5,14 +5,10 @@ TestCase subclass: #ParedTest
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 22:58:11'!
-inicializarParedConExtension: unaExtension
-	^Pared inicializarParedConExtension: unaExtension! !
-
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:00:33'!
+!ParedTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 00:44:01'!
 test001LaParedArrancaSinPinturas
 	| pared |
-	pared := self inicializarParedConExtension: 3@2.
+	pared := Rectangle origin: 0@0 corner: 3@2. 
 	
 	self assert: (pared cantidadPinturas: 0) equals: true.
 	! !
@@ -203,7 +199,7 @@ test005PintorSoloPuedeAlinearSiTieneMasDeUnaPinturaSeleccionada
 	
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 00:00:01'!
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 00:07:19'!
 test006PintorPuedeDeshacerLaAccionDeAgregarUnaPinturaALaPared
 	| pared pintura pintor|
 	pintor := Pintor new.
@@ -214,7 +210,33 @@ test006PintorPuedeDeshacerLaAccionDeAgregarUnaPinturaALaPared
 	pintor deshacerAccionAgregarPintura: pintura en: pared.
 	
 	self assert: (pared cantidadPinturas: 0	).
-	self assert: pintor historialAccionesEmpty .
+
+	
+	
+	
+	
+! !
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 00:08:28'!
+test007PintorPuedeDeshacerLaAccionDeMoverPinturasSeleccionadasALaIzquierda
+	| pared pintura pintor pintura2 primerPinturaEnPared segundaPinturaEnPared|
+	pintor := Pintor new.
+	pintura := Rectangle origin: 0@0 corner: 5@5.
+	pintura2 := Rectangle origin: 5@3 corner: 10@10.
+	
+	pared := Pared inicializarParedConExtension: 20@20.
+	pared colocarPintura: pintura.
+	pared colocarPintura: pintura2.
+	
+	primerPinturaEnPared := pintor seleccionarPintura: (pared obtenerPintura: pintura).
+	segundaPinturaEnPared := pintor seleccionarPintura: (pared obtenerPintura: pintura2).
+	
+	pintor alinearPinturasAIzquierda.
+	pintor deshacerAccionMoverPinturasALaIzquierda.
+	
+	self assert: (pared cantidadPinturas: 0	).
+	self assert: primerPinturaEnPared equals: pintura.
+	self assert: segundaPinturaEnPared equals: pintura2.
 	
 	
 	
@@ -315,10 +337,6 @@ cantidadPinturasSeleccionadas
 deshacerAccionAgregarPintura: unaPintura en: unaPared
 	unaPared removerPintura: unaPintura
 	! !
-
-!Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:55:53'!
-historialAccionesEmpty
-	^historialAcciones  size = 0.! !
 
 !Pintor methodsFor: 'as yet unclassified' stamp: 'Tom 11/20/2025 23:55:04'!
 initialize
