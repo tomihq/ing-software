@@ -56,7 +56,7 @@ inicializarParedConExtension: unaExtension
 
 !classDefinition: #Pintor category: #Pintor!
 Object subclass: #Pintor
-	instanceVariableNames: 'pinturasSeleccionadas historialAcciones'
+	instanceVariableNames: 'pinturasSeleccionadas'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Pintor'!
@@ -95,10 +95,9 @@ alinearPinturasCalculandoOrigenHorizontalUsando: unBloque
 ! !
 
 
-!Pintor methodsFor: 'initializers' stamp: 'Tom 11/20/2025 23:55:04'!
+!Pintor methodsFor: 'initializers' stamp: 'tomihq 11/21/2025 15:14:23'!
 initialize
-	pinturasSeleccionadas := OrderedCollection new.
-	historialAcciones := OrderedCollection new.! !
+	pinturasSeleccionadas := OrderedCollection new.! !
 
 
 !Pintor methodsFor: 'testing' stamp: 'tomihq 11/19/2025 23:49:58'!
@@ -124,6 +123,10 @@ deshacerAccionAgregarPintura: unaPintura en: unaPared
 !Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/21/2025 15:06:26'!
 deshacerAccionSeleccionarPintura: unaPintura
 	pinturasSeleccionadas := pinturasSeleccionadas select: [:pintura | (pintura = unaPintura) not].! !
+
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/21/2025 15:13:58'!
+rehacerAccionSeleccionarPintura: unaPintura
+	self seleccionarPintura: unaPintura.! !
 
 !Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/20/2025 00:03:40'!
 seleccionarPintura: unaPinturaASeleccionar
@@ -381,6 +384,26 @@ test008PintorPuedeDeshacerLaAccionDeHaberSeleccionadoUnaPintura
 	pintor deshacerAccionSeleccionarPintura: pintura.
 	
 	self assert: (pintor sinPinturasSeleccionadas).
+
+	
+	
+	
+	
+! !
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 15:10:34'!
+test009PintorPuedeRehacerLaAccionDeHaberSeleccionadoUnaPintura
+	| pared pintura pintor|
+	pintor := Pintor new.
+	pintura := Rectangle origin: 0@0 corner: 5@5.	
+	pared := Pared inicializarParedConExtension: 20@20.
+	
+	pared colocarPintura: pintura.	
+	pintor seleccionarPintura: pintura.
+	pintor deshacerAccionSeleccionarPintura: pintura.
+	pintor rehacerAccionSeleccionarPintura: pintura.
+	
+	self assert: (pintor cantidadPinturasSeleccionadas > 0).
 
 	
 	
