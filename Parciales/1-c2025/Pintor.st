@@ -5,13 +5,9 @@ Object subclass: #Pared
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!Pared methodsFor: 'pared functions' stamp: 'tomihq 11/19/2025 23:19:22'!
-colocarPintura: unaPinturaAColocar
-	(area containsRect: unaPinturaAColocar) not ifTrue: [^self error: 'Dimensiones de la pintura inválidas'].
-	pinturas do: [:pintura | 
-		(pintura = unaPinturaAColocar) ifTrue: [^self error: 'Ya existe una pintura con el mismo origen y extensión'].
-	].
-	pinturas addLast: unaPinturaAColocar.! !
+!Pared methodsFor: 'pared functions' stamp: 'tomihq 11/22/2025 11:36:42'!
+agregarPintura: unaPintura
+	pinturas addLast: unaPintura.! !
 
 !Pared methodsFor: 'pared functions' stamp: 'Tom 11/20/2025 23:59:44'!
 removerPintura: unaPintura
@@ -43,20 +39,25 @@ obtenerPintura: unaPintura
 area
 	^area.! !
 
+
+!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 11:58:21'!
+contieneTamañoPara: unaDimensionDePintura
+	^area containsRect: unaDimensionDePintura! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Pared class' category: #Pintor!
 Pared class
 	instanceVariableNames: ''!
 
-!Pared class methodsFor: 'instance creation' stamp: 'tomihq 11/19/2025 23:00:01'!
+!Pared class methodsFor: 'instance creation' stamp: 'tomihq 11/22/2025 11:16:53'!
 inicializarParedConExtension: unaExtension
 	^self new initializeCon: unaExtension.! !
 
 
 !classDefinition: #Pintor category: #Pintor!
 Object subclass: #Pintor
-	instanceVariableNames: 'pinturasSeleccionadas'
+	instanceVariableNames: 'pinturasSeleccionadas pared'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Pintor'!
@@ -99,6 +100,15 @@ alinearPinturasCalculandoOrigenHorizontalUsando: unBloque
 initialize
 	pinturasSeleccionadas := OrderedCollection new.! !
 
+!Pintor methodsFor: 'initializers' stamp: 'tomihq 11/22/2025 11:18:48'!
+initializeWithPared: unaPared
+	pared := unaPared.
+	super initialize.! !
+
+
+!Pintor methodsFor: 'testing' stamp: 'tomihq 11/22/2025 11:46:49'!
+hayPintura: unaPintura
+	^pared contieneA: unaPintura.! !
 
 !Pintor methodsFor: 'testing' stamp: 'tomihq 11/19/2025 23:49:58'!
 tienePinturaSeleccionada: unaPinturaSeleccionada
@@ -114,15 +124,20 @@ sinPinturasSeleccionadas
 	^self cantidadPinturasSeleccionadas  = 0.! !
 
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 11:05:22'!
-descripciónErrorNoHayAcciónADeshacer
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:10:22'!
+cantidadPinturas: unaCantidadDePinturas
+	^pared cantidadPinturas: unaCantidadDePinturas.! !
 
-	^ 'No hay acción a deshacer'! !
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 11:58:36'!
+colocarPintura: unaPinturaAColocar
+	self assertDimensionesPinturaValidaDe: unaPinturaAColocar.
+	(self hayPintura: unaPinturaAColocar) ifTrue: [^self error: self descripciónErrorPinturaConMismoOrigenYExtensión].
+	
+	pared agregarPintura: unaPinturaAColocar.! !
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 11:00:45'!
-descripciónErrorPinturaYaSeleccionada
-
-	^ 'No se puede volver a seleccionar una pintura que ya seleccionaste'! !
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 11:05:42'!
+deshacer
+	^self error: self descripciónErrorNoHayAcciónADeshacer ! !
 
 !Pintor methodsFor: 'pintor functions' stamp: 'Tom 11/20/2025 23:56:41'!
 "esto claramente rompe encapsulamiento, y lo hago aproposito para hacer una categorizacion del efecto del undo - Tomás"
@@ -140,20 +155,49 @@ seleccionarPintura: unaPinturaASeleccionar
 	pinturasSeleccionadas addFirst: unaPinturaASeleccionar.! !
 
 
+!Pintor methodsFor: 'error messages' stamp: 'tomihq 11/22/2025 11:59:21'!
+descripciónErrorDimensionDePinturaInválida
+
+	^ 'Dimensiones de la pintura inválidas'! !
+
+!Pintor methodsFor: 'error messages' stamp: 'tomihq 11/22/2025 11:05:22'!
+descripciónErrorNoHayAcciónADeshacer
+
+	^ 'No hay acción a deshacer'! !
+
 !Pintor methodsFor: 'error messages' stamp: 'tomihq 11/22/2025 11:00:56'!
 descripciónErrorPintorDebeTenerAlMenosDosPinturasSeleccionadasMensajeError
 
 	^ 'El Pintor debe tener al menos dos pinturas seleccionadas para alinearlas'! !
 
+!Pintor methodsFor: 'error messages' stamp: 'tomihq 11/22/2025 11:24:04'!
+descripciónErrorPinturaConMismoOrigenYExtensión
+
+	^ 'Ya existe una pintura con el mismo origen y extensión'! !
+
+!Pintor methodsFor: 'error messages' stamp: 'tomihq 11/22/2025 11:00:45'!
+descripciónErrorPinturaYaSeleccionada
+
+	^ 'No se puede volver a seleccionar una pintura que ya seleccionaste'! !
+
+
+!Pintor methodsFor: 'assertions' stamp: 'tomihq 11/22/2025 11:59:21'!
+assertDimensionesPinturaValidaDe: unaPintura
+	(pared contieneTamañoPara: unaPintura) not ifTrue: [^self error: self descripciónErrorDimensionDePinturaInválida].! !
 
 !Pintor methodsFor: 'assertions' stamp: 'tomihq 11/22/2025 11:00:56'!
 assertPintorTieneMasDeUnaPinturaSeleccionada
 	pinturasSeleccionadas size < 2 ifTrue: [^self error: self descripciónErrorPintorDebeTenerAlMenosDosPinturasSeleccionadasMensajeError.].! !
 
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 11:05:42'!
-deshacer
-	^self error: self descripciónErrorNoHayAcciónADeshacer ! !
+!classDefinition: 'Pintor class' category: #Pintor!
+Pintor class
+	instanceVariableNames: ''!
+
+!Pintor class methodsFor: 'instance creation' stamp: 'tomihq 11/22/2025 11:44:08'!
+sobreParedDe: unaExtension
+	^self new initializeWithPared: (Pared inicializarParedConExtension: unaExtension)! !
 
 
 !classDefinition: #ParedTest category: #Pintor!
@@ -182,50 +226,6 @@ test002ParedTieneUnAreaDefinidaBasadoEnSuExtension
 	
 	! !
 
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:59:19'!
-test003PinturaQueContieneDimensionesInvalidasNoEsColocadaEnLaPared
-	| pared area pintura|
-	pintura := Rectangle origin: 0@1 corner: 3@3.
-	area := Pared inicializarParedConExtension: 3@1. 
-	pared := Pared inicializarParedConExtension: 3@2.
-	
-	self should: [pared colocarPintura: pintura.]  raise: Error withExceptionDo: [:error | 
-			self assert: (pared cantidadPinturas: 0).
-			self deny: (pared contieneA: pintura).
-	]
-	
-	! !
-
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:59:24'!
-test004PinturaQueContieneDimensionesValidasEsColocadaEnLaPared
-	| pared area pintura|
-	pintura := Rectangle origin: 0@0 corner: 2@1.
-	area := Rectangle origin: 0@0 corner: 3@2. 
-	pared := Pared inicializarParedConExtension: 3@2.
-	pared colocarPintura: pintura.
-	self assert: (pared cantidadPinturas: 1).
-	self assert: (pared contieneA: pintura).
-	
-	! !
-
-!ParedTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/21/2025 14:59:28'!
-test005PinturaQueContieneMismoOrigenYExtensionQueOtraQueEstaEnParedNoSePuedeAgregar
-	| pared area pintura pintura2|
-	pintura := Rectangle origin: 0@0 corner: 2@1.
-	pintura2 := Rectangle origin: 0@0 corner: 2@1.
-	area := Rectangle origin: 0@0 corner: 3@2. 
-	
-	pared := Pared inicializarParedConExtension: 3@2.
-	pared colocarPintura: pintura.
-	
-	self should: [pared colocarPintura: pintura2.] raise: Error  withExceptionDo: [:error | 
-		self assert: (pared cantidadPinturas: 1).
-		self assert: (pared contieneA: pintura).
-		
-	]
-	
-	! !
-
 
 !classDefinition: #PintorTest category: #Pintor!
 TestCase subclass: #PintorTest
@@ -234,35 +234,61 @@ TestCase subclass: #PintorTest
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/19/2025 23:56:20'!
-test001PintorPuedeSeleccionarPinturasDeLaPared
-	| pared pintura pintor pintura2 |
-	pintor := Pintor new.
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 11:59:39'!
+test001PinturaQueContieneDimensionesInvalidasNoEsColocadaEnLaPared
+	| area pintura pintor|
+	pintura := Rectangle origin: 0@1 corner: 3@3.
+	area := Pared inicializarParedConExtension: 3@1. 
+	pintor := Pintor sobreParedDe: 3@2.
+	
+	self should: [pintor colocarPintura: pintura.]  raise: Error withExceptionDo: [:error | 
+			self deny: (pintor hayPintura: pintura).
+			self assert: error messageText equals: pintor descripciónErrorDimensionDePinturaInválida 
+	]
+	
+	! !
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:01:59'!
+test002PinturaQueContieneDimensionesValidasEsColocadaEnLaPared
+	| area pintura pintor|
+	pintura := Rectangle origin: 0@0 corner: 2@1.
+	area := Rectangle origin: 0@0 corner: 3@2. 
+	pintor := Pintor sobreParedDe: 3@2.
+	pintor colocarPintura: pintura.
+	
+	self assert: (pintor hayPintura: pintura).
+	
+	! !
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:03:24'!
+test003PintorPuedeSeleccionarPinturasDeLaPared
+	| pintura pintor pintura2 |
+	
 	pintura := Rectangle origin: 0@0 corner: 2@0.
 	pintura2 := Rectangle origin: 2@1 corner: 3@1.
 	
-	pared := Pared inicializarParedConExtension: 3@2.
-	pared colocarPintura: pintura.
-	pared colocarPintura: pintura2.
+	pintor := Pintor sobreParedDe: 3@2.
+	pintor colocarPintura: pintura.
+	pintor colocarPintura: pintura2.
 	
-	pintor seleccionarPintura: (pared obtenerPintura: pintura).
-	pintor seleccionarPintura: (pared obtenerPintura: pintura2).
+	pintor seleccionarPintura: pintura.
+	pintor seleccionarPintura: pintura2.
 	
 	self assert: pintor cantidadPinturasSeleccionadas equals: 2.
 	
 	
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 10:59:58'!
-test002PintorNoPuedeSeleccionarUnaPinturaYaSeleccionada
-	| pared pintura pintor |
-	pintor := Pintor new.
-	pintura := Rectangle origin: 0@0 corner: 2@0.
-	pared := Pared new initializeCon: 3@2.
-	pared colocarPintura: pintura.
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:04:22'!
+test004PintorNoPuedeSeleccionarUnaPinturaYaSeleccionada
+	| pintura pintor |
 	
-	pintor seleccionarPintura: (pared obtenerPintura: pintura).
-	self should: [pintor seleccionarPintura: (pared obtenerPintura: pintura)] raise: Error  withExceptionDo: [:error | 
+	pintura := Rectangle origin: 0@0 corner: 2@0.
+	pintor := Pintor sobreParedDe: 3@2.
+	pintor colocarPintura: pintura.
+	
+	pintor seleccionarPintura: pintura.
+	self should: [pintor seleccionarPintura: pintura] raise: Error  withExceptionDo: [:error | 
 		self assert: pintor cantidadPinturasSeleccionadas equals: 1.
 		self assert: error messageText equals: 'No se puede volver a seleccionar una pintura que ya seleccionaste'
 	].
@@ -272,44 +298,40 @@ test002PintorNoPuedeSeleccionarUnaPinturaYaSeleccionada
 	
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 01:17:14'!
-test003PintorPuedeAlinearPinturasALaIzquierda
-	    | pared pintura pintor pintura2 |
-	    
-	    pintor := Pintor new.
-	    
-	    pintura := Rectangle origin: 0@0 corner: 5@5.
-	    pintura2 := Rectangle origin: 5@3 corner: 10@10. 
-	    
-	    pared := Pared inicializarParedConExtension: 20@20.
-	    pared colocarPintura: pintura.
-	    pared colocarPintura: pintura2.
-	    
-	    pintor seleccionarPintura: (pared obtenerPintura: pintura).
-	    pintor seleccionarPintura: (pared obtenerPintura: pintura2).
-	    
-	    pintor alinearPinturasAIzquierda.
-	    
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:09:53'!
+test005PinturaQueContieneMismoOrigenYExtensionQueOtraQueEstaEnParedNoSePuedeAgregar
+	|  area pintura pintura2 pintor|
+	pintura := Rectangle origin: 0@0 corner: 2@1.
+	pintura2 := Rectangle origin: 0@0 corner: 2@1.
+	area := Rectangle origin: 0@0 corner: 3@2. 
+	pintor := Pintor sobreParedDe: 3@2.
+	pintor colocarPintura: pintura.
+	
+	self should: [pintor colocarPintura: pintura2.] raise: Error  withExceptionDo: [:error | 
+		
+		self assert: (pintor hayPintura: pintura).
+		self assert: (pintor cantidadPinturas: 1).
+		
+	]
+	
+	! !
 
-	    self assert: pintura equals: (Rectangle origin: 0@0 corner: 5@5).
-	    self assert: pintura2 equals: (Rectangle origin: 0@3 corner: 5@10).
-! !
-
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'Tom 11/21/2025 01:17:33'!
-test004PintorPuedeAlinearPinturasALaDerecha
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:11:10'!
+test006PintorPuedeAlinearPinturasALaDerecha
     | pared pintura pintor pintura2 |
 
-    pintor := Pintor new.
+    
 
     pintura := Rectangle origin: 0@0 corner: 5@5.     
     pintura2 := Rectangle origin: 5@3 corner: 10@10.    
 
     pared := Pared inicializarParedConExtension: 20@20.
-    pared colocarPintura: pintura.
-    pared colocarPintura: pintura2.
+    pintor := Pintor sobreParedDe: 20@20.
+    pintor colocarPintura: pintura.
+    pintor colocarPintura: pintura2.
 
-    pintor seleccionarPintura: (pared obtenerPintura: pintura).
-    pintor seleccionarPintura: (pared obtenerPintura: pintura2).
+    pintor seleccionarPintura: pintura.
+    pintor seleccionarPintura: pintura2.
 
     pintor alinearPinturasALaDerecha.
 
@@ -318,40 +340,39 @@ test004PintorPuedeAlinearPinturasALaDerecha
     self assert: pintura2 equals: (Rectangle origin: 5@3 corner: 10@10).
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 11:00:56'!
-"Alinear a la derecha con una pintura debe fallar. El objetivo de este es demostrar que alinearPinturasALaDerecha llama al método correspondiente que termina arrojando el error."
-test005PintorSoloPuedeAlinearAIzquierdaSiTieneMasDeUnaPinturaSeleccionada
-	| pared pintura pintor|
-	pintor := Pintor new.
-	pintura := Rectangle origin: 0@0 corner: 5@5.	
-	pared := Pared inicializarParedConExtension: 20@20.
-	
-	pared colocarPintura: pintura.	
-	pintor seleccionarPintura: (pared obtenerPintura: pintura).
-	
-	self should: [ pintor alinearPinturasAIzquierda ] raise: Error withExceptionDo: [:exception |
-	        self assert: exception messageText equals: pintor descripciónErrorPintorDebeTenerAlMenosDosPinturasSeleccionadasMensajeError .
-	        self assert: pintura equals: (Rectangle origin: 0@0 corner: 5@5).
-	    ].
-		
-	
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:11:33'!
+test007PintorPuedeAlinearPinturasALaIzquierda
+	    | pared pintura pintor pintura2 |
+	   
+	    pintura := Rectangle origin: 0@0 corner: 5@5.
+	    pintura2 := Rectangle origin: 5@3 corner: 10@10. 
+	    
+	    pared := Pared inicializarParedConExtension: 20@20.
+	    pintor := Pintor sobreParedDe: 20@20.
+	    pintor colocarPintura: pintura.
+	    pintor colocarPintura: pintura2.
+	    
+	    pintor seleccionarPintura: pintura.
+	    pintor seleccionarPintura: pintura2.
+	    
+	    pintor alinearPinturasAIzquierda.
+	    
 
-	
-	
-	
-	
+	    self assert: pintura equals: (Rectangle origin: 0@0 corner: 5@5).
+	    self assert: pintura2 equals: (Rectangle origin: 0@3 corner: 5@10).
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 11:00:56'!
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:11:53'!
 "Alinear a la derecha con una pintura debe fallar. El objetivo de este es demostrar que alinearPinturasALaDerecha llama al método correspondiente que termina arrojando el error."
-test006PintorSoloPuedeAlinearADerechaSiTieneMasDeUnaPinturaSeleccionada
+test008PintorSoloPuedeAlinearADerechaSiTieneMasDeUnaPinturaSeleccionada
 	| pared pintura pintor|
-	pintor := Pintor new.
+	
 	pintura := Rectangle origin: 0@0 corner: 5@5.	
 	pared := Pared inicializarParedConExtension: 20@20.
+	pintor := Pintor sobreParedDe: 20@20.
 	
-	pared colocarPintura: pintura.	
-	pintor seleccionarPintura: (pared obtenerPintura: pintura).
+	pintor colocarPintura: pintura.	
+	pintor seleccionarPintura: pintura.
 	
 	self should: [ pintor alinearPinturasALaDerecha ] raise: Error withExceptionDo: [:exception |
 	        self assert: exception messageText equals: pintor descripciónErrorPintorDebeTenerAlMenosDosPinturasSeleccionadasMensajeError .
@@ -366,17 +387,24 @@ test006PintorSoloPuedeAlinearADerechaSiTieneMasDeUnaPinturaSeleccionada
 	
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 10:50:27'!
-test007PintorPuedeDeshacerAgregarPinturaALaPared
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:12:08'!
+"Alinear a la derecha con una pintura debe fallar. El objetivo de este es demostrar que alinearPinturasALaDerecha llama al método correspondiente que termina arrojando el error."
+test009PintorSoloPuedeAlinearAIzquierdaSiTieneMasDeUnaPinturaSeleccionada
 	| pared pintura pintor|
-	pintor := Pintor new.
+	
 	pintura := Rectangle origin: 0@0 corner: 5@5.	
 	pared := Pared inicializarParedConExtension: 20@20.
+	pintor := Pintor sobreParedDe: 20@20.
 	
-	pared colocarPintura: pintura.	
-	pintor deshacerAccionAgregarPintura: pintura en: pared.
+	pintor colocarPintura: pintura.	
+	pintor seleccionarPintura: pintura.
 	
-	self assert: (pared cantidadPinturas: 0	).
+	self should: [ pintor alinearPinturasAIzquierda ] raise: Error withExceptionDo: [:exception |
+	        self assert: exception messageText equals: pintor descripciónErrorPintorDebeTenerAlMenosDosPinturasSeleccionadasMensajeError .
+	        self assert: pintura equals: (Rectangle origin: 0@0 corner: 5@5).
+	    ].
+		
+	
 
 	
 	
@@ -384,14 +412,33 @@ test007PintorPuedeDeshacerAgregarPinturaALaPared
 	
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 10:50:13'!
-test008PintorPuedeDeshacerSeleccionDePintura
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:12:20'!
+test010PintorNoPuedeDeshacerSiNoHizoAcciones
 	| pared pintura pintor|
-	pintor := Pintor new.
+	
 	pintura := Rectangle origin: 0@0 corner: 5@5.	
 	pared := Pared inicializarParedConExtension: 20@20.
+	pintor := Pintor sobreParedDe: 20@20.
 	
-	pared colocarPintura: pintura.	
+	self should: [pintor deshacer] 
+	raise: Error - MessageNotUnderstood 
+	withMessageText: pintor descripciónErrorNoHayAcciónADeshacer
+
+	
+	
+	
+	
+! !
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:12:51'!
+test011PintorPuedeDeshacerSeleccionDePintura
+	| pared pintura pintor|
+	
+	pintura := Rectangle origin: 0@0 corner: 5@5.	
+	pared := Pared inicializarParedConExtension: 20@20.
+	pintor := Pintor sobreParedDe: 20@20.
+	
+	pintor colocarPintura: pintura.	
 	pintor seleccionarPintura: pintura.
 	pintor deshacerAccionSeleccionarPintura: pintura.
 	
@@ -403,16 +450,19 @@ test008PintorPuedeDeshacerSeleccionDePintura
 	
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 11:05:58'!
-test009PintorNoPuedeDeshacerSiNoHizoAcciones
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:13:15'!
+test012PintorPuedeDeshacerAgregarPinturaALaPared
 	| pared pintura pintor|
-	pintor := Pintor new.
+	
 	pintura := Rectangle origin: 0@0 corner: 5@5.	
 	pared := Pared inicializarParedConExtension: 20@20.
+	pintor := Pintor sobreParedDe: 20@20.
 	
-	self should: [pintor deshacer] 
-	raise: Error - MessageNotUnderstood 
-	withMessageText: pintor descripciónErrorNoHayAcciónADeshacer
+	pintor colocarPintura: pintura.	
+	pintor deshacer.
+	
+	self assert: (pared cantidadPinturas: 0	).
+	self deny: (pintor tienePinturaSeleccionada: pintura).
 
 	
 	
