@@ -1,34 +1,3 @@
-!classDefinition: #Agregar category: #Pintor!
-Object subclass: #Agregar
-	instanceVariableNames: 'pintura pared'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Pintor'!
-
-!Agregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:29:47'!
-deshacer
-	pared removerPintura: pintura.! !
-
-!Agregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:25:03'!
-inicializarCon: unaPinturaAColocar en: unaPared
-	pintura := unaPinturaAColocar.
-	pared := unaPared.! !
-
-!Agregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:25:55'!
-realizar
-	pared agregarPintura: pintura.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Agregar class' category: #Pintor!
-Agregar class
-	instanceVariableNames: ''!
-
-!Agregar class methodsFor: 'instance creation' stamp: 'tomihq 11/22/2025 12:24:33'!
-pintura: unaPinturaAColocar en: pared
-	^self new inicializarCon: unaPinturaAColocar en: pared.! !
-
-
 !classDefinition: #Pared category: #Pintor!
 Object subclass: #Pared
 	instanceVariableNames: 'pinturas area'
@@ -40,9 +9,9 @@ Object subclass: #Pared
 agregarPintura: unaPintura
 	pinturas addLast: unaPintura.! !
 
-!Pared methodsFor: 'pared functions' stamp: 'Tom 11/20/2025 23:59:44'!
+!Pared methodsFor: 'pared functions' stamp: 'tomihq 11/22/2025 12:30:42'!
 removerPintura: unaPintura
-	pinturas := pinturas select: [:pintura | (pintura = unaPintura) not].
+	pinturas remove: unaPintura.
 	! !
 
 
@@ -156,17 +125,21 @@ sinPinturasSeleccionadas
 	^self cantidadPinturasSeleccionadas  = 0.! !
 
 
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:37:52'!
+agregarPinturaSeleccionada: unaPintura
+	pinturasSeleccionadas addLast: unaPintura.! !
+
 !Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:10:22'!
 cantidadPinturas: unaCantidadDePinturas
 	^pared cantidadPinturas: unaCantidadDePinturas.! !
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:27:21'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:31:40'!
 colocarPintura: unaPinturaAColocar
 	| accion |
 	self assertDimensionesPinturaValidaDe: unaPinturaAColocar.
 	(self hayPintura: unaPinturaAColocar) ifTrue: [^self error: self descripciónErrorPinturaConMismoOrigenYExtensión].
 	
-	accion := Agregar pintura: unaPinturaAColocar en: pared.
+	accion := PintorAgregar pintura: unaPinturaAColocar en: pared.
 	accion realizar.
 	accionesADeshacer addLast: accion.! !
 
@@ -175,10 +148,19 @@ deshacer
 	accionesADeshacer ifEmpty: [^self error: self descripciónErrorNoHayAcciónADeshacer ].
 	accionesADeshacer removeLast deshacer. ! !
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 11:00:45'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:38:48'!
+removerPinturaSeleccionada: unaPintura
+	pinturasSeleccionadas remove: unaPintura.! !
+
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:41:56'!
 seleccionarPintura: unaPinturaASeleccionar
+	| accion |
 	(pinturasSeleccionadas includes: unaPinturaASeleccionar) ifTrue: [^self error: self descripciónErrorPinturaYaSeleccionada]. "agregué esto porque sino el test no tenia sentido. El modelo le enseña. "
-	pinturasSeleccionadas addFirst: unaPinturaASeleccionar.! !
+	accion := PintorSeleccionar una: unaPinturaASeleccionar para: self.
+	accion realizar.
+	
+	accionesADeshacer addLast: accion.
+	! !
 
 
 !Pintor methodsFor: 'error messages' stamp: 'tomihq 11/22/2025 11:59:21'!
@@ -224,6 +206,69 @@ Pintor class
 !Pintor class methodsFor: 'instance creation' stamp: 'tomihq 11/22/2025 11:44:08'!
 sobreParedDe: unaExtension
 	^self new initializeWithPared: (Pared inicializarParedConExtension: unaExtension)! !
+
+
+!classDefinition: #PintorAgregar category: #Pintor!
+Object subclass: #PintorAgregar
+	instanceVariableNames: 'pintura pared'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Pintor'!
+
+!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:29:47'!
+deshacer
+	pared removerPintura: pintura.! !
+
+!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:25:03'!
+inicializarCon: unaPinturaAColocar en: unaPared
+	pintura := unaPinturaAColocar.
+	pared := unaPared.! !
+
+!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:25:55'!
+realizar
+	pared agregarPintura: pintura.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'PintorAgregar class' category: #Pintor!
+PintorAgregar class
+	instanceVariableNames: ''!
+
+!PintorAgregar class methodsFor: 'instance creation' stamp: 'tomihq 11/22/2025 12:24:33'!
+pintura: unaPinturaAColocar en: pared
+	^self new inicializarCon: unaPinturaAColocar en: pared.! !
+
+
+!classDefinition: #PintorSeleccionar category: #Pintor!
+Object subclass: #PintorSeleccionar
+	instanceVariableNames: 'pintura pintor'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Pintor'!
+
+!PintorSeleccionar methodsFor: 'initialization' stamp: 'tomihq 11/22/2025 12:35:20'!
+inicializarPara: unaPintura para: unPintor
+	pintura := unaPintura.
+	pintor := unPintor.! !
+
+
+!PintorSeleccionar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:38:38'!
+deshacer
+	pintor removerPinturaSeleccionada: pintura.! !
+
+!PintorSeleccionar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:38:03'!
+realizar
+	pintor agregarPinturaSeleccionada: pintura.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'PintorSeleccionar class' category: #Pintor!
+PintorSeleccionar class
+	instanceVariableNames: ''!
+
+!PintorSeleccionar class methodsFor: 'instance creation' stamp: 'tomihq 11/22/2025 12:34:59'!
+una: pintura para: unPintor
+	^self new inicializarPara: pintura para: unPintor.! !
 
 
 !classDefinition: #ParedTest category: #Pintor!
@@ -456,7 +501,7 @@ test010PintorNoPuedeDeshacerSiNoHizoAcciones
 	
 ! !
 
-!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:12:51'!
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:31:04'!
 test011PintorPuedeDeshacerSeleccionDePintura
 	| pared pintura pintor|
 	
@@ -466,7 +511,7 @@ test011PintorPuedeDeshacerSeleccionDePintura
 	
 	pintor colocarPintura: pintura.	
 	pintor seleccionarPintura: pintura.
-	pintor deshacerAccionSeleccionarPintura: pintura.
+	pintor deshacer.
 	
 	self assert: (pintor sinPinturasSeleccionadas).
 
