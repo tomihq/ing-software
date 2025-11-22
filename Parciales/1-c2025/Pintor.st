@@ -580,3 +580,45 @@ test013PintorNoPuedeRehacerSiNoHayAccionParaRehacer
 	
 	
 ! !
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:43:08'!
+test014PintorPuedeRehacerAcciónDeSeleccionarPintura
+	| pintura pintor|
+	
+	pintura := Rectangle origin: 0@0 corner: 5@5.	
+	pintor := Pintor sobreParedDe: 20@20.
+	
+	pintor seleccionarPintura: pintura.	
+	pintor deshacer.
+	pintor rehacer. 
+	self assert: pintor cantidadPinturasSeleccionadas equals: 1.
+	
+	
+	
+
+	
+	
+	
+	
+! !
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:41:37'!
+test015PintorPuedeRehacerAcciónDeAgregarPinturaALaPared
+	| pintura pintor|
+	
+	pintura := Rectangle origin: 0@0 corner: 5@5.	
+	pintor := Pintor sobreParedDe: 20@20.
+	
+	pintor colocarPintura: pintura.	
+	pintor deshacer.
+	pintor rehacer. 
+	self assert: (pintor cantidadPinturas: 1	).
+	
+	
+	
+
+	
+	
+	
+	
+! !
