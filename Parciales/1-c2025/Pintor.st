@@ -394,9 +394,9 @@ removerPintura: unaPintura
 removerPinturaSeleccionada: unaPintura
 	pinturasSeleccionadas remove: unaPintura.! !
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 15:34:19'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 16:01:56'!
 seleccionar: unaPinturaASeleccionar
-	(pinturasSeleccionadas includes: unaPinturaASeleccionar) ifTrue: [^self error: self descripciónErrorPinturaYaSeleccionada]. "agregué esto porque sino el test no tenia sentido. El modelo le enseña. "
+	self assertPinturaNoEstaSeleccionada: unaPinturaASeleccionar. "agregué esto porque sino el test no tenia sentido. El modelo le enseña. "
 	self hacer: (PintorSeleccionar una: unaPinturaASeleccionar para: self).
 	! !
 
@@ -420,6 +420,11 @@ descripciónErrorPinturaYaSeleccionada
 !Pintor methodsFor: 'assertions' stamp: 'tomihq 11/22/2025 11:59:21'!
 assertDimensionesPinturaValidaDe: unaPintura
 	(pared contieneTamañoPara: unaPintura) not ifTrue: [^self error: self descripciónErrorDimensionDePinturaInválida].! !
+
+
+!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 16:02:08'!
+assertPinturaNoEstaSeleccionada: unaPinturaASeleccionar
+	(pinturasSeleccionadas includes: unaPinturaASeleccionar) ifTrue: [^self error: self descripciónErrorPinturaYaSeleccionada].! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
