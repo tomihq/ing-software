@@ -421,8 +421,7 @@ descripciónErrorPinturaYaSeleccionada
 assertDimensionesPinturaValidaDe: unaPintura
 	(pared contieneTamañoPara: unaPintura) not ifTrue: [^self error: self descripciónErrorDimensionDePinturaInválida].! !
 
-
-!Pintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 16:02:08'!
+!Pintor methodsFor: 'assertions' stamp: 'tomihq 11/22/2025 16:02:08'!
 assertPinturaNoEstaSeleccionada: unaPinturaASeleccionar
 	(pinturasSeleccionadas includes: unaPinturaASeleccionar) ifTrue: [^self error: self descripciónErrorPinturaYaSeleccionada].! !
 
