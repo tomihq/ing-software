@@ -57,7 +57,7 @@ inicializarParedConExtension: unaExtension
 
 !classDefinition: #Pintor category: #Pintor!
 Object subclass: #Pintor
-	instanceVariableNames: 'pinturasSeleccionadas pared accionesADeshacer'
+	instanceVariableNames: 'pinturasSeleccionadas pared accionesADeshacer accionesARehacer'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Pintor'!
@@ -96,10 +96,11 @@ alinearPinturasCalculandoOrigenHorizontalUsando: unBloque
 ! !
 
 
-!Pintor methodsFor: 'initializers' stamp: 'tomihq 11/22/2025 12:21:56'!
+!Pintor methodsFor: 'initializers' stamp: 'tomihq 11/22/2025 12:58:43'!
 initialize
 	pinturasSeleccionadas := OrderedCollection new.
-	accionesADeshacer := OrderedCollection new.! !
+	accionesADeshacer := OrderedCollection new.
+	accionesARehacer := OrderedCollection new.! !
 
 !Pintor methodsFor: 'initializers' stamp: 'tomihq 11/22/2025 11:18:48'!
 initializeWithPared: unaPared
@@ -125,6 +126,10 @@ sinPinturasSeleccionadas
 	^self cantidadPinturasSeleccionadas  = 0.! !
 
 
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:59:43'!
+agregarAccionARehacer: unaAccion
+	accionesARehacer addLast: unaAccion.! !
+
 !Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:37:52'!
 agregarPinturaSeleccionada: unaPintura
 	pinturasSeleccionadas addLast: unaPintura.! !
@@ -133,20 +138,33 @@ agregarPinturaSeleccionada: unaPintura
 cantidadPinturas: unaCantidadDePinturas
 	^pared cantidadPinturas: unaCantidadDePinturas.! !
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:31:40'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 13:03:46'!
 colocarPintura: unaPinturaAColocar
 	| accion |
 	self assertDimensionesPinturaValidaDe: unaPinturaAColocar.
 	(self hayPintura: unaPinturaAColocar) ifTrue: [^self error: self descripciónErrorPinturaConMismoOrigenYExtensión].
 	
-	accion := PintorAgregar pintura: unaPinturaAColocar en: pared.
+	accion := PintorAgregar pintura: unaPinturaAColocar para: self.
 	accion realizar.
 	accionesADeshacer addLast: accion.! !
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:29:11'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 13:30:57'!
+descripciónErrorNoHayAccionPorRehacer
+
+	^ 'No hay acción por rehacer'! !
+
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 13:09:32'!
 deshacer
+	| accionADeshacer |
 	accionesADeshacer ifEmpty: [^self error: self descripciónErrorNoHayAcciónADeshacer ].
-	accionesADeshacer removeLast deshacer. ! !
+	accionADeshacer := accionesADeshacer removeLast.
+	accionADeshacer deshacer.
+	accionesARehacer addLast: accionADeshacer! !
+
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 13:31:06'!
+rehacer
+	accionesARehacer ifEmpty: [^self error: self descripciónErrorNoHayAccionPorRehacer ].
+	accionesARehacer removeLast realizar. ! !
 
 !Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:38:48'!
 removerPinturaSeleccionada: unaPintura
@@ -197,6 +215,11 @@ assertDimensionesPinturaValidaDe: unaPintura
 assertPintorTieneMasDeUnaPinturaSeleccionada
 	pinturasSeleccionadas size < 2 ifTrue: [^self error: self descripciónErrorPintorDebeTenerAlMenosDosPinturasSeleccionadasMensajeError.].! !
 
+
+!Pintor methodsFor: 'nil' stamp: 'tomihq 11/22/2025 13:12:28'!
+pared
+	^pared.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Pintor class' category: #Pintor!
@@ -210,23 +233,24 @@ sobreParedDe: unaExtension
 
 !classDefinition: #PintorAgregar category: #Pintor!
 Object subclass: #PintorAgregar
-	instanceVariableNames: 'pintura pared'
+	instanceVariableNames: 'pintura pintor'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:29:47'!
+!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:27:32'!
 deshacer
-	pared removerPintura: pintura.! !
+	pintor pared removerPintura: pintura.
+	pintor agregarAccionARehacer: [self realizar].! !
 
-!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:25:03'!
-inicializarCon: unaPinturaAColocar en: unaPared
+!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:02:00'!
+inicializarCon: unaPinturaAColocar para: unPintor
 	pintura := unaPinturaAColocar.
-	pared := unaPared.! !
+	pintor := unPintor.! !
 
-!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:25:55'!
+!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:11:25'!
 realizar
-	pared agregarPintura: pintura.! !
+	pintor pared agregarPintura: pintura.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -234,9 +258,9 @@ realizar
 PintorAgregar class
 	instanceVariableNames: ''!
 
-!PintorAgregar class methodsFor: 'instance creation' stamp: 'tomihq 11/22/2025 12:24:33'!
-pintura: unaPinturaAColocar en: pared
-	^self new inicializarCon: unaPinturaAColocar en: pared.! !
+!PintorAgregar class methodsFor: 'instance creation' stamp: 'tomihq 11/22/2025 13:03:28'!
+pintura: unaPinturaAColocar para: unPintor
+	^self new inicializarCon: unaPinturaAColocar para: unPintor.! !
 
 
 !classDefinition: #PintorSeleccionar category: #Pintor!
@@ -252,9 +276,10 @@ inicializarPara: unaPintura para: unPintor
 	pintor := unPintor.! !
 
 
-!PintorSeleccionar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:38:38'!
+!PintorSeleccionar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:26:59'!
 deshacer
-	pintor removerPinturaSeleccionada: pintura.! !
+	pintor removerPinturaSeleccionada: pintura.
+	pintor agregarAccionARehacer: [self realizar].! !
 
 !PintorSeleccionar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:38:03'!
 realizar
@@ -531,6 +556,26 @@ test012PintorPuedeDeshacerAgregarPinturaALaPared
 	
 	pintor colocarPintura: pintura.	
 	pintor deshacer.
+	
+	self assert: (pared cantidadPinturas: 0	).
+	self deny: (pintor tienePinturaSeleccionada: pintura).
+
+	
+	
+	
+	
+! !
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:31:09'!
+test013PintorNoPuedeRehacerSiNoSeDeshizoAccionAntes
+	| pared pintura pintor|
+	
+	pintura := Rectangle origin: 0@0 corner: 5@5.	
+	pared := Pared inicializarParedConExtension: 20@20.
+	pintor := Pintor sobreParedDe: 20@20.
+	
+	pintor colocarPintura: pintura.	
+	self should:  [ pintor rehacer. ] raise: Error - MessageNotUnderstood withMessageText: pintor descripciónErrorNoHayAccionPorRehacer.
 	
 	self assert: (pared cantidadPinturas: 0	).
 	self deny: (pintor tienePinturaSeleccionada: pintura).
