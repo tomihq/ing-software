@@ -1,3 +1,134 @@
+!classDefinition: #AcciónPintor category: #Pintor!
+Object subclass: #AcciónPintor
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Pintor'!
+
+!AcciónPintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:18:17'!
+deshacer
+
+	self subclassResponsibility! !
+
+!AcciónPintor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:18:13'!
+hacer
+
+	self subclassResponsibility! !
+
+
+!classDefinition: #PintorAgregar category: #Pintor!
+AcciónPintor subclass: #PintorAgregar
+	instanceVariableNames: 'pintura pintor'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Pintor'!
+
+!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:58:14'!
+deshacer
+	pintor pared removerPintura: pintura.! !
+
+!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:14:56'!
+hacer
+	pintor pared agregarPintura: pintura.! !
+
+!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:02:00'!
+inicializarCon: unaPinturaAColocar para: unPintor
+	pintura := unaPinturaAColocar.
+	pintor := unPintor.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'PintorAgregar class' category: #Pintor!
+PintorAgregar class
+	instanceVariableNames: ''!
+
+!PintorAgregar class methodsFor: 'instance creation' stamp: 'tomihq 11/22/2025 13:03:28'!
+pintura: unaPinturaAColocar para: unPintor
+	^self new inicializarCon: unaPinturaAColocar para: unPintor.! !
+
+
+!classDefinition: #PintorSeleccionar category: #Pintor!
+AcciónPintor subclass: #PintorSeleccionar
+	instanceVariableNames: 'pintura pintor'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Pintor'!
+
+!PintorSeleccionar methodsFor: 'initialization' stamp: 'tomihq 11/22/2025 12:35:20'!
+inicializarPara: unaPintura para: unPintor
+	pintura := unaPintura.
+	pintor := unPintor.! !
+
+
+!PintorSeleccionar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:58:21'!
+deshacer
+	pintor removerPinturaSeleccionada: pintura.! !
+
+!PintorSeleccionar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:15:03'!
+hacer
+	pintor agregarPinturaSeleccionada: pintura.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'PintorSeleccionar class' category: #Pintor!
+PintorSeleccionar class
+	instanceVariableNames: ''!
+
+!PintorSeleccionar class methodsFor: 'instance creation' stamp: 'tomihq 11/22/2025 12:34:59'!
+una: pintura para: unPintor
+	^self new inicializarPara: pintura para: unPintor.! !
+
+
+!classDefinition: #HistorialAcciones category: #Pintor!
+Object subclass: #HistorialAcciones
+	instanceVariableNames: 'accionesADeshacer accionesARehacer'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Pintor'!
+
+!HistorialAcciones methodsFor: 'getter-setter' stamp: 'tomihq 11/22/2025 14:23:38'!
+accionesADeshacer
+	^accionesADeshacer! !
+
+!HistorialAcciones methodsFor: 'getter-setter' stamp: 'tomihq 11/22/2025 14:23:38'!
+accionesARehacer
+	^accionesARehacer! !
+
+
+!HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:23:38'!
+deshacer: aPintor
+	| accionADeshacer |
+	self accionesADeshacer ifEmpty: [^aPintor error: aPintor descripciónErrorNoHayAcciónADeshacer ].
+	accionADeshacer := self accionesADeshacer removeLast.
+	accionADeshacer deshacer.
+	self accionesARehacer addLast: accionADeshacer.
+	^aPintor.! !
+
+!HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:23:38'!
+hacer: unaAccion withPintor: aPintor
+
+	unaAccion hacer.
+	self accionesADeshacer addLast: unaAccion.
+	self accionesARehacer removeAll.
+	^aPintor.! !
+
+!HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:26:03'!
+initialize
+	accionesADeshacer :=  OrderedCollection new.
+	accionesARehacer  := OrderedCollection new.! !
+
+!HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:23:38'!
+rehacer: aPintor
+	| accionARehacer |
+	self accionesARehacer ifEmpty: [^aPintor error: aPintor descripciónErrorNoHayAccionPorRehacer ].
+	accionARehacer := self accionesARehacer removeLast.
+	accionARehacer hacer.
+	self accionesADeshacer addLast: accionARehacer.
+	 
+	.
+	^aPintor.! !
+
+
 !classDefinition: #Pared category: #Pintor!
 Object subclass: #Pared
 	instanceVariableNames: 'pinturas area'
@@ -57,7 +188,7 @@ inicializarParedConExtension: unaExtension
 
 !classDefinition: #Pintor category: #Pintor!
 Object subclass: #Pintor
-	instanceVariableNames: 'pinturasSeleccionadas pared accionesADeshacer accionesARehacer'
+	instanceVariableNames: 'pinturasSeleccionadas pared historial'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Pintor'!
@@ -96,15 +227,15 @@ alinearPinturasCalculandoOrigenHorizontalUsando: unBloque
 ! !
 
 
-!Pintor methodsFor: 'initializers' stamp: 'tomihq 11/22/2025 12:58:43'!
+!Pintor methodsFor: 'initializers' stamp: 'tomihq 11/22/2025 14:25:13'!
 initialize
 	pinturasSeleccionadas := OrderedCollection new.
-	accionesADeshacer := OrderedCollection new.
-	accionesARehacer := OrderedCollection new.! !
+! !
 
-!Pintor methodsFor: 'initializers' stamp: 'tomihq 11/22/2025 11:18:48'!
+!Pintor methodsFor: 'initializers' stamp: 'tomihq 11/22/2025 14:25:15'!
 initializeWithPared: unaPared
 	pared := unaPared.
+	historial := HistorialAcciones new.
 	super initialize.! !
 
 
@@ -117,9 +248,9 @@ tienePinturaSeleccionada: unaPinturaSeleccionada
 	^pinturasSeleccionadas includes: unaPinturaSeleccionada.! !
 
 
-!Pintor methodsFor: 'accessing' stamp: 'tomihq 11/22/2025 13:46:08'!
+!Pintor methodsFor: 'accessing' stamp: 'tomihq 11/22/2025 14:23:38'!
 cantidadDeAccionesPorRehacer
-	^accionesARehacer size.! !
+	^historial accionesARehacer size.! !
 
 !Pintor methodsFor: 'accessing' stamp: 'tomihq 11/19/2025 23:49:32'!
 cantidadPinturasSeleccionadas
@@ -130,9 +261,9 @@ sinPinturasSeleccionadas
 	^self cantidadPinturasSeleccionadas  = 0.! !
 
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:59:43'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 14:23:38'!
 agregarAccionARehacer: unaAccion
-	accionesARehacer addLast: unaAccion.! !
+	historial accionesARehacer addLast: unaAccion.! !
 
 !Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:37:52'!
 agregarPinturaSeleccionada: unaPintura
@@ -154,34 +285,21 @@ descripciónErrorNoHayAccionPorRehacer
 
 	^ 'No hay acción por rehacer'! !
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 13:58:53'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 14:23:38'!
 deshacer
-	| accionADeshacer |
-	accionesADeshacer ifEmpty: [^self error: self descripciónErrorNoHayAcciónADeshacer ].
-	accionADeshacer := accionesADeshacer removeLast.
-	accionADeshacer deshacer.
-	accionesARehacer addLast: accionADeshacer.! !
+	^historial deshacer: self.! !
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 14:15:29'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 14:23:38'!
 hacer: unaAccion
+	^historial hacer: unaAccion withPintor: self.! !
 
-	unaAccion hacer.
-	accionesADeshacer addLast: unaAccion.
-	accionesARehacer removeAll! !
-
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 13:47:54'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 14:23:38'!
 limpiarAccionesPorRehacer
-	accionesARehacer  := OrderedCollection new.! !
+	historial accionesARehacer: OrderedCollection new.! !
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 14:13:23'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 14:23:38'!
 rehacer
-	| accionARehacer |
-	accionesARehacer ifEmpty: [^self error: self descripciónErrorNoHayAccionPorRehacer ].
-	accionARehacer := accionesARehacer removeLast.
-	accionARehacer hacer.
-	accionesADeshacer addLast: accionARehacer.
-	 
-	! !
+	^historial rehacer: self.! !
 
 !Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:38:48'!
 removerPinturaSeleccionada: unaPintura
@@ -244,69 +362,6 @@ Pintor class
 !Pintor class methodsFor: 'instance creation' stamp: 'tomihq 11/22/2025 11:44:08'!
 sobreParedDe: unaExtension
 	^self new initializeWithPared: (Pared inicializarParedConExtension: unaExtension)! !
-
-
-!classDefinition: #PintorAgregar category: #Pintor!
-Object subclass: #PintorAgregar
-	instanceVariableNames: 'pintura pintor'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Pintor'!
-
-!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:58:14'!
-deshacer
-	pintor pared removerPintura: pintura.! !
-
-!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:14:56'!
-hacer
-	pintor pared agregarPintura: pintura.! !
-
-!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:02:00'!
-inicializarCon: unaPinturaAColocar para: unPintor
-	pintura := unaPinturaAColocar.
-	pintor := unPintor.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'PintorAgregar class' category: #Pintor!
-PintorAgregar class
-	instanceVariableNames: ''!
-
-!PintorAgregar class methodsFor: 'instance creation' stamp: 'tomihq 11/22/2025 13:03:28'!
-pintura: unaPinturaAColocar para: unPintor
-	^self new inicializarCon: unaPinturaAColocar para: unPintor.! !
-
-
-!classDefinition: #PintorSeleccionar category: #Pintor!
-Object subclass: #PintorSeleccionar
-	instanceVariableNames: 'pintura pintor'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Pintor'!
-
-!PintorSeleccionar methodsFor: 'initialization' stamp: 'tomihq 11/22/2025 12:35:20'!
-inicializarPara: unaPintura para: unPintor
-	pintura := unaPintura.
-	pintor := unPintor.! !
-
-
-!PintorSeleccionar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:58:21'!
-deshacer
-	pintor removerPinturaSeleccionada: pintura.! !
-
-!PintorSeleccionar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:15:03'!
-hacer
-	pintor agregarPinturaSeleccionada: pintura.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'PintorSeleccionar class' category: #Pintor!
-PintorSeleccionar class
-	instanceVariableNames: ''!
-
-!PintorSeleccionar class methodsFor: 'instance creation' stamp: 'tomihq 11/22/2025 12:34:59'!
-una: pintura para: unPintor
-	^self new inicializarPara: pintura para: unPintor.! !
 
 
 !classDefinition: #ParedTest category: #Pintor!
