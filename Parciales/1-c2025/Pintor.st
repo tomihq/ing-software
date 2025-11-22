@@ -904,3 +904,60 @@ test021DescartaAcciónDeMoverPinturasALaIzquierda
 	
 	
 ! !
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 15:23:12'!
+test022DescartaAcciónDeMoverPinturasALaDerechaYLaRehace
+	| pintura pintura2 pintor|
+	
+	pintura := Rectangle origin: 0@0 corner: 5@5.	
+	pintura2 := Rectangle origin: 5@3 corner: 10@10.
+	
+	pintor := Pintor sobreParedDe: 20@20.
+	pintor seleccionar: pintura.
+	pintor seleccionar: pintura2.
+	
+	pintor alinearPinturasALaDerecha .	
+	pintor deshacer.
+	pintor rehacer.
+	
+	self assert: pintura equals: (Rectangle origin: 5@0 corner: 10@5).
+	self assert: pintura2 equals: (Rectangle origin: 5@3 corner: 10@10)
+	
+	
+	
+	
+
+	
+	
+	
+	
+! !
+
+!PintorTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 15:24:04'!
+test023DescartaAcciónDeMoverPinturasALaIzquierdaYLaRehace
+	| pintura pintura2 pintor|
+	
+	pintura := Rectangle origin: 0@0 corner: 5@5.	
+	pintura2 := Rectangle origin: 5@3 corner: 10@10.
+	
+	pintor := Pintor sobreParedDe: 20@20.
+	pintor seleccionar: pintura.
+	pintor seleccionar: pintura2.
+	
+	pintor alinearPinturasAIzquierda .	
+	pintor deshacer.
+	pintor rehacer.
+	
+	self assert: pintura equals: (Rectangle origin: 0@0 corner: 5@5).
+	self assert: pintura2 equals: (Rectangle origin: 0@3 corner: 5@10).
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+! !
