@@ -23,15 +23,16 @@ AcciónPintor subclass: #PintorAgregar
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:58:14'!
+!PintorAgregar methodsFor: 'hacer/deshacer' stamp: 'tomihq 11/22/2025 13:58:14'!
 deshacer
 	pintor pared removerPintura: pintura.! !
 
-!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:14:56'!
+!PintorAgregar methodsFor: 'hacer/deshacer' stamp: 'tomihq 11/22/2025 14:14:56'!
 hacer
 	pintor pared agregarPintura: pintura.! !
 
-!PintorAgregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 13:02:00'!
+
+!PintorAgregar methodsFor: 'initializations' stamp: 'tomihq 11/22/2025 13:02:00'!
 inicializarCon: unaPinturaAColocar para: unPintor
 	pintura := unaPinturaAColocar.
 	pintor := unPintor.! !
@@ -47,14 +48,19 @@ pintura: unaPinturaAColocar para: unPintor
 	^self new inicializarCon: unaPinturaAColocar para: unPintor.! !
 
 
-!classDefinition: #PintorMover category: #Pintor!
-AcciónPintor subclass: #PintorMover
+!classDefinition: #PintorAlinear category: #Pintor!
+AcciónPintor subclass: #PintorAlinear
 	instanceVariableNames: 'pinturas originales'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!PintorMover methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:52:35'!
+!PintorAlinear methodsFor: 'initializations' stamp: 'tomihq 11/22/2025 14:52:59'!
+initializeWith: unasPinturas
+	pinturas := unasPinturas.! !
+
+
+!PintorAlinear methodsFor: 'PintorAlinear functions' stamp: 'tomihq 11/22/2025 14:52:35'!
 "Usamos extent acá porque necesito preservar tamaños relativos. Si movés el rectángulo a la derecha pero el corner lo dejás igual, la estás acahicando en ancho.
 Para eso, necesitamos modificar también el corner basado en el nuevo origen x + el extent actual.
 extent = nuevoOrigen + extentVieja
@@ -66,35 +72,31 @@ alinearPinturasCalculandoOrigenHorizontalUsando: unBloque
         p setOrigin: x @ p origin y corner: (x @ p origin y) + p extent
     ].! !
 
-!PintorMover methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 15:21:46'!
+!PintorAlinear methodsFor: 'PintorAlinear functions' stamp: 'tomihq 11/22/2025 15:21:46'!
 deshacer
 	pinturas with: originales do: [:unaPintura :unaOriginal | 
 		unaPintura setOrigin: unaOriginal origin corner: unaOriginal corner.
 	].! !
 
-!PintorMover methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:52:59'!
-initializeWith: unasPinturas
-	pinturas := unasPinturas.! !
-
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'PintorMover class' category: #Pintor!
-PintorMover class
+!classDefinition: 'PintorAlinear class' category: #Pintor!
+PintorAlinear class
 	instanceVariableNames: ''!
 
-!PintorMover class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 15:07:21'!
+!PintorAlinear class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 15:07:21'!
 pinturas: unasPinturas
 	^self new initializeWith: unasPinturas! !
 
 
-!classDefinition: #PintorMoverDerecha category: #Pintor!
-PintorMover subclass: #PintorMoverDerecha
+!classDefinition: #PintorAlinearDerecha category: #Pintor!
+PintorAlinear subclass: #PintorAlinearDerecha
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!PintorMoverDerecha methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 15:21:09'!
+!PintorAlinearDerecha methodsFor: 'hacer' stamp: 'tomihq 11/22/2025 15:21:09'!
 hacer
     | maxX |
     maxX := (pinturas collect: [:p | p origin x + p extent x]) max.
@@ -102,14 +104,14 @@ hacer
     self alinearPinturasCalculandoOrigenHorizontalUsando: [:p | maxX - p extent x ].! !
 
 
-!classDefinition: #PintorMoverIzquierda category: #Pintor!
-PintorMover subclass: #PintorMoverIzquierda
+!classDefinition: #PintorAlinearIzquierda category: #Pintor!
+PintorAlinear subclass: #PintorAlinearIzquierda
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!PintorMoverIzquierda methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 15:21:09'!
+!PintorAlinearIzquierda methodsFor: 'hacer' stamp: 'tomihq 11/22/2025 15:21:09'!
 hacer
     | minX |
     minX := (pinturas collect: [:p | p origin x]) min.
@@ -159,30 +161,36 @@ Object subclass: #HistorialAcciones
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!HistorialAcciones methodsFor: 'getter-setter' stamp: 'tomihq 11/22/2025 14:23:38'!
+!HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:23:38'!
 accionesADeshacer
 	^accionesADeshacer! !
 
-!HistorialAcciones methodsFor: 'getter-setter' stamp: 'tomihq 11/22/2025 14:23:38'!
-accionesARehacer
-	^accionesARehacer! !
+!HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 15:27:04'!
+agregarAccionADeshacer: unaAccionADeshacer
+	accionesADeshacer addLast: unaAccionADeshacer.! !
 
+!HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 15:30:07'!
+agregarAccionARehacer: unaAccionARehacer
+	accionesARehacer addLast: unaAccionARehacer! !
 
-!HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:23:38'!
+!HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 15:31:17'!
+cantidadDeAccionesPorRehacer
+	^accionesARehacer size! !
+
+!HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 15:26:16'!
 deshacer: aPintor
 	| accionADeshacer |
 	self accionesADeshacer ifEmpty: [^aPintor error: aPintor descripciónErrorNoHayAcciónADeshacer ].
 	accionADeshacer := self accionesADeshacer removeLast.
 	accionADeshacer deshacer.
-	self accionesARehacer addLast: accionADeshacer.
-	^aPintor.! !
+	self agregarAccionARehacer: accionADeshacer.! !
 
-!HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:26:47'!
+!HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 15:28:12'!
 hacer: unaAccion
 
 	unaAccion hacer.
 	self accionesADeshacer addLast: unaAccion.
-	self accionesARehacer removeAll.
+	accionesARehacer removeAll.
 	! !
 
 !HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:26:03'!
@@ -190,11 +198,11 @@ initialize
 	accionesADeshacer :=  OrderedCollection new.
 	accionesARehacer  := OrderedCollection new.! !
 
-!HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 14:57:33'!
+!HistorialAcciones methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 15:29:00'!
 rehacer: aPintor
 	| accionARehacer |
-	self accionesARehacer ifEmpty: [^aPintor error: aPintor descripciónErrorNoHayAccionPorRehacer ].
-	accionARehacer := self accionesARehacer removeLast.
+	accionesARehacer ifEmpty: [^aPintor error: aPintor descripciónErrorNoHayAccionPorRehacer ].
+	accionARehacer := accionesARehacer removeLast.
 	accionARehacer hacer.
 	self accionesADeshacer addLast: accionARehacer.! !
 
@@ -231,6 +239,10 @@ cantidadPinturas: unaCantidadDePinturas
 contieneA: unaPintura
 	^pinturas includes: unaPintura.! !
 
+!Pared methodsFor: 'testing' stamp: 'tomihq 11/22/2025 11:58:21'!
+contieneTamañoPara: unaDimensionDePintura
+	^area containsRect: unaDimensionDePintura! !
+
 !Pared methodsFor: 'testing' stamp: 'tomihq 11/20/2025 00:40:04'!
 obtenerPintura: unaPintura
 	^pinturas detect: [:pintura | pintura == unaPintura].! !
@@ -239,11 +251,6 @@ obtenerPintura: unaPintura
 !Pared methodsFor: 'accessing' stamp: 'tomihq 11/19/2025 23:00:15'!
 area
 	^area.! !
-
-
-!Pared methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 11:58:21'!
-contieneTamañoPara: unaDimensionDePintura
-	^area containsRect: unaDimensionDePintura! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -263,21 +270,21 @@ Object subclass: #Pintor
 	poolDictionaries: ''
 	category: 'Pintor'!
 
-!Pintor methodsFor: 'alignment' stamp: 'tomihq 11/22/2025 15:09:37'!
+!Pintor methodsFor: 'alignment' stamp: 'tomihq 11/22/2025 15:35:33'!
 alinearPinturasAIzquierda
     self assertPintorTieneMasDeUnaPinturaSeleccionada.
-    self hacer: (PintorMoverIzquierda pinturas: pinturasSeleccionadas ).
+    self hacer: (PintorAlinearIzquierda pinturas: pinturasSeleccionadas ).
     
 ! !
 
-!Pintor methodsFor: 'alignment' stamp: 'tomihq 11/22/2025 14:54:16'!
+!Pintor methodsFor: 'alignment' stamp: 'tomihq 11/22/2025 15:35:28'!
 "Usamos extent acá porque necesito preservar tamaños relativos. Si movés el rectángulo a la derecha pero el corner lo dejás igual, la estás acahicando en ancho.
 Para eso, necesitamos modificar también el corner basado en el nuevo origen x + el extent actual.
 extent = nuevoOrigen + extentVieja
  - Tomás"
 alinearPinturasALaDerecha
     self assertPintorTieneMasDeUnaPinturaSeleccionada.
-    self hacer: (PintorMoverDerecha pinturas: pinturasSeleccionadas ).
+    self hacer: (PintorAlinearDerecha pinturas: pinturasSeleccionadas ).
 ! !
 
 
@@ -302,9 +309,9 @@ tienePinturaSeleccionada: unaPinturaSeleccionada
 	^pinturasSeleccionadas includes: unaPinturaSeleccionada.! !
 
 
-!Pintor methodsFor: 'accessing' stamp: 'tomihq 11/22/2025 14:23:38'!
+!Pintor methodsFor: 'accessing' stamp: 'tomihq 11/22/2025 15:31:18'!
 cantidadDeAccionesPorRehacer
-	^historial accionesARehacer size.! !
+	^historial cantidadDeAccionesPorRehacer.! !
 
 !Pintor methodsFor: 'accessing' stamp: 'tomihq 11/19/2025 23:49:32'!
 cantidadPinturasSeleccionadas
@@ -315,9 +322,9 @@ sinPinturasSeleccionadas
 	^self cantidadPinturasSeleccionadas  = 0.! !
 
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 14:23:38'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 15:32:29'!
 agregarAccionARehacer: unaAccion
-	historial accionesARehacer addLast: unaAccion.! !
+	historial agregarAccionARehacer: unaAccion.! !
 
 !Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:37:52'!
 agregarPinturaSeleccionada: unaPintura
@@ -359,11 +366,9 @@ rehacer
 removerPinturaSeleccionada: unaPintura
 	pinturasSeleccionadas remove: unaPintura.! !
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 14:16:23'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 15:34:19'!
 seleccionar: unaPinturaASeleccionar
-	
 	(pinturasSeleccionadas includes: unaPinturaASeleccionar) ifTrue: [^self error: self descripciónErrorPinturaYaSeleccionada]. "agregué esto porque sino el test no tenia sentido. El modelo le enseña. "
-	
 	self hacer: (PintorSeleccionar una: unaPinturaASeleccionar para: self).
 	! !
 
