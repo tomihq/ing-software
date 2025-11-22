@@ -1,3 +1,34 @@
+!classDefinition: #Agregar category: #Pintor!
+Object subclass: #Agregar
+	instanceVariableNames: 'pintura pared'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Pintor'!
+
+!Agregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:29:47'!
+deshacer
+	pared removerPintura: pintura.! !
+
+!Agregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:25:03'!
+inicializarCon: unaPinturaAColocar en: unaPared
+	pintura := unaPinturaAColocar.
+	pared := unaPared.! !
+
+!Agregar methodsFor: 'as yet unclassified' stamp: 'tomihq 11/22/2025 12:25:55'!
+realizar
+	pared agregarPintura: pintura.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Agregar class' category: #Pintor!
+Agregar class
+	instanceVariableNames: ''!
+
+!Agregar class methodsFor: 'instance creation' stamp: 'tomihq 11/22/2025 12:24:33'!
+pintura: unaPinturaAColocar en: pared
+	^self new inicializarCon: unaPinturaAColocar en: pared.! !
+
+
 !classDefinition: #Pared category: #Pintor!
 Object subclass: #Pared
 	instanceVariableNames: 'pinturas area'
@@ -57,7 +88,7 @@ inicializarParedConExtension: unaExtension
 
 !classDefinition: #Pintor category: #Pintor!
 Object subclass: #Pintor
-	instanceVariableNames: 'pinturasSeleccionadas pared'
+	instanceVariableNames: 'pinturasSeleccionadas pared accionesADeshacer'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Pintor'!
@@ -96,9 +127,10 @@ alinearPinturasCalculandoOrigenHorizontalUsando: unBloque
 ! !
 
 
-!Pintor methodsFor: 'initializers' stamp: 'tomihq 11/21/2025 15:14:23'!
+!Pintor methodsFor: 'initializers' stamp: 'tomihq 11/22/2025 12:21:56'!
 initialize
-	pinturasSeleccionadas := OrderedCollection new.! !
+	pinturasSeleccionadas := OrderedCollection new.
+	accionesADeshacer := OrderedCollection new.! !
 
 !Pintor methodsFor: 'initializers' stamp: 'tomihq 11/22/2025 11:18:48'!
 initializeWithPared: unaPared
@@ -128,26 +160,20 @@ sinPinturasSeleccionadas
 cantidadPinturas: unaCantidadDePinturas
 	^pared cantidadPinturas: unaCantidadDePinturas.! !
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 11:58:36'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:27:21'!
 colocarPintura: unaPinturaAColocar
+	| accion |
 	self assertDimensionesPinturaValidaDe: unaPinturaAColocar.
 	(self hayPintura: unaPinturaAColocar) ifTrue: [^self error: self descripciónErrorPinturaConMismoOrigenYExtensión].
 	
-	pared agregarPintura: unaPinturaAColocar.! !
+	accion := Agregar pintura: unaPinturaAColocar en: pared.
+	accion realizar.
+	accionesADeshacer addLast: accion.! !
 
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 11:05:42'!
+!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 12:29:11'!
 deshacer
-	^self error: self descripciónErrorNoHayAcciónADeshacer ! !
-
-!Pintor methodsFor: 'pintor functions' stamp: 'Tom 11/20/2025 23:56:41'!
-"esto claramente rompe encapsulamiento, y lo hago aproposito para hacer una categorizacion del efecto del undo - Tomás"
-deshacerAccionAgregarPintura: unaPintura en: unaPared
-	unaPared removerPintura: unaPintura
-	! !
-
-!Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/21/2025 15:06:26'!
-deshacerAccionSeleccionarPintura: unaPintura
-	pinturasSeleccionadas := pinturasSeleccionadas select: [:pintura | (pintura = unaPintura) not].! !
+	accionesADeshacer ifEmpty: [^self error: self descripciónErrorNoHayAcciónADeshacer ].
+	accionesADeshacer removeLast deshacer. ! !
 
 !Pintor methodsFor: 'pintor functions' stamp: 'tomihq 11/22/2025 11:00:45'!
 seleccionarPintura: unaPinturaASeleccionar
