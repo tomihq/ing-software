@@ -1,19 +1,19 @@
 !classDefinition: #Desarrollador category: #TaskTracker!
 Object subclass: #Desarrollador
-	instanceVariableNames: 'nombre tiempoDeDedicación costo'
+	instanceVariableNames: 'nombre dedicación costo'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TaskTracker'!
 
-!Desarrollador methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:02:02'!
+!Desarrollador methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:57:58'!
 crearCon: unNombre dedicación: unTiempoDeDedicacion costo: unCosto
 	nombre := unNombre.
-	tiempoDeDedicación  := unTiempoDeDedicacion.
+	dedicación  := unTiempoDeDedicacion.
 	costo := unCosto.! !
 
-!Desarrollador methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:11:12'!
-dedicacion
-	^tiempoDeDedicación.! !
+!Desarrollador methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:58:10'!
+tiempoEnCompletar: unasHorasDeEsfuerzo
+	^unasHorasDeEsfuerzo / dedicación.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -21,7 +21,7 @@ dedicacion
 Desarrollador class
 	instanceVariableNames: ''!
 
-!Desarrollador class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:01:31'!
+!Desarrollador class methodsFor: 'instance creation' stamp: 'tomihq 11/23/2025 12:01:31'!
 nombre: unNombre dedicación: tiempoDeDedicación costo: unCosto
 	^self new crearCon: unNombre dedicación: tiempoDeDedicación costo: unCosto.
 	! !
@@ -107,7 +107,7 @@ conNombre: unNombre yTareas: tareas
 
 !classDefinition: #TareaConcreta category: #TaskTracker!
 Object subclass: #TareaConcreta
-	instanceVariableNames: 'nombre fechaInicio horasEsfuerzo responsable dependientes'
+	instanceVariableNames: 'nombre fechaInicioDeseada horasEsfuerzo responsable dependientes'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TaskTracker'!
@@ -125,21 +125,20 @@ esResponsable: unResponsable
 	^responsable = unResponsable.! !
 
 
-!TareaConcreta methodsFor: 'time' stamp: 'tomihq 11/23/2025 12:18:51'!
-fechaFinalizacion
-	|tiempoDedicacionResponsable|
-	tiempoDedicacionResponsable := responsable dedicacion.
+!TareaConcreta methodsFor: 'time' stamp: 'tomihq 11/23/2025 12:59:49'!
+fechaInicio
+	^fechaInicioDeseada.! !
+
+!TareaConcreta methodsFor: 'time' stamp: 'tomihq 11/23/2025 13:01:55'!
+finalizaEn: unaFechaFinalización
+	^unaFechaFinalización = (fechaInicioDeseada next: (responsable tiempoEnCompletar: horasEsfuerzo) - (1 * day)).
 	! !
 
-!TareaConcreta methodsFor: 'time' stamp: 'tomihq 11/23/2025 10:48:48'!
-fechaInicio
-	^fechaInicio.! !
 
-
-!TareaConcreta methodsFor: 'initializations' stamp: 'tomihq 11/23/2025 11:52:59'!
-inicializarCon: unNombre fechaDeInicio: unaFechaDeInicio horasDeEsfuerzo: unasHorasDeEsfuerzo responsable: unResponsable dependientes: unosDependientes   
+!TareaConcreta methodsFor: 'initializations' stamp: 'tomihq 11/23/2025 12:59:49'!
+inicializarCon: unNombre fechaDeInicioDeseada: unaFechaDeInicio horasDeEsfuerzo: unasHorasDeEsfuerzo responsable: unResponsable dependeDe: unosDependientes   
 	nombre := unNombre. 
-	fechaInicio := unaFechaDeInicio.
+	fechaInicioDeseada := unaFechaDeInicio.
 	horasEsfuerzo := unasHorasDeEsfuerzo.
 	responsable := unResponsable.
 	dependientes := unosDependientes.! !
@@ -150,9 +149,9 @@ inicializarCon: unNombre fechaDeInicio: unaFechaDeInicio horasDeEsfuerzo: unasHo
 TareaConcreta class
 	instanceVariableNames: ''!
 
-!TareaConcreta class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 11:53:10'!
-conNombre: unNombre fechaDeInicio: unaFechaDeInicio horasEsfuerzo: unasHorasDeEsfuerzo responsable: unResponsable dependientes: unosDependientes   
-	^self new inicializarCon: unNombre fechaDeInicio: unaFechaDeInicio horasDeEsfuerzo: unasHorasDeEsfuerzo responsable: unResponsable dependientes: unosDependientes.! !
+!TareaConcreta class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:00:01'!
+conNombre: unNombre fechaDeInicioDeseada: unaFechaDeInicio horasEsfuerzo: unasHorasDeEsfuerzo responsable: unResponsable dependeDe: unosDependientes   
+	^self new inicializarCon: unNombre fechaDeInicioDeseada: unaFechaDeInicio horasDeEsfuerzo: unasHorasDeEsfuerzo responsable: unResponsable dependeDe: unosDependientes.! !
 
 
 !classDefinition: #ProyectoTest category: #TaskTracker!
@@ -172,10 +171,10 @@ test01ProyectoContieneNombre
 	tareas := OrderedCollection new.
 	self assert: (Proyecto conNombre: 'Hey' yTareas: tareas) nombre equals: 'Hey'.! !
 
-!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:48:28'!
+!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:00:01'!
 test02ProyectoContieneTareas
 	| proyecto tarea tareas|
-	tarea := TareaConcreta conNombre: 'SS A' fechaDeInicio: July/1/2024 horasEsfuerzo: 8 * hour responsable: 'Alan Kay' dependientes: OrderedCollection new.
+	tarea := TareaConcreta conNombre: 'SS A' fechaDeInicioDeseada: July/1/2024 horasEsfuerzo: 8 * hour responsable: 'Alan Kay' dependeDe: OrderedCollection new.
 	tareas := OrderedCollection new.
 	tareas addLast: tarea.
 	proyecto := Proyecto conNombre: 'Modelo' yTareas: tareas.
@@ -195,12 +194,12 @@ test03ProyectoPuedeContenerOtroProyectosDentro
 	
 	self assert: (proyecto contieneSubproyecto: proyecto2).! !
 
-!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:50:27'!
+!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:00:01'!
 "notar que un proyecto a sí mismo su fecha de inicio es la mínima de una tarea por lo que basta recursivamente con buscar la fecha mínima de todas las tareas - Tomás"
 test04ProyectoArrancaEnLaFechaMasTempranaDeTareaOSubproyecto
 	| proyecto tarea tareas |
 	
-	tarea := TareaConcreta conNombre: 'SS A' fechaDeInicio: July/1/2024  horasEsfuerzo: 8 * hour responsable: self danIngalls dependientes: OrderedCollection new.
+	tarea := TareaConcreta conNombre: 'SS A' fechaDeInicioDeseada: July/1/2024  horasEsfuerzo: 8 * hour responsable: self danIngalls dependeDe: OrderedCollection new.
 	tareas := OrderedCollection new.
 	tareas addLast: tarea.
 	proyecto := Proyecto conNombre: 'Modelo' yTareas: tareas.
@@ -209,7 +208,7 @@ test04ProyectoArrancaEnLaFechaMasTempranaDeTareaOSubproyecto
 	self assert: (proyecto contieneTarea: tarea).
 	self assert: (proyecto fechaInicio: July/1/2024 ).! !
 
-!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:50:23'!
+!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:00:01'!
 "acá nos damos cuenta que hay una especie de Composite entre Tarea y Proyecto a nivel de fechaInicio"
 test05ProyectoContieneSubproyectosYTareas
 	| proyecto proyecto2 tareasProyecto2 proyectos tarea tareas |
@@ -218,11 +217,11 @@ test05ProyectoContieneSubproyectosYTareas
 	tareasProyecto2 := OrderedCollection new.
 	
 	
-	tarea := TareaConcreta conNombre: 'SS A' fechaDeInicio: July/1/2024  horasEsfuerzo: 8 * hour responsable: self danIngalls  dependientes: OrderedCollection new. 
+	tarea := TareaConcreta conNombre: 'SS A' fechaDeInicioDeseada: July/1/2024  horasEsfuerzo: 8 * hour responsable: self danIngalls  dependeDe: OrderedCollection new. 
 	tareas addLast: tarea.
 	
 
-	tarea := TareaConcreta conNombre: 'SS C' fechaDeInicio: July/2/2024  horasEsfuerzo: 8 * hour responsable: self danIngalls  dependientes: OrderedCollection new.
+	tarea := TareaConcreta conNombre: 'SS C' fechaDeInicioDeseada: July/2/2024  horasEsfuerzo: 8 * hour responsable: self danIngalls  dependeDe: OrderedCollection new.
 	tareas addLast: tarea.
 	
 	proyecto2 := Proyecto conNombre: 'Modelo' yTareas: proyectos.
@@ -236,28 +235,28 @@ test05ProyectoContieneSubproyectosYTareas
 	self assert: (proyecto fechaInicio: (July/1/2024 ))
 ! !
 
-!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:50:19'!
+!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:00:01'!
 test06TareaContieneEsfuerzoEnHorasQueToma
 	|  tarea |
 	
-	tarea := TareaConcreta conNombre: 'SS A' fechaDeInicio: July/1/2024  horasEsfuerzo: 8 * hour responsable: self danIngalls  dependientes: OrderedCollection new. 
+	tarea := TareaConcreta conNombre: 'SS A' fechaDeInicioDeseada: July/1/2024  horasEsfuerzo: 8 * hour responsable: self danIngalls  dependeDe: OrderedCollection new. 
 	self assert: (tarea contieneHorasEsfuerzo: 8 * hour)
 ! !
 
-!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:51:17'!
+!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:00:01'!
 test07ContieneDesarrolladorResponsableARealizarla
 	|  tarea desarrollador |
 	desarrollador := self danIngalls .
-	tarea := TareaConcreta conNombre: 'SS A' fechaDeInicio: July/1/2024 horasEsfuerzo: 8 * hour responsable: desarrollador dependientes: OrderedCollection new. 
+	tarea := TareaConcreta conNombre: 'SS A' fechaDeInicioDeseada: July/1/2024 horasEsfuerzo: 8 * hour responsable: desarrollador dependeDe: OrderedCollection new. 
 	self assert: (tarea esResponsable: desarrollador )
 ! !
 
-!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:50:10'!
+!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:00:01'!
 test08TareaConMismoEsfuerzoQueTiempoDeDedicacionTerminaElMismoDia
-	|  tarea fechaInicio |
-	tarea := TareaConcreta  conNombre: 'A' fechaDeInicio: July/1/2024 horasEsfuerzo: 8 * hour  responsable:  self danIngalls dependientes: OrderedCollection new.
+	|  tarea |
+	tarea := TareaConcreta  conNombre: 'A' fechaDeInicioDeseada: July/1/2024 horasEsfuerzo: 8 * hour  responsable:  self danIngalls dependeDe: OrderedCollection new.
 	
-	self assert: tarea fechaFinalización equals: fechaInicio
+	self assert: (tarea finalizaEn: July/1/2024).
 	
 	
 	
