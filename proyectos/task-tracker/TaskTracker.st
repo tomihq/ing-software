@@ -1,61 +1,3 @@
-!classDefinition: #Desarrollador category: #TaskTracker!
-Object subclass: #Desarrollador
-	instanceVariableNames: 'nombre dedicación costo'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'TaskTracker'!
-
-!Desarrollador methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:57:58'!
-crearCon: unNombre dedicación: unTiempoDeDedicacion costo: unCosto
-	nombre := unNombre.
-	dedicación  := unTiempoDeDedicacion.
-	costo := unCosto.! !
-
-!Desarrollador methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:10:27'!
-tiempoEnCompletar: unasHorasDeEsfuerzo
-	^(unasHorasDeEsfuerzo / dedicación) ceiling.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Desarrollador class' category: #TaskTracker!
-Desarrollador class
-	instanceVariableNames: ''!
-
-!Desarrollador class methodsFor: 'instance creation' stamp: 'tomihq 11/23/2025 12:01:31'!
-nombre: unNombre dedicación: tiempoDeDedicación costo: unCosto
-	^self new crearCon: unNombre dedicación: tiempoDeDedicación costo: unCosto.
-	! !
-
-
-!classDefinition: #Equipo category: #TaskTracker!
-Object subclass: #Equipo
-	instanceVariableNames: 'nombre miembros'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'TaskTracker'!
-
-!Equipo methodsFor: 'initialization' stamp: 'tomihq 11/23/2025 13:16:34'!
-inicializarCon: unNombre miembros: unosMiembros
-	nombre := unNombre.
-	miembros := unosMiembros.
-	! !
-
-
-!Equipo methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:20:55'!
-tiempoEnCompletar: unTiempoEsfuerzo
-	^(miembros collect: [:miembro | miembro tiempoEnCompletar: unTiempoEsfuerzo]) min.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Equipo class' category: #TaskTracker!
-Equipo class
-	instanceVariableNames: ''!
-
-!Equipo class methodsFor: 'instance creation' stamp: 'tomihq 11/23/2025 13:16:22'!
-conNombre: unNombre miembros: unosMiembros
-	^self new inicializarCon: unNombre miembros: unosMiembros.! !
-
-
 !classDefinition: #Proyecto category: #TaskTracker!
 Object subclass: #Proyecto
 	instanceVariableNames: 'nombre tareas fechaInicio subproyectos'
@@ -88,10 +30,10 @@ initialize
 	subproyectos := OrderedCollection new.! !
 
 
-!Proyecto methodsFor: 'accessing' stamp: 'tomihq 11/23/2025 11:04:22'!
+!Proyecto methodsFor: 'accessing' stamp: 'tomihq 11/23/2025 13:28:52'!
 fechaInicio
 	tareas size = 0 ifTrue: [^self].
-	^(tareas collect: [:tarea | tarea fechaInicio]) min.! !
+	^tareas min: [:tarea | tarea fechaInicio].! !
 
 !Proyecto methodsFor: 'accessing' stamp: 'tomihq 11/23/2025 10:13:16'!
 nombre
@@ -132,6 +74,72 @@ conNombre: unNombre ySubproyectos: subproyectos
 !Proyecto class methodsFor: 'instance creation' stamp: 'tomihq 11/23/2025 11:06:40'!
 conNombre: unNombre yTareas: tareas 
 	^self new crearCon: unNombre yUnConjuntoDe: tareas.! !
+
+
+!classDefinition: #Responsable category: #TaskTracker!
+Object subclass: #Responsable
+	instanceVariableNames: 'nombre'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TaskTracker'!
+
+
+!classDefinition: #Desarrollador category: #TaskTracker!
+Responsable subclass: #Desarrollador
+	instanceVariableNames: 'dedicación costo'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TaskTracker'!
+
+!Desarrollador methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:57:58'!
+crearCon: unNombre dedicación: unTiempoDeDedicacion costo: unCosto
+	nombre := unNombre.
+	dedicación  := unTiempoDeDedicacion.
+	costo := unCosto.! !
+
+!Desarrollador methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:10:27'!
+tiempoEnCompletar: unasHorasDeEsfuerzo
+	^(unasHorasDeEsfuerzo / dedicación) ceiling.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Desarrollador class' category: #TaskTracker!
+Desarrollador class
+	instanceVariableNames: ''!
+
+!Desarrollador class methodsFor: 'instance creation' stamp: 'tomihq 11/23/2025 12:01:31'!
+nombre: unNombre dedicación: tiempoDeDedicación costo: unCosto
+	^self new crearCon: unNombre dedicación: tiempoDeDedicación costo: unCosto.
+	! !
+
+
+!classDefinition: #Equipo category: #TaskTracker!
+Responsable subclass: #Equipo
+	instanceVariableNames: 'miembros'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TaskTracker'!
+
+!Equipo methodsFor: 'initialization' stamp: 'tomihq 11/23/2025 13:16:34'!
+inicializarCon: unNombre miembros: unosMiembros
+	nombre := unNombre.
+	miembros := unosMiembros.
+	! !
+
+
+!Equipo methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:30:29'!
+tiempoEnCompletar: unTiempoEsfuerzo
+	^miembros max: [:miembro | miembro tiempoEnCompletar: unTiempoEsfuerzo].! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Equipo class' category: #TaskTracker!
+Equipo class
+	instanceVariableNames: ''!
+
+!Equipo class methodsFor: 'instance creation' stamp: 'tomihq 11/23/2025 13:16:22'!
+conNombre: unNombre miembros: unosMiembros
+	^self new inicializarCon: unNombre miembros: unosMiembros.! !
 
 
 !classDefinition: #TareaConcreta category: #TaskTracker!
@@ -197,9 +205,17 @@ TestCase subclass: #ProyectoTest
 	poolDictionaries: ''
 	category: 'TaskTracker'!
 
+!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:26:10'!
+alanKay
+	^Desarrollador nombre: 'Alan Kay' dedicación: 6 *hour/day costo: 80*dollar/hour.! !
+
 !ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:49:59'!
 danIngalls
 	^Desarrollador nombre: 'Dan Ingalls' dedicación: 8 *hour/day costo: 60*dollar/hour.! !
+
+!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:25:55'!
+parcMobTeam
+	^Equipo conNombre: 'Parc Team' miembros: {self danIngalls. self alanKay}.! !
 
 !ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 11:06:40'!
 test01ProyectoContieneNombre
@@ -309,18 +325,15 @@ test09TareaConDiferenteEsfuerzoQueTiempoDeDedicacionTomaVariosDias
 	
 ! !
 
-!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:15:53'!
+!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:26:24'!
 test10TareaRealizadaPorEquipoTomaElTiempoDelDesarrolladorMasLento
-	|  tarea equipo miembros |
+	|  tarea equipo |
 	
-	miembros := OrderedCollection new.
-	miembros addLast: self danIngalls.
+	equipo := self parcMobTeam.
 	
-	equipo := Equipo conNombre: 'Parc Team' miembros: miembros.
+	tarea := TareaConcreta  conNombre: 'A' fechaDeInicioDeseada: July/1/2024 horasEsfuerzo: 16 * hour  responsable:  equipo dependeDe: OrderedCollection new.
 	
-	tarea := TareaConcreta  conNombre: 'A' fechaDeInicioDeseada: July/1/2024 horasEsfuerzo: 10 * hour  responsable:  equipo dependeDe: OrderedCollection new.
-	
-	self assert: (tarea finalizaEn: July/2/2024).
+	self assert: (tarea finalizaEn: ( July/1/2024 next: (16 * hour/(6*hour/day)) ceiling) previous)
 	
 	
 	
