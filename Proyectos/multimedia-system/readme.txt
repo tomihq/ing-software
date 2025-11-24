@@ -26,7 +26,7 @@ Por ejemplo:
 - Pausar sin tener el reproductor corriendo es un error.
 - Parar el reproductor sin tener el reproductor corriendo es un error.
 
-Desde ya, el reproductor puede verse como una sucesión de estados: Stopped -> Running -> Paused -> Running -> Stopped.
+Desde ya, el reproductor puede verse como una sucesión de estados: Stopped -> Running -> Paused -> Running -> Stopped los cuales el reproductor, en cada estado, podría hacer una acción diferente ante una misma consulta.
 
 
 
