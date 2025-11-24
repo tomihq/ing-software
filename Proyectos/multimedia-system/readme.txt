@@ -4,7 +4,7 @@ El reproductor será capaz de reproducir el siguiente tipo de contenido *(pero s
 1. Música.
 2. Vídeos.
 
-Donde de cada uno nos interesa el **nombre**, la **duración** y el **autor**. 
+Donde de cada uno nos interesa el **nombre**, la **duración** y el **autor**. Y del vídeo también la resolución.  
 
 En todo momento, se podrá agregar/quitar elementos de la cola del reproductor. 
 1. Si se intenta quitar el elemento multimedia que está actualmente siendo reproducido se tendrá que eliminarse de la cola y quedarse en estado stand-by. Permitiendo al usuario presionar "play" en el reproductor para que se reproduzca el siguiente elemento.
