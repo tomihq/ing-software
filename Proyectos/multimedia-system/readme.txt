@@ -1,6 +1,6 @@
 Estamos incursionando en el mundo de los reproductores de contenido multimedia.
 
-El reproductor será capaz de reproducir el siguiente tipo de contenido:
+El reproductor será capaz de reproducir el siguiente tipo de contenido *(pero se espera agregar más)*:
 1. Música.
 2. Vídeos.
 
