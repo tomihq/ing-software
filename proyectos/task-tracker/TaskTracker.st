@@ -18,6 +18,10 @@ Responsable subclass: #Desarrollador
 	poolDictionaries: ''
 	category: 'TaskTracker'!
 
+!Desarrollador methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 22:31:07'!
+agregarFechasLaborales: unasFechasLaborales a: unWorksheet
+	unWorksheet agregarFechasLaborales: unasFechasLaborales aDesarrollador: self.! !
+
 !Desarrollador methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 12:57:58'!
 crearCon: unNombre dedicación: unTiempoDeDedicacion costo: unCosto
 	nombre := unNombre.
@@ -99,7 +103,7 @@ finalizaEn: unaFechaFinalización
 
 !classDefinition: #Proyecto category: #TaskTracker!
 Tarea subclass: #Proyecto
-	instanceVariableNames: 'subtareas'
+	instanceVariableNames: 'subtareas worksheet'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TaskTracker'!
@@ -137,37 +141,30 @@ tieneSobretrabajo
 contiene: unaDependencia
 	^subtareas includes: unaDependencia.! !
 
-!Proyecto methodsFor: 'testing' stamp: 'tomihq 11/23/2025 21:32:39'!
-"si tiene más de una tarea para hacer en un unico día está sobrecargado"
+!Proyecto methodsFor: 'testing' stamp: 'tomihq 11/23/2025 22:18:28'!
 diasDeSobrecargaDe: unDesarrollador
-	|tareas tareasPorDia |
-	tareas := self tareasCorrespondientesA: unDesarrollador.
-	tareasPorDia := self obtenerCantidadTareasPorDiaDe: tareas.
-	
-	^OrderedCollection newFrom: (tareasPorDia keys select: [:k | (tareasPorDia at: k) > 1 ]) .
-! !
+	^(Worksheet of: self) diasDeSobrecargaDe: unDesarrollador.! !
 
 !Proyecto methodsFor: 'testing' stamp: 'tomihq 11/23/2025 18:38:56'!
 fechaInicio: unaFechaDeInicio
 	^fechaInicioDeseada = unaFechaDeInicio.! !
 
-!Proyecto methodsFor: 'testing' stamp: 'tomihq 11/23/2025 21:33:15'!
+!Proyecto methodsFor: 'testing' stamp: 'tomihq 11/23/2025 22:22:08'!
 obtenerCantidadTareasPorDiaDe: unaCantidadDeTareas
-	|fecha cantTareas tareasPorDia|
-	tareasPorDia := Dictionary new.
-	unaCantidadDeTareas do: [:subtareasResponsable | 
-		
-		fecha := subtareasResponsable fechaInicio.
-		cantTareas := tareasPorDia at: fecha ifAbsent: 0.
-		tareasPorDia at:  fecha put: cantTareas+1.
+	^(Worksheet of: self) obtenerCantidadTareasPorDiaDe: unaCantidadDeTareas.! !
 
-	].
-	^tareasPorDia.! !
-
-!Proyecto methodsFor: 'testing' stamp: 'tomihq 11/23/2025 21:28:26'!
+!Proyecto methodsFor: 'testing' stamp: 'tomihq 11/23/2025 22:22:19'!
 tareasCorrespondientesA: unDesarrollador
+	^(Worksheet of: self) tareasCorrespondientesA: unDesarrollador! !
 
-	^ subtareas select: [:subtarea | subtarea esResponsable: unDesarrollador]! !
+
+!Proyecto methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 22:45:19'!
+agregarFechasLaboralesPara: unWorksheet
+	subtareas do: [:subtarea | subtarea agregarFechasLaboralesPara: unWorksheet].! !
+
+!Proyecto methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 22:21:40'!
+initialize
+	super initialize.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -186,10 +183,6 @@ Tarea subclass: #TareaConcreta
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TaskTracker'!
-
-!TareaConcreta methodsFor: 'testing' stamp: 'tomihq 11/23/2025 11:54:01'!
-contieneDependientes: unasTareasDependientes
-	^dependientes = unasTareasDependientes.! !
 
 !TareaConcreta methodsFor: 'testing' stamp: 'tomihq 11/23/2025 11:39:06'!
 contieneHorasEsfuerzo: unasHorasDeEsfuerzo
@@ -234,6 +227,11 @@ inicializarCon: unNombre fechaDeInicioDeseada: unaFechaDeInicio horasDeEsfuerzo:
 	responsable := unResponsable.
 	dependientes := unosDependientes.! !
 
+
+!TareaConcreta methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 22:41:47'!
+agregarFechasLaboralesPara: unWorksheet
+	responsable agregarFechasLaborales: (self fechaInicio to: self fechaFinalización ) a: unWorksheet ! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'TareaConcreta class' category: #TaskTracker!
@@ -243,6 +241,48 @@ TareaConcreta class
 !TareaConcreta class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 13:00:01'!
 conNombre: unNombre fechaDeInicioDeseada: unaFechaDeInicio horasEsfuerzo: unasHorasDeEsfuerzo responsable: unResponsable dependeDe: unosDependientes   
 	^self new inicializarCon: unNombre fechaDeInicioDeseada: unaFechaDeInicio horasDeEsfuerzo: unasHorasDeEsfuerzo responsable: unResponsable dependeDe: unosDependientes.! !
+
+
+!classDefinition: #Worksheet category: #TaskTracker!
+Object subclass: #Worksheet
+	instanceVariableNames: 'proyecto fechasLaboralesPorDesarrollador'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TaskTracker'!
+
+!Worksheet methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 22:38:19'!
+agregarFechasLaborales: unasFechasLaborales aDesarrollador: unDesarrollador
+	|fechasLaboralesDesarrollador|
+	fechasLaboralesDesarrollador := fechasLaboralesPorDesarrollador at: unDesarrollador ifAbsentPut: [Bag new].
+	fechasLaboralesDesarrollador addAll: unasFechasLaborales.! !
+
+!Worksheet methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 22:42:29'!
+diasDeSobrecargaDe: unDesarrollador
+	|diasDeTrabajoDesarrollador diasDeTrabajoConSobrecargaDeDesarrollador|
+	
+	diasDeTrabajoDesarrollador := fechasLaboralesPorDesarrollador at: unDesarrollador ifAbsent: [Bag new].
+	diasDeTrabajoConSobrecargaDeDesarrollador := Set new.
+	diasDeTrabajoDesarrollador withOccurrencesDo: [:fecha :apariciones | apariciones > 1 ifTrue: [diasDeTrabajoConSobrecargaDeDesarrollador add: fecha]].
+	
+	^diasDeTrabajoConSobrecargaDeDesarrollador
+! !
+
+!Worksheet methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 22:44:31'!
+initializePara: unProyecto
+	proyecto := unProyecto.
+	fechasLaboralesPorDesarrollador := Dictionary new.
+	unProyecto agregarFechasLaboralesPara: self.
+	! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Worksheet class' category: #TaskTracker!
+Worksheet class
+	instanceVariableNames: ''!
+
+!Worksheet class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 22:20:38'!
+of: unProyecto
+	^self new initializePara: unProyecto.! !
 
 
 !classDefinition: #ProyectoTest category: #TaskTracker!
@@ -476,6 +516,68 @@ test17ElDesarrolladorEstáSobrecargadoSiTieneMásDeUnProyectoARealizarEnElMismoD
 	danIngallsDiasSobrecargado := proyectoERP diasDeSobrecargaDe: danIngalls.
 	
 	self assert: (danIngallsDiasSobrecargado size) equals: 1.
+
+
+	
+	
+! !
+
+!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 22:10:41'!
+test17ElDesarrolladorNoEstáSobrecargadoSiNoTieneTareasAsignadas
+	| tareaSSA proyectoERP danIngalls alanKay |
+	
+	danIngalls := self danIngalls.
+	alanKay := self alanKay.
+	tareaSSA := TareaConcreta conNombre: 'SS A' fechaDeInicioDeseada: July/1/2024  horasEsfuerzo: 8 * hour responsable:  alanKay  dependeDe: {}. 
+	
+
+	proyectoERP := Proyecto llamado: 'Sistema ERP' compuestoPor: {tareaSSA }.
+
+
+	self assert: (proyectoERP diasDeSobrecargaDe: danIngalls) isEmpty.
+	
+
+
+	
+	
+! !
+
+!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 22:10:35'!
+test18ElDesarrolladorEstáSobrecargadoSiTieneMásDeUnProyectoARealizarEnElMismoDía
+	| tareaSSA tareaSSB proyectoERP danIngalls danIngallsDiasSobrecargado |
+	
+	danIngalls := self danIngalls.
+	tareaSSA := TareaConcreta conNombre: 'SS A' fechaDeInicioDeseada: July/1/2024  horasEsfuerzo: 8 * hour responsable:  danIngalls  dependeDe: {}. 
+	tareaSSB := TareaConcreta conNombre: 'SS B' fechaDeInicioDeseada: July/1/2024  horasEsfuerzo: 8 * hour responsable: danIngalls  dependeDe: {}. 
+
+	proyectoERP := Proyecto llamado: 'Sistema ERP' compuestoPor: {tareaSSA . tareaSSB}.
+	
+	danIngallsDiasSobrecargado := proyectoERP diasDeSobrecargaDe: danIngalls.
+	
+	self assert: (danIngallsDiasSobrecargado size) equals: 1.
+
+
+	
+	
+! !
+
+!ProyectoTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/23/2025 22:16:03'!
+ttest19HayDesarolladoresQueEstánSobrecargadoSiTienenMásDeUnProyectoARealizarEnElMismoDía
+	| tareaSSA tareaSSB tareaSSC tareaSSD proyectoERP danIngalls danIngallsDiasSobrecargado alanKay |
+	
+	danIngalls := self danIngalls.
+	alanKay := self alanKay.
+	tareaSSA := TareaConcreta conNombre: 'SS A' fechaDeInicioDeseada: July/1/2024  horasEsfuerzo: 8 * hour responsable:  danIngalls  dependeDe: {}. 
+	tareaSSB := TareaConcreta conNombre: 'SS B' fechaDeInicioDeseada: July/1/2024  horasEsfuerzo: 8 * hour responsable: danIngalls  dependeDe: {}. 
+	tareaSSC := TareaConcreta conNombre: 'SS C' fechaDeInicioDeseada: July/1/2024  horasEsfuerzo: 8 * hour responsable: alanKay  dependeDe: {}. 
+	tareaSSD := TareaConcreta conNombre: 'SS D' fechaDeInicioDeseada: July/1/2024  horasEsfuerzo: 8 * hour responsable: alanKay  dependeDe: {}. 
+
+	proyectoERP := Proyecto llamado: 'Sistema ERP' compuestoPor: {tareaSSA . tareaSSB}.
+
+	
+	self assert: (proyectoERP haySobrecarga).
+	self assert: (proyectoERP diasDeSobrecargaDe: alanKay > 0) .
+	self assert: (proyectoERP diasDeSobrecargaDe: danIngalls > 0) .
 
 
 	
