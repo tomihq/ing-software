@@ -6,7 +6,7 @@ El reproductor será capaz de reproducir el siguiente tipo de contenido *(pero s
 
 Donde de cada uno nos interesa el **nombre**, la **duración** (en segundos) y el **autor**. Y del vídeo también la resolución.  
 
-En todo momento, se podrá agregar/quitar elementos de la cola del reproductor. 
+En todo momento, se podrá agregar/quitar elementos de la cola del reproductor. Considere que NO puede haber elementos repetidos en la cola. 
 1. Si se intenta quitar el elemento multimedia que está actualmente siendo reproducido se tendrá que eliminarse de la cola y quedarse en estado stand-by. Permitiendo al usuario presionar "play" en el reproductor para que se reproduzca el siguiente elemento.
 2. Si se intenta quitar un elemento multimedia que no está siendo reproducido no pasa ningún efecto. 
 
