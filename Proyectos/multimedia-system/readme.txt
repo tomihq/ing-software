@@ -41,7 +41,9 @@ Como podría haber diferentes tipos de reportes se pide **no implementarlos** di
 
 El reporte debería tener esta pinta:
 'Oops, I did it again' Britney Spears played 32 times
-'Resident Evil 4, Serenity' CAPCOM played 20 times.
+'Complicated' Avril Lavigne played 20 times.
 
 Considere que se considera "reproducido" cualquier elemento multimedia que haya pasado por el player y haya finalizado en algún momento.
+No nos interesa de qué manera exporta el reporte, tranquilamente podría ser cualquier estructura de datos que usted considere eficiente.
+Ej.: un array nos basta.
 
