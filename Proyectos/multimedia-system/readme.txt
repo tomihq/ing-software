@@ -35,4 +35,8 @@ Necesitamos que ahora el reproductor tenga un mensaje especial para recibir una 
 
 -- 
 
+Queremos introducir reportes de los archivos multimedia que más han sido reproducidas por un usuario. Asuma que cuando el cliente instancia el Player y lo utiliza, está simulando que usted es el usuario.
+
+Como podría haber diferentes tipos de reportes se pide **no implementarlos** directamente en el reproductor, sino que el reproductor "proporcione la información" a quién corresponda y según la necesite.
+
 
