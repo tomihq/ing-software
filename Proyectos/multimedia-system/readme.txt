@@ -25,7 +25,9 @@ Por ejemplo:
 - Comenzar a reproducir sin tener elementos en la cola es un error.
 - Pausar sin tener el reproductor corriendo es un error.
 - Parar el reproductor sin tener el reproductor corriendo es un error.
-- 
+
+Desde ya, el reproductor puede verse como una sucesión de estados: Stopped -> Running -> Paused -> Running -> Stopped.
+
 
 
 --
