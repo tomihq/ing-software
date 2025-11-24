@@ -39,4 +39,9 @@ Queremos introducir reportes de los archivos multimedia que más han sido reprod
 
 Como podría haber diferentes tipos de reportes se pide **no implementarlos** directamente en el reproductor, sino que el reproductor "proporcione la información" a quién corresponda y según la necesite.
 
+El reporte debería tener esta pinta:
+'Oops, I did it again' Britney Spears played 32 times
+'Resident Evil 4, Serenity' CAPCOM played 20 times.
+
+Considere que se considera "reproducido" cualquier elemento multimedia que haya pasado por el player y haya finalizado en algún momento.
 
