@@ -28,12 +28,11 @@ Por ejemplo:
 
 Desde ya, el reproductor puede verse como una sucesión de estados: Stopped -> Running -> Paused -> Running -> Stopped los cuales el reproductor, en cada estado, podría hacer una acción diferente ante una misma consulta. Tome esto como una intuición pero no como una estrategia de resolución directa.
 
-
-
 --
 
 Queremos introducir playlists. No se puede modificar en absoluto lo anterior. 
 Necesitamos que ahora el reproductor tenga un mensaje especial para recibir una playlist y que agregue a la cola todos los elementos multimedia que contiene.
 
 -- 
+
 
