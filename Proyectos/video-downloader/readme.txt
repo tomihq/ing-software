@@ -7,7 +7,7 @@ El internet del usuario es lento, así que queremos realizar las descargas cuand
 Iteración 1
 Tenemos dos proveedores: A y B aunque podremos agregar más a futuro. 
 El proveedor A contiene un mensaje "fetch" que recibe un nombre de un archivo y a dónde escribir el contenido. Asuma que el resultado es un buffer que eventualmente sería escribir un archivo en sistema.
-El proveedor B contiene un mensaje "getFile" que recibe un nombre de un archivo y devuelve un RemoteFile que no es más que un nombre y un Stream.
+El proveedor B contiene un mensaje "getFile" que recibe un nombre de un archivo y devuelve un RemoteFile que no es más que un nombre y un Stream. Puede asumir que luego de llamar a este método, la variable contiene como resultado el Stream correspondiente.
 
 Queremos sólamente utilizar un Downloader y un método download para descargar el archivo, sin preocuparnos dentro de ella *qué proveedor* eligió el cliente para usar.
 
