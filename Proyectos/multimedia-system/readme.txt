@@ -28,7 +28,7 @@ Por ejemplo:
 
 Desde ya, el reproductor puede verse como una sucesión de estados: Stopped -> Running -> Paused -> Running -> Stopped los cuales el reproductor, en cada estado, podría hacer una acción diferente ante una misma consulta. Tome esto como una intuición pero no como una estrategia de resolución directa.
 
-Por último, el usuario podrá adelantar o retroceder el archivo multimedia. Asuma que recibe un número que representa "lo que le quedaría por terminar de reproducir el elemento multimedia una vez que se movió a X lugar". Ej.: Si la entrada es "10 * second" entonces, el usuario está queriendo ir hacia los últimos 10 * second del archivo multimedia. Esto es por fines prácticos para que no tenga que complejizar el modelo. 
+Por último, el usuario podrá adelantar o retroceder el archivo multimedia (Siempre que esté en Running / Paused). Asuma que recibe un número que representa "lo que le quedaría por terminar de reproducir el elemento multimedia una vez que se movió a X lugar". Ej.: Si la entrada es "10 * second" entonces, el usuario está queriendo ir hacia los últimos 10 * second del archivo multimedia. Esto es por fines prácticos para que no tenga que complejizar el modelo. 
 
 --
 
