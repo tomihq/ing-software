@@ -34,6 +34,11 @@ Por último, el usuario podrá adelantar o retroceder el archivo multimedia (Sie
 
 Queremos introducir playlists. No se puede modificar en absoluto lo anterior. 
 Necesitamos que ahora el reproductor tenga un mensaje especial para recibir una playlist y que agregue a la cola todos los elementos multimedia que contiene.
+La playlist tendrá un nombre y los siguientes tipos de elementos:
+1. Playlists internas.
+2. Vídeos y Canciones.
+
+Recordar que "una playlist interna" no es más que un conjunto de vídeos y canciones.
 
 -- 
 
