@@ -1,41 +1,71 @@
-Summary
-Queremos construir un pequeño sistema para descargar archivos desde distintos proveedores remotos, cada uno con una interfaz diferente.
+Objetivo general
 
-El internet del usuario es lento, así que queremos realizar las descargas cuando realmente las solicite. Además de querer descargar el archivo **una única vez**
+Diseñar un pequeño sistema para descargar archivos desde distintos proveedores remotos, cada uno con su propia interfaz.
+    Queremos:
+	a. Poder agregar proveedores nuevos sin modificar el código existente.
+	b. Cargar los archivos solo cuando sea necesario (descarga diferida).
+	c. Evitar descargas repetidas (caché).
+	d. Ocultar al usuario final los detalles técnicos de los proveedores.
+
+Iteración 1 — Unificación de interfaces de descarga
+
+Tenemos dos proveedores remotos:
+Proveedor A
+Expone el mensaje:
+fetch: aFileName to: aStream
+Recibe el nombre de un archivo y un Stream donde escribir su contenido.
+
+Proveedor B
+Expone el mensaje:
+getFile: aFileName
+Devuelve un objeto RemoteFile que contiene el nombre y un Stream con el contenido descargado.
 
 --
-Iteración 1
-Tenemos dos proveedores: A y B aunque podremos agregar más a futuro. 
-El proveedor A contiene un mensaje "fetch" que recibe un nombre de un archivo y a dónde escribir el contenido. Asuma que el resultado es un buffer que eventualmente sería escribir un archivo en sistema.
-El proveedor B contiene un mensaje "getFile" que recibe un nombre de un archivo y devuelve un RemoteFile que no es más que un nombre y un Stream. Puede asumir que luego de llamar a este método, la variable contiene como resultado el Stream correspondiente.
 
-Queremos sólamente utilizar un Downloader y un método download para descargar el archivo, sin preocuparnos dentro de ella *qué proveedor* eligió el cliente para usar.
+Problema
 
-En esta iteración se asume que el archivo se descarga apenas se hace
-downloader download: fileName. El cliente **sabe** exactamente cómo se descarga y se descarga mil veces si quiere.
+Cada proveedor tiene su propia forma de descargar los archivos.
+Queremos tener un único punto de acceso para descargar archivos:
+downloader download: 'file.txt'
 
-Considere utilizar Stubs para simular qué contenido descarga cada archivo.
-Ej.: para 'file.txt' debería devolver un Stream que contenga el contenido de #('fileDownloaded').
+En esta iteración, la descarga se realiza inmediatamente cada vez que se llama a download:.
+El cliente sabe qué proveedor usa, y puede descargar el mismo archivo muchas veces.
+
+Se recomienda usar stubs para simular las descargas.
+Por ejemplo, 'file.txt' puede “descargar” un Stream que contenga #('fileDownloaded').
 
 --
-Iteración 2
-Queremos que la descarga se realice **solo** cuando el usuario "la solicite". Pero sin mostrarle a él cómo se hace la descarga y si realmente se hace.
-Esto quiere decir que el cliente podrá mencionar un "download" pero no sabe si se descargó desde cero o vino el archivo desde un caché. 
 
-En esta iteración se asume que todavía el usuario **conoce** a qué proveedor le va a pedir la información, y quién es el encargado de descargarlo.
+Iteración 2 — Descarga diferida y caché
 
--- 
-Iteración 3
-El usuario está cansado de tener que conocer los proveedores y solamente quiere utilizar un mensaje simple.
-Algo como FileServiceDownloader download: 'file.txt'.
+Ahora queremos que la descarga se realice solo cuando realmente se necesite, no cuando el usuario llame download.
 
-Como el usuario no especifica qué proveedor usar, se asume que este Service conoce a cada uno de ellos y puede buscar en cada uno de ellos el archivo solicitado. 
+Si el usuario pide el archivo muchas veces, solo debe descargarse la primera vez.
+Las siguientes deben venir desde un caché interno del downloader.
 
-Por comodidad, se asume que todos los archivos están en todos los services, pero sí lo desea, puede hacer que no todos los tengan ¿qué cambiaría? 
+El cliente sigue eligiendo explícitamente qué proveedor usar, pero ya no sabe si:
+1. el archivo se acaba de descargar, o
+2. vino del caché.
 
-En esta iteración se espera que tanto la descarga diferida, como el adaptador al servicio esté todo dentro de FileServiceDownloader, lo cual, hace la vida más simple del usuario final que saber de tecnicismos innecesarios.
+file := downloader download: 'file.txt'.   "Puede o no disparar la descarga real"
+
+--
+
+Iteración 3 — Servicio unificado
+
+Ahora el usuario está cansado de conocer los proveedores específicos.
+Quiere una interfaz única, simple, como:
+
+FileServiceDownloader download: 'file.txt'
 
 
+Este servicio debe:
+1. Internamente conocer la lista de proveedores disponibles.
+2. Buscar el archivo en cualquiera de ellos.
+3. Aplicar automáticamente la descarga diferida.
+4. Aplicar también el caché.
 
 
-
+A elección del diseñador:
+1. Podés asumir que todos los proveedores contienen todos los archivos, o
+2. Podés hacer que algunos proveedores tengan archivos y otros no. En ese caso, el sistema debe buscar entre ellos y continuar si uno falla.
