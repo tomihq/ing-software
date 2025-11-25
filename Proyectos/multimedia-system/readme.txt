@@ -14,7 +14,7 @@ El reproductor podrá *iniciarse* si tiene al menos un elemento en la cola. Si n
 
 El reproductor podrá pausarse *sólo* si hay un un archivo multimedia corriendo, y su tiempo de *ejecución* deberá congelarse, es decir, el tiempo no pasará. El archivo de multimedia "actual" permanece siendo el mismo.
 
-El reproductor podrá stoppearse *sólo* si hay un archivo multimedia corriendo. En este caso, se elimina reinicia el estado del elemento multimedia como si nunca hubiese corrido.
+El reproductor podrá stoppearse *sólo* si el reproductor está en Running/Paused. En este caso, se elimina reinicia el estado del elemento multimedia como si nunca hubiese corrido.
 
 El reproductor podrá permitir al usuario ir al siguiente elemento multimedia. Esto afectará al reproductor de la siguiente manera:
 1. Se elimina el elemento previo de la queue.
