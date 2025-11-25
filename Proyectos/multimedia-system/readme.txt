@@ -1,5 +1,5 @@
 Estamos incursionando en el mundo de los reproductores de contenido multimedia.
-
+ITERACIÓN 1
 El reproductor será capaz de reproducir el siguiente tipo de contenido *(pero se espera agregar más)*:
 1. Música.
 2. Vídeos.
@@ -31,7 +31,7 @@ Desde ya, el reproductor puede verse como una sucesión de estados: Stopped -> R
 Por último, el usuario podrá adelantar o retroceder el archivo multimedia (Siempre que esté en Running / Paused). Asuma que recibe un número que representa "lo que le quedaría por terminar de reproducir el elemento multimedia una vez que se movió a X lugar". Ej.: Si la entrada es "10 * second" entonces, el usuario está queriendo ir hacia los últimos 10 * second del archivo multimedia. Esto es por fines prácticos para que no tenga que complejizar el modelo. 
 
 --
-
+ITERACIÓN 2
 Queremos introducir playlists. No se puede modificar en absoluto lo anterior. 
 Necesitamos que ahora el reproductor tenga un mensaje especial para recibir una playlist y que agregue a la cola todos los elementos multimedia que contiene.
 La playlist tendrá un nombre y los siguientes tipos de elementos:
@@ -41,7 +41,7 @@ La playlist tendrá un nombre y los siguientes tipos de elementos:
 Recordar que "una playlist interna" no es más que un conjunto de vídeos y canciones.
 
 -- 
-
+ITERACIÓN 3
 Queremos introducir reportes de los archivos multimedia que más han sido reproducidas por un usuario. Asuma que cuando el cliente instancia el Player y lo utiliza, está simulando que usted es el usuario.
 
 Como podría haber diferentes tipos de reportes se pide **no implementarlos** directamente en el reproductor, sino que el reproductor "proporcione la información" a quién corresponda y según la necesite.
