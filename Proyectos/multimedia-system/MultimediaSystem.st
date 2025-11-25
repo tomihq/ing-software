@@ -1,133 +1,95 @@
-!classDefinition: #MultimediaElement category: #MultimediaSystem!
-Object subclass: #MultimediaElement
-	instanceVariableNames: 'name duration artist state remainingTime'
+!classDefinition: #MediaStat category: #MultimediaSystem!
+Object subclass: #MediaStat
+	instanceVariableNames: 'element count'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'MultimediaSystem'!
 
-!MultimediaElement methodsFor: 'accessing' stamp: 'tomihq 11/24/2025 14:15:42'!
+!MediaStat methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:52:12'!
+counterAt: aCounterValue
+	^count = aCounterValue.! !
+
+!MediaStat methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:51:02'!
+counterAtZero
+	^count = 0.! !
+
+!MediaStat methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:42:07'!
+increment
+    count := count + 1.! !
+
+!MediaStat methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:43:07'!
+initializeForElement: aMultimediaElement
+	element := aMultimediaElement.
+	count := 0.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'MediaStat class' category: #MultimediaSystem!
+MediaStat class
+	instanceVariableNames: ''!
+
+!MediaStat class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:42:46'!
+for: anElement
+    ^ self new initializeForElement: anElement.! !
+
+
+!classDefinition: #MultimediaElement category: #MultimediaSystem!
+Object subclass: #MultimediaElement
+	instanceVariableNames: 'name author duration multimediaId'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'MultimediaSystem'!
+
+!MultimediaElement methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 21:37:39'!
 duration
 	^duration.! !
 
-!MultimediaElement methodsFor: 'accessing' stamp: 'tomihq 11/24/2025 14:11:24'!
-size
-	^1.! !
+!MultimediaElement methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:26:51'!
+id
+	^multimediaId.! !
 
 
-!MultimediaElement methodsFor: 'testing' stamp: 'tomihq 11/24/2025 14:07:58'!
-goInTime: aTimeToPass
-	remainingTime := remainingTime - aTimeToPass.! !
-
-!MultimediaElement methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:23:08'!
-isPaused
-	^state isPaused.! !
-
-!MultimediaElement methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:22:53'!
-isReproducing
-	^state isReproducing.! !
-
-!MultimediaElement methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:24:31'!
-isStopped
-	^state isStopped.! !
-
-!MultimediaElement methodsFor: 'testing' stamp: 'tomihq 11/24/2025 14:03:39'!
-remainingTime: aTimeToCompare
-	^remainingTime = aTimeToCompare.! !
-
-!MultimediaElement methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:29:21'!
-state: aState
-	state := aState.! !
+!MultimediaElement methodsFor: 'actions' stamp: 'tomihq 11/24/2025 23:50:20'!
+addElementsTo: aQueue
+    aQueue addLast: self.! !
 
 
-!MultimediaElement methodsFor: 'initializations' stamp: 'tomihq 11/24/2025 16:21:20'!
-initializeWith: aName duration: aDurationInSeconds artist: anArtist
-	name := aName.
-	duration := aDurationInSeconds.
-	artist := anArtist.
-	state := StoppedState for: self.
-	remainingTime := aDurationInSeconds.! !
+!MultimediaElement methodsFor: 'initializations' stamp: 'tomihq 11/25/2025 00:20:18'!
+initializeWith: aSongName author: anAuthorName duration: aSongDuration id: anId
+	multimediaId := anId.
+	name := aSongName.
+	author := anAuthorName.
+	duration := aSongDuration.
+	! !
 
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!MultimediaElement methodsFor: 'actions' stamp: 'tomihq 11/24/2025 15:18:14'!
-pause
-	state pause.! !
+!classDefinition: 'MultimediaElement class' category: #MultimediaSystem!
+MultimediaElement class
+	instanceVariableNames: ''!
 
-!MultimediaElement methodsFor: 'actions' stamp: 'tomihq 11/24/2025 15:17:00'!
-play
-	state play.! !
-
-!MultimediaElement methodsFor: 'actions' stamp: 'tomihq 11/24/2025 15:32:38'!
-resetRemainingTime
-	remainingTime := duration.! !
-
-!MultimediaElement methodsFor: 'actions' stamp: 'tomihq 11/24/2025 15:18:27'!
-stop
-	state stop.! !
-
-
-!MultimediaElement methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 16:34:45'!
-includesElement: anElement
-    ^ self == anElement! !
+!MultimediaElement class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:18:35'!
+id: anId named: aSongName author: anAuthorName duration: aSongDuration
+	^self new initializeWith: aSongName author: anAuthorName duration: aSongDuration id: anId.! !
 
 
 !classDefinition: #Playlist category: #MultimediaSystem!
 MultimediaElement subclass: #Playlist
-	instanceVariableNames: 'elements'
+	instanceVariableNames: 'multimedia'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'MultimediaSystem'!
 
-!Playlist methodsFor: 'initializations' stamp: 'tomihq 11/24/2025 14:21:36'!
-initializeWith: aName and: aListOfMultimediaElements
-	name := aName.
-	elements := aListOfMultimediaElements asOrderedCollection .! !
+!Playlist methodsFor: 'actions' stamp: 'tomihq 11/24/2025 23:49:58'!
+addElementsTo: aQueue
+	multimedia do: [:each | each addElementsTo: aQueue ].! !
 
 
-!Playlist methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:03:21'!
-includes: aMultimediaElement
-	^elements includes: aMultimediaElement.! !
+!Playlist methodsFor: 'initializations' stamp: 'tomihq 11/24/2025 23:42:04'!
+initializeWith: aPlaylistName media: aListOfMultimediaElement.
+	name := aPlaylistName.
+	multimedia := aListOfMultimediaElement.! !
 
-!Playlist methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:41:17'!
-isReproducing
-	^elements anySatisfy: [:multimediaElement | multimediaElement isReproducing].! !
-
-!Playlist methodsFor: 'testing' stamp: 'tomihq 11/24/2025 16:33:30'!
-nowPlaying: aMultimediaElement
-    ^ (self includesElement: aMultimediaElement)
-        and: [ aMultimediaElement isReproducing ].! !
-
-
-!Playlist methodsFor: 'accessing' stamp: 'tomihq 11/24/2025 14:13:39'!
-duration
-	^elements sum: [:element | element duration].! !
-
-!Playlist methodsFor: 'accessing' stamp: 'tomihq 11/24/2025 14:11:16'!
-size
-	^elements sum: [:element | element size].! !
-
-
-!Playlist methodsFor: 'assertions' stamp: 'tomihq 11/24/2025 15:05:45'!
-assertPlaylistIsNotEmpty
-	elements size = 0 ifTrue: [^self error: self class cannotPlayIfPlaylistIsEmptyErrorMessage ]! !
-
-
-!Playlist methodsFor: 'actions' stamp: 'tomihq 11/24/2025 14:20:52'!
-add: aMultimediaElement
-	elements add: aMultimediaElement.! !
-
-!Playlist methodsFor: 'actions' stamp: 'tomihq 11/24/2025 15:05:34'!
-play
-	| multimedia |
-	self assertPlaylistIsNotEmpty.
-	multimedia := elements first.
-	multimedia play.
-	! !
-
-
-!Playlist methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 16:34:52'!
-includesElement: anElement
-    ^ (self == anElement)
-        or: [ elements anySatisfy: [:child | child includesElement: anElement] ].! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -135,13 +97,9 @@ includesElement: anElement
 Playlist class
 	instanceVariableNames: ''!
 
-!Playlist class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 13:58:38'!
-cannotPlayIfPlaylistIsEmptyErrorMessage
-	^'Playlist do not contains elements to play'! !
-
-!Playlist class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 13:52:07'!
-named: aName with: aListOfMultimediaElements
-	^self new initializeWith: aName and: aListOfMultimediaElements! !
+!Playlist class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 23:33:29'!
+named: aPlaylistName withMedia: aListOfMultimediaElement
+	^self new initializeWith: aPlaylistName media: aListOfMultimediaElement.! !
 
 
 !classDefinition: #Song category: #MultimediaSystem!
@@ -151,27 +109,18 @@ MultimediaElement subclass: #Song
 	poolDictionaries: ''
 	category: 'MultimediaSystem'!
 
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Song class' category: #MultimediaSystem!
-Song class
-	instanceVariableNames: ''!
-
-!Song class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 16:21:20'!
-named: aName duration: aDurationInSeconds artist: anArtist
-	^self new initializeWith: aName duration: aDurationInSeconds artist: anArtist! !
-
-!Song class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 13:47:50'!
-notPlayingDescriptionErrorMessage
-	^'Song is not playing'! !
-
 
 !classDefinition: #Video category: #MultimediaSystem!
 MultimediaElement subclass: #Video
-	instanceVariableNames: ''
+	instanceVariableNames: 'resolution'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'MultimediaSystem'!
+
+!Video methodsFor: 'initializations' stamp: 'tomihq 11/25/2025 00:19:25'!
+initializeWith: aSongName author: anAuthorName duration: aSongDuration resolution: aResolution id: anId
+	resolution := aResolution.
+	super initializeWith:  aSongName author:  anAuthorName duration: aSongDuration id: anId.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -179,394 +128,698 @@ MultimediaElement subclass: #Video
 Video class
 	instanceVariableNames: ''!
 
-!Video class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 16:21:20'!
-named: aName duration: aDurationInSeconds artist: anArtist
-	^self new initializeWith: aName duration: aDurationInSeconds artist: anArtist! !
-
-!Video class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 13:48:02'!
-notPlayingDescriptionErrorMessage
-	^'Video is not playing'! !
+!Video class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:19:58'!
+id: anId named: aSongName author: anAuthorName duration: aSongDuration resolution: aResolution 
+	^self new initializeWith: aSongName author: anAuthorName duration: aSongDuration resolution: aResolution id: anId.! !
 
 
-!classDefinition: #PlaybackState category: #MultimediaSystem!
-Object subclass: #PlaybackState
-	instanceVariableNames: 'element'
+!classDefinition: #Player category: #MultimediaSystem!
+Object subclass: #Player
+	instanceVariableNames: 'queue currentlyPlaying remainingPlayTime state playerStats'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'MultimediaSystem'!
 
-!PlaybackState methodsFor: 'initializations' stamp: 'tomihq 11/24/2025 15:30:37'!
-initializeFor: aMultimediaElement
-	element := aMultimediaElement.! !
+!Player methodsFor: 'assertions' stamp: 'tomihq 11/24/2025 23:07:35'!
+assertMultimediaElementNotPresentAtQueue: aMultimediaElement
+	(queue includes: aMultimediaElement) ifTrue: [^self error: self class cannotAddMultimediaOfElementThatIsAlreadyPresentErrorMessage ].! !
+
+!Player methodsFor: 'assertions' stamp: 'tomihq 11/24/2025 23:09:51'!
+assertMultimediaElementPresentAtQueue: aMultimediaElement
+	(queue includes: aMultimediaElement) not ifTrue: [^self error: self class cannotRemoveMultimediaOfElementIfNotPresentInQueueErrorMessage ].! !
+
+!Player methodsFor: 'assertions' stamp: 'tomihq 11/24/2025 23:01:09'!
+assertPlayerHasMultimediaElementLoaded
+	currentlyPlaying = nil ifTrue: [^self error: self class cannotRequestNextMultimediaElementIfThereIsNotCurrentOneAtPlayerErrorMessage ].! !
+
+!Player methodsFor: 'assertions' stamp: 'tomihq 11/24/2025 23:08:29'!
+assertQueueNotEmpty
+	self isQueueEmpty ifTrue: [^self error: self class queueIsEmptyErrorMessage].! !
+
+
+!Player methodsFor: 'testing' stamp: 'tomihq 11/25/2025 01:10:43'!
+accept: aVisitor
+    aVisitor visitPlayer: self.! !
+
+!Player methodsFor: 'testing' stamp: 'tomihq 11/24/2025 20:56:41'!
+atQueue: aMultimediaElement
+	^queue includes: aMultimediaElement.! !
+
+!Player methodsFor: 'testing' stamp: 'tomihq 11/24/2025 21:11:11'!
+currentMediaRemainingPlayTime: aPlayTime
+	^remainingPlayTime = aPlayTime.! !
+
+!Player methodsFor: 'testing' stamp: 'tomihq 11/24/2025 21:07:44'!
+isPlaying: aMultimediaElement
+	^currentlyPlaying = aMultimediaElement.! !
+
+!Player methodsFor: 'testing' stamp: 'tomihq 11/24/2025 23:08:19'!
+isQueueEmpty
+	^queue size = 0.! !
+
+!Player methodsFor: 'testing' stamp: 'tomihq 11/24/2025 22:35:44'!
+isStopped
+	^state isStopped.! !
+
+!Player methodsFor: 'testing' stamp: 'tomihq 11/24/2025 21:04:38'!
+queueSize: aQueueSize
+	^queue size = aQueueSize.! !
+
+
+!Player methodsFor: 'actions' stamp: 'tomihq 11/24/2025 23:07:45'!
+add: aMultimediaElement
+	self assertMultimediaElementNotPresentAtQueue: aMultimediaElement.
+	queue add: aMultimediaElement.! !
+
+!Player methodsFor: 'actions' stamp: 'tomihq 11/24/2025 23:37:48'!
+addPlaylist: aPlaylist
+	aPlaylist addElementsTo: queue.! !
+
+!Player methodsFor: 'actions' stamp: 'tomihq 11/24/2025 22:40:01'!
+advanceTime: anElapsedTime
+	state advanceTime: anElapsedTime.! !
+
+!Player methodsFor: 'actions' stamp: 'tomihq 11/25/2025 00:44:41'!
+advanceTimeWhenPlaying: anElapsedTime
+	remainingPlayTime := (remainingPlayTime - anElapsedTime) max: 0.
+	remainingPlayTime  = 0 ifTrue: [
+		self updateMediaStats.
+		self remove: currentlyPlaying.
+	].! !
+
+!Player methodsFor: 'actions' stamp: 'tomihq 11/24/2025 23:13:56'!
+firstInQueue
+	^queue first! !
+
+!Player methodsFor: 'actions' stamp: 'tomihq 11/24/2025 23:05:53'!
+next
+	self assertPlayerHasMultimediaElementLoaded.
+	self remove: currentlyPlaying.
+	self play.
+	
+	
+	
+	! !
+
+!Player methodsFor: 'actions' stamp: 'tomihq 11/24/2025 22:26:36'!
+pause
+	state pause.
+	! !
+
+!Player methodsFor: 'actions' stamp: 'tomihq 11/24/2025 23:19:12'!
+play
+	self assertQueueNotEmpty.
+	state play: self firstInQueue.
+	
+	! !
+
+!Player methodsFor: 'actions' stamp: 'tomihq 11/24/2025 23:20:51'!
+playWhenNotRunning: aMultimediaElementToPlay
+	currentlyPlaying := aMultimediaElementToPlay.
+	remainingPlayTime := currentlyPlaying duration.! !
+
+!Player methodsFor: 'actions' stamp: 'tomihq 11/24/2025 23:09:39'!
+remove: aMultimediaElement
+	self assertMultimediaElementPresentAtQueue: aMultimediaElement.
+	queue remove: aMultimediaElement.
+	(aMultimediaElement = currentlyPlaying) ifTrue: [^self stopPlayer].
+	! !
+
+!Player methodsFor: 'actions' stamp: 'tomihq 11/24/2025 22:40:47'!
+stop
+	state stop.
+	! !
+
+!Player methodsFor: 'actions' stamp: 'tomihq 11/24/2025 22:33:09'!
+stopPlayer
+	currentlyPlaying  := nil.
+	remainingPlayTime := nil.
+	state := StoppedState for: self.! !
+
+!Player methodsFor: 'actions' stamp: 'tomihq 11/25/2025 00:44:52'!
+updateMediaStats
+	| key stat |
+	key := currentlyPlaying id.
+
+	stat := playerStats 
+	    at: key 
+	    ifAbsentPut: [ MediaStat for: currentlyPlaying ].
+
+	stat increment.! !
+
+
+!Player methodsFor: 'setters' stamp: 'tomihq 11/24/2025 22:28:32'!
+state: aPlayerState
+	state := aPlayerState.! !
+
+
+!Player methodsFor: 'initializations' stamp: 'tomihq 11/25/2025 00:23:29'!
+initialize
+	queue := OrderedCollection new.
+	state := StoppedState for: self.
+	playerStats := Dictionary new.! !
+
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'PlaybackState class' category: #MultimediaSystem!
-PlaybackState class
+!classDefinition: 'Player class' category: #MultimediaSystem!
+Player class
 	instanceVariableNames: ''!
 
-!PlaybackState class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 15:11:12'!
-for: aMultimediaElement
-	^self new initializeFor: aMultimediaElement.! !
+!Player class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 21:03:03'!
+cannotAddMultimediaOfElementThatIsAlreadyPresentErrorMessage
+	^'Cannot add to the queue because is already present'.! !
+
+!Player class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 21:34:57'!
+cannotPauseIfNotRunningErrorMessage
+	^'Cannot pause player if not running'.! !
+
+!Player class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 21:03:08'!
+cannotRemoveMultimediaOfElementIfNotPresentInQueueErrorMessage
+	^'Cannot remove an element of the queue that is not present'.! !
+
+!Player class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 22:59:45'!
+cannotRequestNextMultimediaElementIfThereIsNotCurrentOneAtPlayerErrorMessage
+	^'Cannot request next multimedia element if there is not an active one'! !
+
+!Player class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 21:31:49'!
+cannotStopIfNotRunningErrorMessage
+	^'Cannot stop player if not running'.! !
+
+!Player class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 20:50:40'!
+queueIsEmptyErrorMessage
+	^'Queue is empty'.! !
+
+
+!classDefinition: #PlayerReportVisitor category: #MultimediaSystem!
+Object subclass: #PlayerReportVisitor
+	instanceVariableNames: 'player collectedStats'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'MultimediaSystem'!
+
+!PlayerReportVisitor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 01:10:01'!
+initializeFor: aPlayer
+	player := aPlayer.
+	collectedStats := OrderedCollection new.! !
+
+!PlayerReportVisitor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 01:10:01'!
+isEmpty
+	^collectedStats size = 0.
+	! !
+
+!PlayerReportVisitor methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 01:40:47'!
+visitPlayer: aPlayer
+    ! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'PlayerReportVisitor class' category: #MultimediaSystem!
+PlayerReportVisitor class
+	instanceVariableNames: ''!
+
+!PlayerReportVisitor class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:34:55'!
+for: aPlayer
+	^self new initializeFor: aPlayer.! !
+
+
+!classDefinition: #PlayerState category: #MultimediaSystem!
+Object subclass: #PlayerState
+	instanceVariableNames: 'player'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'MultimediaSystem'!
+
+!PlayerState methodsFor: 'initializations' stamp: 'tomihq 11/24/2025 22:25:59'!
+initializeFor: aPlayer
+	player := aPlayer.! !
+
+
+!PlayerState methodsFor: 'testing' stamp: 'tomihq 11/24/2025 22:36:01'!
+isStopped
+	^false.! !
+
+
+!PlayerState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 22:38:58'!
+advanceTime: anElapsedTime! !
+
+!PlayerState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 22:43:33'!
+pause
+	^self error: player class cannotPauseIfNotRunningErrorMessage! !
+
+!PlayerState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 23:22:02'!
+play: aMultimediaElement
+	player state: (PlayingState for: player).
+	player playWhenNotRunning: aMultimediaElement.! !
+
+!PlayerState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 22:41:07'!
+stop
+	player stopPlayer.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'PlayerState class' category: #MultimediaSystem!
+PlayerState class
+	instanceVariableNames: ''!
+
+!PlayerState class methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 22:25:50'!
+for: aPlayer
+	^self new initializeFor: aPlayer! !
 
 
 !classDefinition: #PausedState category: #MultimediaSystem!
-PlaybackState subclass: #PausedState
+PlayerState subclass: #PausedState
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'MultimediaSystem'!
 
-!PausedState methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:16:24'!
-isPaused
-	^true.! !
-
-!PausedState methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:16:11'!
-isReproducing
-	^false! !
-
-!PausedState methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:15:48'!
-isStopped
-	^false! !
-
-
-!PausedState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 15:13:55'!
-pause
-! !
-
-!PausedState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 15:30:44'!
-play
-	element state: (PlayingState for: element).! !
-
-!PausedState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 16:02:17'!
-stop
-	! !
+!PausedState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 23:21:12'!
+play: aMultimediaElement
+	player state: (PlayingState for: player).! !
 
 
 !classDefinition: #PlayingState category: #MultimediaSystem!
-PlaybackState subclass: #PlayingState
+PlayerState subclass: #PlayingState
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'MultimediaSystem'!
 
-!PlayingState methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:16:36'!
-isPaused
-	^false.! !
+!PlayingState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 22:39:11'!
+advanceTime: anElapsedTime
+	player advanceTimeWhenPlaying: anElapsedTime! !
 
-!PlayingState methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:16:07'!
-isReproducing
-	^true! !
-
-!PlayingState methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:15:44'!
-isStopped
-	^false! !
-
-
-!PlayingState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 15:30:59'!
+!PlayingState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 22:28:09'!
 pause
-	element state: (PausedState for: element).! !
-
-!PlayingState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 15:32:58'!
-stop
-	element state: (StoppedState for: element).
-	element resetRemainingTime.! !
+	player state: (PausedState for: player).! !
 
 
 !classDefinition: #StoppedState category: #MultimediaSystem!
-PlaybackState subclass: #StoppedState
+PlayerState subclass: #StoppedState
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'MultimediaSystem'!
 
-!StoppedState methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:16:40'!
-isPaused
-	^false.! !
-
-!StoppedState methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:16:15'!
-isReproducing
-	^false! !
-
-!StoppedState methodsFor: 'testing' stamp: 'tomihq 11/24/2025 15:15:35'!
-isStopped
-	^true! !
-
-
-!StoppedState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 15:13:52'!
-pause
-! !
-
-!StoppedState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 15:31:28'!
-play
-	element state: (PlayingState for: element).! !
-
-!StoppedState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 15:30:37'!
+!StoppedState methodsFor: 'actions' stamp: 'tomihq 11/24/2025 22:42:55'!
 stop
-	^self error: element class notPlayingDescriptionErrorMessage ! !
+	^self error: player class cannotStopIfNotRunningErrorMessage! !
+
+
+!StoppedState methodsFor: 'testing' stamp: 'tomihq 11/24/2025 22:35:55'!
+isStopped
+	^true.! !
 
 
-!classDefinition: #SongTest category: #MultimediaSystem!
-TestCase subclass: #SongTest
-	instanceVariableNames: 'name duration artist'
+!classDefinition: #MediaStatTest category: #MultimediaSystem!
+TestCase subclass: #MediaStatTest
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'MultimediaSystem'!
 
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 13:36:31'!
-test01CanPlaySongIfSongIsNotPlaying
-	| song |
-	song := Song named: 'Oops, I did it again' duration: 213 * second artist: 'Britney Spears'.
-	song play.
+!MediaStatTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:50:40'!
+test001MediaStatCounterStartsAtZero
+	|mediaStat|
+	mediaStat := MediaStat for: '1'.
 	
-	self assert: song isReproducing.
-	self deny: song isPaused.! !
+	self assert: mediaStat counterAtZero.! !
 
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 13:40:12'!
-test02CanStopSongIfIsPlaying
-	| song |
-	song := Song named: 'Oops, I did it again' duration: 213 * second artist: 'Britney Spears'.
-	song play.
-	song stop.
+!MediaStatTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:51:56'!
+test002MediaStatIncrementsCounterCorrectly
+	|mediaStat|
+	mediaStat := MediaStat for: '1'.
+	mediaStat increment.
 	
-	self deny: song isReproducing.
+	
+	self deny: mediaStat counterAtZero.
+	self assert: (mediaStat counterAt: 1).! !
+
+
+!classDefinition: #PlayerTest category: #MultimediaSystem!
+TestCase subclass: #PlayerTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'MultimediaSystem'!
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 20:52:51'!
+test001PlayerCannotPlayIfQueueIsEmpty
+	|player|
+	player := Player new.
+	
+	self should: [player play] raise: Error - MessageNotUnderstood withExceptionDo: [:anError | 
+			self assert: anError messageText equals: Player queueIsEmptyErrorMessage.
+			
+	]! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:16:43'!
+test002AMultimediaElementCanBeAddedToTheQueueOfThePlayer
+	|player song |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+	player add: song.
+	
+	self assert: (player atQueue: song).
+	self assert: (player queueSize: 1).! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:16:43'!
+test003AMultimediaElementThatIsPresentAtTheQueueCannotBeAdded
+	|player song |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+	player add: song.
+	
+	self should: [player add: song] raise: Error - MessageNotUnderstood withExceptionDo: [:anError | 
+		self assert: anError messageText equals: Player cannotAddMultimediaOfElementThatIsAlreadyPresentErrorMessage.
+		self assert: (player queueSize: 1).
+	].! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:16:43'!
+test004AMultimediaElementCannotBeRemovedOfTheQueueIfNotPresent
+	|player song |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+
+	
+	self should:  [ player remove: song.] raise: Error - MessageNotUnderstood withExceptionDo: [:anError | 
+		self assert: anError messageText equals: Player cannotRemoveMultimediaOfElementIfNotPresentInQueueErrorMessage.
+		self assert: (player queueSize: 0)
+	].! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:16:43'!
+test005AMultimediaElementCanBeRemovedOfTheQueue
+	|player song |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+	player add: song.
+	player remove: song.
+	
+	self deny: (player atQueue: song).! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:16:43'!
+test006PlayerPlayShouldStartPlayingFirstElementOfQueue
+	|player song |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+	player add: song.
+	player play.
+	
+	self assert: (player atQueue: song).
+	self assert: (player isPlaying: song).
+	self deny: (player isStopped)! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:16:43'!
+test007PlayerShouldTrackPlayingTimeOfAMultimediaElement
+	|player song |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+	player add: song.
+	player play.
+	
+	self assert: (player currentMediaRemainingPlayTime: 380 * second).
+	player advanceTime: 80 * second.
+	self assert: (player currentMediaRemainingPlayTime: 300 * second).
+	
+	
 	! !
 
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 13:47:50'!
-test03CannotStopSongIfIsNotPlaying
-	| song |
-	song := Song named: 'Oops, I did it again' duration: 213 * second artist: 'Britney Spears'.
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:48:33'!
+test008PlayerRemovesMultimediaElementOfQueueIfRemainingTimeIsZero
+	|player song |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+	player add: song.
+	player play.
 	
-	self should: [song stop.] raise: Error - MessageNotUnderstood  withExceptionDo: [:anError | 
-		self assert: song isStopped.
-		self assert: anError messageText equals: Song notPlayingDescriptionErrorMessage.
+	self assert: (player currentMediaRemainingPlayTime: 380 * second).
+	player advanceTime: 390 * second.
+	self deny: (player atQueue: song)
+	
+	
+	! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 21:21:12'!
+test009PlayerStartsStopped
+	|player |
+	player := Player new.
+	
+	self assert: player isStopped.
+	
+	
+	! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:16:43'!
+test010PausingAndPlayingTheSameMultimediaElementShouldNotResetPlayerMultimediaElementState
+	|player song |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+	
+	player add: song.
+	player play.
+	player advanceTime: 300 * second.
+	self assert: (player isPlaying: song).
+	self assert: (player currentMediaRemainingPlayTime: 80 * second).
+	
+	player pause.
+	player play.
+	self assert: (player currentMediaRemainingPlayTime: 80 * second).
+	! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:16:43'!
+test011PausingThePlayerAndPlayingItShouldHaveTheSameRemainingTimeOfMultimediaAsWhenPaused
+	|player song |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+	player add: song.
+	player play.
+	
+	player advanceTime: 300 * second.
+	self assert: (player currentMediaRemainingPlayTime: 80 * second).
+	
+	player pause.
+	player advanceTime: 10 * second.
+	self assert: (player currentMediaRemainingPlayTime: 80 * second).
+	
+	player play.
+	self assert: (player currentMediaRemainingPlayTime: 80 * second).
+	
+	
+	
+	! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:16:43'!
+test012RemovingFromQueueActualPlayingElementShouldStopPlayer
+	|player song |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+	player add: song.
+	player play.
+	
+	player remove: song.
+	
+	self assert: (player isStopped).
+	
+	
+	
+	
+	! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:16:43'!
+test013PlayerCannotBeStoppedIfNotRunning
+	|player song |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+	player add: song.
+	
+	
+	self should: [player stop.] raise: Error - MessageNotUnderstood  withExceptionDo: [:anError | 
+		self assert: anError messageText equals: Player cannotStopIfNotRunningErrorMessage
+	].
+	
+	
+	
+	
+	! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:16:43'!
+test014PlayerCannotBePausedIfAMultimediaElementIsNotPlaying
+	|player song |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+	player add: song.
+	
+	self should: [player pause.] raise: Error - MessageNotUnderstood  withExceptionDo: [:anError | 
+		self assert: anError messageText equals: Player cannotPauseIfNotRunningErrorMessage
+	].
+	
+	
+	
+	
+	! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:18:51'!
+test015PlayerWillPlayNextMultimediaElementIfQueueIsNotEmpty
+	|player song song2 |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+	song2 := Song id: 2 named: 'Its my life' author: 'Bon Jovi' duration: 258 * second.
+	player add: song.
+	player add: song2.
+	player play.
+	player next.
+	
+	self assert: (player isPlaying: song2).
+	self assert: (player atQueue: song2).
+
+	
+	
+	
+	
+	
+	
+	! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:16:43'!
+test016PlayerWillFailIfNextMultimediaElementIsRequestedButThereIsNotCurrentOne
+	|player song |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+	player add: song.
+	self should: [	player next.] raise: Error - MessageNotUnderstood withExceptionDo: [:anError |
+		self assert: anError messageText equals: Player cannotRequestNextMultimediaElementIfThereIsNotCurrentOneAtPlayerErrorMessage.
 	]
-	! !
 
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 15:57:13'!
-test04CanPauseSongAndPlayItLater
-	| song |
-	song := Song named: 'Oops, I did it again' duration: 213 * second artist: 'Britney Spears'.
-
-	song play.
-	self assert: song isReproducing.
-	song pause.
-	self assert: song isPaused.
-	self deny: song isReproducing.
-	! !
-
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 15:58:58'!
-test04bCanPlaySongPauseItAndPlayItAgain
-	| song |
-	song := Song named: 'Oops, I did it again' duration: 213 * second artist: 'Britney Spears'.
-
-	song play.
 	
-	self assert: song isReproducing.
-	song pause.
 	
-	self assert: song isPaused.
-	song play.
 	
-	self deny: song isPaused.
-	self deny: song isStopped.
-	self assert: song isReproducing.
+	
+	
+	
 	! !
 
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 14:15:15'!
-test05CanPlayVideoIfVideoIsNotPlaying
-	| video |
-
-	video := Video named: '1 Hour - Serenity and Rain - Resident Evil 4' duration: 3600 * second artist: 'CAPCOM'.
-	video play.
-	self assert: video isReproducing.
-	video pause.
-	self assert: video isPaused.
-	! !
-
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 16:04:56'!
-test06CanStopVideoIfIsPlaying
-	| video |
-
-	video := Video named: '1 Hour - Serenity and Rain - Resident Evil 4' duration: 3600 * second artist: 'CAPCOM'.
-	video play.
-	self assert: video isReproducing.
-	
-	video stop.
-	self assert: video isStopped.
-	self deny: video isReproducing.
-	self deny: video isPaused.
-	! !
-
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 14:15:11'!
-test07CannotStopVideoIfIsNotPlaying
-	| video |
-
-	video := Video named: '1 Hour - Serenity and Rain - Resident Evil 4' duration: 3600 * second artist: 'CAPCOM'.
-	self should: [video stop.] raise: Error - MessageNotUnderstood  withExceptionDo: [:anError | 
-		self assert: video isStopped.
-		self assert: anError messageText equals: Video notPlayingDescriptionErrorMessage.
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:16:43'!
+test017PlayerWillFailIfNextMultimediaElementIsRequestedButQueueIsEmpty
+	|player song |
+	player := Player new.
+	song := Song id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second.
+	player add: song.
+	player play.
+	self should: [	player next.] raise: Error - MessageNotUnderstood withExceptionDo: [:anError |
+		self assert: anError messageText equals: Player queueIsEmptyErrorMessage.
+		self assert: player isStopped.
 	]
-	
-	! !
 
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 14:15:08'!
-test08CanPauseVideoAndPlayItLater
-	| video |
-
-	video := Video named: '1 Hour - Serenity and Rain - Resident Evil 4' duration: 3600 * second artist: 'CAPCOM'.
-	video play.
-	self assert: video isReproducing.
-	video pause.
-	self assert: video isPaused.
 	
 	
-	! !
-
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 16:01:32'!
-test08bCanPlayVideoPauseItAndPlayItAgain
-	| video |
-
-	video := Video named: '1 Hour - Serenity and Rain - Resident Evil 4' duration: 3600 * second artist: 'CAPCOM'.
 	
-	video play.
-	self assert: video isReproducing.
-	
-	video pause.
-	self assert: video isPaused.
-	
-	video play.
-	self assert: video isReproducing.
-	self deny: video isPaused.
-	
-	
-	! !
-
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 13:58:51'!
-test09PlayPlaylistFailsIfTheresNotMultimediaToPlay
-	| playlist |
-	playlist := Playlist named: 'Relax' with: {}.
-	
-	self should: [playlist play.] raise:  Error - MessageNotUnderstood withMessageText: Playlist cannotPlayIfPlaylistIsEmptyErrorMessage.
 	
 	
 	
 	! !
 
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 15:52:08'!
-test10PlayingPlaylistStartReproducingFirstElementOfThePlaylist
-	| playlist video song |
-	
-	song := Song named: 'Oops, I did it again' duration: 213 * second artist: 'Britney Spears'.
-	video := Video named: '1 Hour - Serenity and Rain - Resident Evil 4' duration: 3600 * second artist: 'CAPCOM'.
-	
-	playlist := Playlist named: 'Relax' with: {video. song}.
-	playlist play.
-	self assert: (playlist nowPlaying: video).
-	self assert: (playlist isReproducing).
-	
-	! !
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:18:58'!
+test018PlayerCanPlayVideo
+	|player video |
+	player := Player new.
+	video := Video id: 1 named: 'Oops, I did it again' author: 'Britney Spears' duration: 380 * second resolution: 1920@1080.
+	player add: video.
+	player play.
+	self assert: (player isPlaying: video).
 
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 15:53:50'!
-test11PlaylistSizeIsTheAmountOfTheElementsThatContains
-	| playlist video song |
 	
-	song := Song named: 'Oops, I did it again' duration: 213 * second artist: 'Britney Spears'.
-	video := Video named: '1 Hour - Serenity and Rain - Resident Evil 4' duration: 3600 * second artist: 'CAPCOM'.
 	
-	playlist := Playlist named: 'Relax' with: {video. song}.
-
-	self assert: (playlist size) equals: 2.
 	
-! !
-
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 15:55:41'!
-test12PlaylistDurationIsTheDurationOfAllEachMultimediaElementsThatContains
-	| playlist video song |
 	
-	song := Song named: 'Oops, I did it again' duration: 213 * second artist: 'Britney Spears'.
-	video := Video named: '1 Hour - Serenity and Rain - Resident Evil 4' duration: 3600 * second artist: 'CAPCOM'.
-	
-	playlist := Playlist named: 'Relax' with: {video. song}.
-
-	self assert: (playlist duration) equals: 3813 * second.
-	
-! !
-
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 15:02:55'!
-test13CanAddMultimediaElementsToAPlaylistAfterCreated
-	| playlist video song |
-	
-	song := Song named: 'Oops, I did it again' duration: 213 * second artist: 'Britney Spears'.
-	video := Video named: '1 Hour - Serenity and Rain - Resident Evil 4' duration: 3600 * second artist: 'CAPCOM'.
-	
-	playlist := Playlist named: 'Relax' with: {video}.
-	
-	playlist add: song.
-
-	self assert: (playlist includes: song)
-! !
-
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 14:18:15'!
-test14MultimediaElementRemainingTimeIsEqualsToDurationIfNotPlayedYet
-	| playlist video song |
-	
-	song := Song named: 'Oops, I did it again' duration: 213 * second artist: 'Britney Spears'.
-	
-	self assert: (song remainingTime: 213 * second).
 	
 	
 	! !
 
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 14:18:20'!
-test15MultimediaElementDecreasesRemainingTimeWhilePlaying
-	| song |
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:19:06'!
+test019PlayerQueueContainsPlaylistMediaAtSameOrderAsPlaylist
+	|player video song playlist |
+	player := Player new.
+	video := Video id: 1 named: 'Eye Of The Tiger' author: 'Survivor Band' duration: 244 * second resolution: 1920@1080.
+	song := Song id: 2 named: 'Numb' author: 'Linkin Park' duration: 187 * second.
+
+	playlist := Playlist named: 'Music'  withMedia: {video. song} asOrderedCollection.
 	
-	song := Song 
-		named: 'Oops, I did it again'
-		duration: 213 * second
-		artist: 'Britney Spears'.
-
-	self assert: (song remainingTime: 213 * second).
-
-	song play.                
-	song goInTime: 10 * second.  
-
-	self assert: (song remainingTime: 203 * second).
-! !
-
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 14:18:22'!
-test16MultimediaElementRemainingTimeIsBackToMultimediaElementDurationIfHasBeenStopped
-	| song |
+	player addPlaylist: playlist.
+	player play.
 	
-	song := Song 
-		named: 'Oops, I did it again'
-		duration: 213 * second
-		artist: 'Britney Spears'.
-
-	self assert: (song remainingTime: 213 * second).
-
-	song play.                
-	song goInTime: 10 * second.  
-
-	self assert: (song remainingTime: 203 * second).
-	song stop.
-	self assert: (song remainingTime: 213 * second).
-! !
-
-!SongTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/24/2025 16:03:54'!
-test17PlaylistWithPlaylistAsFirstElementPlaysTheFirstElementOfTheNestedPlaylist
-	| playlist playlist2 video song |
+	self assert: (player atQueue: video).
+	self assert: (player atQueue: song).
+	self assert: (player isPlaying: video).
 	
-	song := Song named: 'Resident Evil 1 - 1996 Save Theme' duration: 3600 * second artist: 'CAPCOM'.
-	video := Video named: '1 Hour - Serenity and Rain - Resident Evil 4' duration: 3600 * second artist: 'CAPCOM'.
 	
-	playlist := Playlist named: 'Relax' with: {video. song}.
-	playlist2 := Playlist named: 'Resident Evil' with: {playlist}.
 	
-	playlist2 play.
+	
+	
+	
+	
 
-	self assert: (playlist2 nowPlaying: video).
-	self deny: (playlist2 nowPlaying: song).
-! !
-(Smalltalk at: #qq__ ifAbsentPut: [OrderedCollection new]) add: (#(54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 74 124 112 122 108 122 54 74 124 112 122 54 115 112 117 124 127 61 59 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 74 124 112 122 108 122 54 74 124 112 122 54 115 112 117 124 127 61 59 54 74 124 112 122 92 117 112 125 108 121 122 112 123 128 52 62 61 59 56 53 112 116 104 110 108 17 124 117 112 127 17 83 112 117 124 127 39 61 53 56 59 53 55 52 58 61 52 110 108 117 108 121 112 106 17 127 63 61 102 61 59 17 86 119 108 117 39 90 116 104 115 115 123 104 115 114 39 74 118 110 98 90 119 124 121 100 39 93 84 39 98 83 112 125 108 91 128 119 112 117 110 74 118 80 117 123 108 121 119 121 108 123 108 121 39 93 84 84 104 114 108 121 53 118 122 106 118 110 52 108 108 116 53 58 61 61 57 100 17 95 56 56 17 92 117 112 127 39 105 124 112 115 123 39 118 117 39 86 106 123 39 39 62 39 57 55 57 60 39 56 59 65 55 63 65 57 62 39 74 118 116 119 112 115 108 121 65 39 60 53 59 53 55 39 57 55 56 61 55 61 55 64 17 83 112 125 108 91 128 119 112 117 110 74 118 80 117 123 108 121 119 121 108 123 108 121 39 93 84 84 104 114 108 121 53 118 122 106 118 110 52 108 108 116 53 58 61 61 57 39 124 124 112 107 65 39 57 61 104 55 55 106 105 106 52 58 56 60 107 52 59 106 108 107 52 104 108 60 105 52 61 60 55 58 60 56 56 61 58 106 58 62 39 86 106 123 39 39 62 39 57 55 57 60 17 83 112 125 108 91 128 119 112 117 110 74 118 110 112 123 39 93 84 84 104 114 108 121 53 118 122 106 118 110 52 108 108 116 53 58 61 61 57 39 124 124 112 107 65 39 57 61 104 55 55 106 105 106 52 58 56 60 107 52 59 106 108 107 52 104 108 60 105 52 61 60 55 58 60 56 56 61 58 106 58 62 39 86 106 123 39 39 62 39 57 55 57 60 17 93 84 65 39 57 55 57 60 56 55 55 61 56 64 58 59 39 111 108 121 117 104 117 71 84 104 106 73 118 118 114 52 87 121 118 52 107 108 52 79 108 121 117 104 117 52 57 53 115 118 106 104 115 65 75 118 106 124 116 108 117 123 122 54 93 84 54 118 119 108 117 122 116 104 115 115 123 104 115 114 52 125 116 39 75 104 123 108 65 39 84 118 117 39 86 106 123 39 61 39 56 57 65 58 59 65 57 56 39 57 55 57 60 39 74 118 116 116 112 123 79 104 122 111 65 39 108 107 58 60 59 63 61 39 87 115 124 110 112 117 122 65 39 57 55 57 60 56 55 55 61 56 64 58 59 39 111 108 121 117 104 117 71 84 104 106 73 118 118 114 52 87 121 118 52 107 108 52 79 108 121 117 104 117 52 57 53 115 118 106 104 115 65 75 118 106 124 116 108 117 123 122 54 93 84 54 118 119 108 117 122 116 104 115 115 123 104 115 114 52 125 116 17 199 175 7 25 17 56 64 57 53 56 61 63 53 55 53 56 63 17 123 118 116 112 111 120 17 123 118 116 112 111 120 17 52 52 52 52 52 52 52 52 52 52 17 57 55 57 60 52 56 56 52 57 59 91 56 60 65 55 57 65 56 61 53 57 62 61 63 55 58 52 55 58 65 55 55 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 92 73 72 54 80 90 94 54 112 117 110 52 122 118 109 123 126 104 121 108 54 87 121 118 128 108 106 123 118 122 54 116 124 115 123 112 116 108 107 112 104 52 122 128 122 123 108 116 54 84 124 115 123 112 116 108 107 112 104 90 128 122 123 108 116 53 122 123 17 56 56 62 60 59 17 52 52 52 52 52 52 52 52 52 52 17 57 55 57 60 52 56 56 52 57 59 91 56 61 65 57 59 65 58 61 53 60 63 56 62 60 62 52 55 58 65 55 55 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 92 73 72 54 80 90 94 54 112 117 110 52 122 118 109 123 126 104 121 108 54 87 121 202 168 106 123 112 106 104 122 54 87 118 121 123 109 118 115 112 118 54 87 118 121 123 109 118 115 112 118 57 53 122 123 17 58 59 63 59 63 17 52 52 52 52 52 52 52 52 52 52 17 17 52 52 52 52 52 52 52 52 52 52 17 52 52 52 52 52 52 52 52 52 52 17 57 55 57 60 52 56 56 52 57 59 91 56 60 65 58 58 65 57 62 53 57 55 64 63 62 62 52 55 58 65 55 55 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 92 73 72 54 80 90 94 54 112 117 110 52 122 118 109 123 126 104 121 108 54 87 121 118 128 108 106 123 118 122 54 116 124 115 123 112 116 108 107 112 104 52 122 128 122 123 108 116 54 84 124 115 123 112 116 108 107 112 104 90 128 122 123 108 116 53 122 123 17 56 60 60 59 59 17 52 52 52 52 52 52 52 52 52 52 17 57 55 57 60 52 56 56 52 57 59 91 56 60 65 60 58 65 55 59 53 57 55 62 61 59 52 55 58 65 55 55 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 92 73 72 54 80 90 94 54 112 117 110 52 122 118 109 123 126 104 121 108 54 87 121 118 128 108 106 123 118 122 54 116 124 115 123 112 116 108 107 112 104 52 122 128 122 123 108 116 54 84 124 115 123 112 116 108 107 112 104 90 128 122 123 108 116 53 122 123 17 56 61 58 60 55 17 52 52 52 52 52 52 52 52 52 52 17 57 55 57 60 52 56 56 52 57 59 91 56 61 65 57 62 65 57 61 53 57 57 58 56 63 62 52 55 58 65 55 55 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 92 73 72 54 80 90 94 54 112 117 110 52 122 118 109 123 126 104 121 108 54 87 121 118 128 108 106 123 118 122 54 116 124 115 123 112 116 108 107 112 104 52 122 128 122 123 108 116 54 84 124 115 123 112 116 108 107 112 104 90 128 122 123 108 116 53 122 123 17 56 62 57 62 56 17 52 52 52 52 52 52 52 52 52 52 17 57 55 57 60 52 56 56 52 57 59 91 56 61 65 58 60 65 59 58 53 59 60 62 55 63 59 52 55 58 65 55 55 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 92 73 72 54 80 90 94 54 112 117 110 52 122 118 109 123 126 104 121 108 54 87 121 118 128 108 106 123 118 122 54 116 124 115 123 112 116 108 107 112 104 52 122 128 122 123 108 116 54 84 124 115 123 112 116 108 107 112 104 90 128 122 123 108 116 53 122 123 17 56 62 58 59 55 17 52 52 52 52 52 52 52 52 52 52 17 17))!
+	
+	
+	
+	
+	
+	
+	! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 00:16:12'!
+test020PlayerQueueContainsEveryElementOfAPlaylistIncludingNestedPlaylists
+	|player video song playlist playlist2 |
+	player := Player new.
+	video := Video id: 1 named: 'Eye Of The Tiger' author: 'Survivor Band' duration: 244 * second resolution: 1920@1080.
+	song := Song id: 2 named: 'Numb' author: 'Linkin Park' duration: 187 * second.
+	
+	playlist2 := Playlist named: 'Linkin Park'  withMedia: {song} asOrderedCollection.
+	playlist := Playlist named: 'Music'  withMedia: {video. playlist2} asOrderedCollection.
+	
+	player addPlaylist: playlist.
+	player play.
+	
+	self assert: (player atQueue: video).
+	self assert: (player atQueue: song).
+	self assert: (player isPlaying: video).
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	! !
+
+!PlayerTest methodsFor: 'as yet unclassified' stamp: 'tomihq 11/25/2025 01:06:07'!
+test021PlayerReportIsEmpty
+	|player statsReport |
+	player := Player new.
+	statsReport := PlayerReportVisitor for: player.
+	
+	self assert: statsReport isEmpty.
+
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	! !
+(Smalltalk at: #qq__ ifAbsentPut: [OrderedCollection new]) add: (#(54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 74 124 112 122 108 122 54 74 124 112 122 54 115 112 117 124 127 61 59 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 74 124 112 122 108 122 54 74 124 112 122 54 115 112 117 124 127 61 59 54 74 124 112 122 92 117 112 125 108 121 122 112 123 128 52 62 61 59 56 53 112 116 104 110 108 17 124 117 112 127 17 83 112 117 124 127 39 61 53 56 59 53 55 52 58 61 52 110 108 117 108 121 112 106 17 127 63 61 102 61 59 17 86 119 108 117 39 90 116 104 115 115 123 104 115 114 39 74 118 110 98 90 119 124 121 100 39 93 84 39 98 83 112 125 108 91 128 119 112 117 110 74 118 80 117 123 108 121 119 121 108 123 108 121 39 93 84 84 104 114 108 121 53 118 122 106 118 110 52 108 108 116 53 58 61 61 57 100 17 95 56 56 17 92 117 112 127 39 105 124 112 115 123 39 118 117 39 86 106 123 39 39 62 39 57 55 57 60 39 56 59 65 55 63 65 57 62 39 74 118 116 119 112 115 108 121 65 39 60 53 59 53 55 39 57 55 56 61 55 61 55 64 17 83 112 125 108 91 128 119 112 117 110 74 118 80 117 123 108 121 119 121 108 123 108 121 39 93 84 84 104 114 108 121 53 118 122 106 118 110 52 108 108 116 53 58 61 61 57 39 124 124 112 107 65 39 57 61 104 55 55 106 105 106 52 58 56 60 107 52 59 106 108 107 52 104 108 60 105 52 61 60 55 58 60 56 56 61 58 106 58 62 39 86 106 123 39 39 62 39 57 55 57 60 17 83 112 125 108 91 128 119 112 117 110 74 118 110 112 123 39 93 84 84 104 114 108 121 53 118 122 106 118 110 52 108 108 116 53 58 61 61 57 39 124 124 112 107 65 39 57 61 104 55 55 106 105 106 52 58 56 60 107 52 59 106 108 107 52 104 108 60 105 52 61 60 55 58 60 56 56 61 58 106 58 62 39 86 106 123 39 39 62 39 57 55 57 60 17 93 84 65 39 57 55 57 60 56 55 55 61 56 64 58 59 39 111 108 121 117 104 117 71 84 104 106 73 118 118 114 52 87 121 118 52 107 108 52 79 108 121 117 104 117 52 57 53 115 118 106 104 115 65 75 118 106 124 116 108 117 123 122 54 93 84 54 118 119 108 117 122 116 104 115 115 123 104 115 114 52 125 116 39 75 104 123 108 65 39 84 118 117 39 86 106 123 39 61 39 56 57 65 58 59 65 57 56 39 57 55 57 60 39 74 118 116 116 112 123 79 104 122 111 65 39 108 107 58 60 59 63 61 39 87 115 124 110 112 117 122 65 39 57 55 57 60 56 55 55 61 56 64 58 59 39 111 108 121 117 104 117 71 84 104 106 73 118 118 114 52 87 121 118 52 107 108 52 79 108 121 117 104 117 52 57 53 115 118 106 104 115 65 75 118 106 124 116 108 117 123 122 54 93 84 54 118 119 108 117 122 116 104 115 115 123 104 115 114 52 125 116 17 199 175 7 25 17 56 64 57 53 56 61 63 53 55 53 56 63 17 123 118 116 112 111 120 17 123 118 116 112 111 120 17 52 52 52 52 52 52 52 52 52 52 17 57 55 57 60 52 56 56 52 57 59 91 56 60 65 55 57 65 56 61 53 57 62 61 63 55 58 52 55 58 65 55 55 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 92 73 72 54 80 90 94 54 112 117 110 52 122 118 109 123 126 104 121 108 54 87 121 118 128 108 106 123 118 122 54 116 124 115 123 112 116 108 107 112 104 52 122 128 122 123 108 116 54 84 124 115 123 112 116 108 107 112 104 90 128 122 123 108 116 53 122 123 17 56 56 62 60 59 17 52 52 52 52 52 52 52 52 52 52 17 57 55 57 60 52 56 56 52 57 59 91 56 61 65 57 59 65 58 61 53 60 63 56 62 60 62 52 55 58 65 55 55 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 92 73 72 54 80 90 94 54 112 117 110 52 122 118 109 123 126 104 121 108 54 87 121 202 168 106 123 112 106 104 122 54 87 118 121 123 109 118 115 112 118 54 87 118 121 123 109 118 115 112 118 57 53 122 123 17 58 59 63 59 63 17 52 52 52 52 52 52 52 52 52 52 17 17 52 52 52 52 52 52 52 52 52 52 17 52 52 52 52 52 52 52 52 52 52 17 57 55 57 60 52 56 56 52 57 59 91 56 60 65 58 58 65 57 62 53 57 55 64 63 62 62 52 55 58 65 55 55 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 92 73 72 54 80 90 94 54 112 117 110 52 122 118 109 123 126 104 121 108 54 87 121 118 128 108 106 123 118 122 54 116 124 115 123 112 116 108 107 112 104 52 122 128 122 123 108 116 54 84 124 115 123 112 116 108 107 112 104 90 128 122 123 108 116 53 122 123 17 56 60 60 59 59 17 52 52 52 52 52 52 52 52 52 52 17 57 55 57 60 52 56 56 52 57 59 91 56 60 65 60 58 65 55 59 53 57 55 62 61 59 52 55 58 65 55 55 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 92 73 72 54 80 90 94 54 112 117 110 52 122 118 109 123 126 104 121 108 54 87 121 118 128 108 106 123 118 122 54 116 124 115 123 112 116 108 107 112 104 52 122 128 122 123 108 116 54 84 124 115 123 112 116 108 107 112 104 90 128 122 123 108 116 53 122 123 17 56 61 58 60 55 17 52 52 52 52 52 52 52 52 52 52 17 57 55 57 60 52 56 56 52 57 59 91 56 61 65 57 62 65 57 61 53 57 57 58 56 63 62 52 55 58 65 55 55 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 92 73 72 54 80 90 94 54 112 117 110 52 122 118 109 123 126 104 121 108 54 87 121 118 128 108 106 123 118 122 54 116 124 115 123 112 116 108 107 112 104 52 122 128 122 123 108 116 54 84 124 115 123 112 116 108 107 112 104 90 128 122 123 108 116 53 122 123 17 56 62 57 62 56 17 52 52 52 52 52 52 52 52 52 52 17 57 55 57 60 52 56 56 52 57 59 91 56 61 65 58 60 65 59 58 53 59 60 62 55 63 59 52 55 58 65 55 55 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 92 73 72 54 80 90 94 54 112 117 110 52 122 118 109 123 126 104 121 108 54 87 121 118 128 108 106 123 118 122 54 116 124 115 123 112 116 108 107 112 104 52 122 128 122 123 108 116 54 84 124 115 123 112 116 108 107 112 104 90 128 122 123 108 116 53 122 123 17 56 62 58 59 55 17 52 52 52 52 52 52 52 52 52 52 17 57 55 57 60 52 56 56 52 57 60 91 55 56 65 59 57 65 55 58 53 58 56 64 62 57 63 52 55 58 65 55 55 17 54 111 118 116 108 54 123 118 116 112 111 120 54 76 122 106 121 112 123 118 121 112 118 54 92 73 72 54 80 90 94 54 112 117 110 52 122 118 109 123 126 104 121 108 54 87 121 118 128 108 106 123 118 122 54 116 124 115 123 112 116 108 107 112 104 52 122 128 122 123 108 116 54 84 124 115 123 112 116 108 107 112 104 90 128 122 123 108 116 53 122 123 17 57 60 55 55 61 17 52 52 52 52 52 52 52 52 52 52 17 17))!
