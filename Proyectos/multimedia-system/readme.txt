@@ -52,5 +52,6 @@ El reporte debería tener esta pinta:
 
 Considere que se considera "reproducido" cualquier elemento multimedia que haya pasado por el player y haya finalizado en algún momento.
 No nos interesa de qué manera exporta el reporte, tranquilamente podría ser cualquier estructura de datos que usted considere eficiente.
-Ej.: un array nos basta.
 
+Notar que cómo el Player no acepta elementos repetidos, de alguna manera tiene que extender los MultimediaElement ¿cómo puede garantizar que son exactamente los mismos, y llevar el conteo en el Player sin importar la instancia del MultimediaElement?
+Pista: utilice un diccionario en Player que permita, por cada MultimediaElement, distinguir uno del resto. 'Oops, I did it again' instancia 1 = 'Oops, I did it again' instancia 2. En el diccionario ambos tienen la misma clave.
