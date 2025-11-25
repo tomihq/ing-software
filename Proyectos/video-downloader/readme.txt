@@ -14,6 +14,9 @@ Queremos sólamente utilizar un Downloader y un método download para descargar 
 En esta iteración se asume que el archivo se descarga apenas se hace
 downloader download: fileName. El cliente **sabe** exactamente cómo se descarga y se descarga mil veces si quiere.
 
+Considere utilizar Stubs para simular qué contenido descarga cada archivo.
+Ej.: para 'file.txt' debería devolver un Stream que contenga el contenido de #('fileDownloaded').
+
 --
 Iteración 2
 Queremos que la descarga se realice **solo** cuando el usuario "la solicite". Pero sin mostrarle a él cómo se hace la descarga y si realmente se hace.
